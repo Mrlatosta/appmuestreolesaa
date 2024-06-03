@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tvnumMuestra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="30dp"
+        android:text="1"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvfecham"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginStart="20dp"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="32" />
+
+    <TextView
+        android:id="@+id/tvhoram"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginStart="20dp"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/tvfecham"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Agua Cruda" />
+
+    <TextView
+        android:id="@+id/tvregistroM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/tvhoram"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="002118-1" />
+
+    <TextView
+        android:id="@+id/tvnombre"
+        android:layout_width="100dp"
+        android:maxWidth="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/tvregistroM"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Agua" />
+
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:background="@color/red"
+        android:text="X"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/tvnombre" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
