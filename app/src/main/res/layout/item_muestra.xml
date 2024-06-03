@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    >
 
     <TextView
         android:id="@+id/tvnumMuestra"
@@ -11,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="30dp"
-        android:text="1"
-        android:textSize="20sp"
+        tools:text="1"
+        android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="20dp"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="32" />
@@ -33,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="20dp"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Agua Cruda" />
@@ -43,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvhoram"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="002118-1" />
@@ -54,10 +56,84 @@
         android:maxWidth="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvregistroM"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Agua" />
+
+    <TextView
+        android:id="@+id/tvidLab"
+        android:layout_width="110dp"
+        android:maxWidth="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvnombre"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="202406031142" />
+
+    <TextView
+        android:id="@+id/tvcantidadAprox"
+        android:layout_width="60dp"
+        android:maxWidth="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvidLab"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="200gr" />
+
+    <TextView
+        android:id="@+id/tvtemperatura"
+        android:layout_width="50dp"
+        android:maxWidth="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="10°C" />
+
+    <TextView
+        android:id="@+id/tvlugar"
+        android:layout_width="80dp"
+        android:maxWidth="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Cocina palenque" />
+    <TextView
+        android:id="@+id/tvdescripcion"
+        android:layout_width="230dp"
+        android:maxWidth="230dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvlugar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Se tomo en restaurante" />
+    <TextView
+        android:id="@+id/tvMicro"
+        android:layout_width="50dp"
+        android:maxWidth="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Ct,Cf" />
+    <TextView
+        android:id="@+id/tvFisico"
+        android:layout_width="50dp"
+        android:maxWidth="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvMicro"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Ph,Turb" />
 
     <Button
         android:id="@+id/btnDelete"
@@ -70,6 +146,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/tvnombre" />
+        app:layout_constraintStart_toEndOf="@id/tvFisico" />
+
+    <TextView
+        android:id="@+id/tvObservaciones"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvhoram"
+        tools:text="Se observo que se lavo las manos el señor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

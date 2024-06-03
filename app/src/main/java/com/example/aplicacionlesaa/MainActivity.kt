@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     var contador = 0
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         val tvfecham = binding.tvfechamuestreo
         val tvhoram = binding.tvHora
+        val tvFolio = binding.tvFolio
+
         // Establecer la fecha actual
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val currentDate = dateFormat.format(Date())
@@ -65,10 +68,13 @@ class MainActivity : AppCompatActivity() {
         handler.post(runnable)
 
 
-
+        val tvRegM = binding.tvregistromuestra
+        val tvNum = binding.tvNumeroMuestra
+        tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
         val txtPrueba = findViewById<TextView>(R.id.txtnombre)
         val btnStart = findViewById<AppCompatButton>(R.id.btnStart)
         binding.btnStart.setOnClickListener {
+            tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
             createMuestra()
             Toast.makeText(this, txtPrueba.text, Toast.LENGTH_SHORT).show()
             Log.i("Ray", "Boton Pulsado")
@@ -89,10 +95,22 @@ class MainActivity : AppCompatActivity() {
         val tvhoram = binding.tvHora
         val tvregistromuestra = binding.tvregistromuestra
         val txtnombrem = binding.txtnombre
+        val txtcantidad = binding.txtcantidadaprox
+        val txtTemp = binding.txtTemp
+        val txtLugar = binding.txtLugar
+        val txtDescripcion = binding.txtdescripcion
+        val txtMicro = binding.txtMicro
+        val txtFisico = binding.txtFisico
+        val txtObserva = binding.txtobservaciones
 
         val numeroMuestra = tvNum.text
 
         if (numeroMuestra != null) {
+            val fechaSinBarras = tvfecham.text.toString().replace("/", "")
+            val horaSinPuntos = tvhoram.text.toString().replace(":", "")
+            val horaRecortada = if (horaSinPuntos.length >= 4) horaSinPuntos.substring(0, 4) else horaSinPuntos
+            val idLab = fechaSinBarras + horaRecortada
+
             // El valor de idServicio es un entero válido, puedes usarlo aquí
             val muestraobjeto =
                 Muestra(
@@ -100,10 +118,19 @@ class MainActivity : AppCompatActivity() {
                     fechaMuestra = tvfecham.text.toString(),
                     horaMuestra = tvhoram.text.toString(),
                     registroMuestra = tvregistromuestra.text.toString(),
-                    nombreMuestra = txtnombrem.text.toString()
-
+                    nombreMuestra = txtnombrem.text.toString(),
+                    idLab = idLab,
+                    cantidadAprox = txtcantidad.text.toString(),
+                    tempM = txtTemp.text.toString(),
+                    lugarToma = txtLugar.text.toString(),
+                    descripcionM = txtDescripcion.text.toString(),
+                    emicro = txtMicro.text.toString(),
+                    efisico = txtFisico.text.toString(),
+                    observaciones = txtObserva.text.toString()
                 )
             muestraMutableList.add(muestraobjeto)
+            contador = muestraMutableList.size
+            tvNum.text = (contador+1).toString()
             adapter.notifyItemInserted(muestraMutableList.size-1)
         } else {
             // Manejar el caso donde la conversión falló
@@ -136,9 +163,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onDeletedItem(position: Int) {
-        muestraMutableList.removeAt(position)
-        //Notificar al listado que se ha en este caso borrado un item con una posicion
-        adapter.notifyItemRemoved(position)
+        try {
+            muestraMutableList.removeAt(position)
+            //Notificar al listado que se ha en este caso borrado un item con una posicion
+            adapter.notifyItemRemoved(position)
+            val tvFolio = binding.tvFolio
+
+
+            // Actualizar los números de muestra en la lista
+            for (i in position until muestraMutableList.size) {
+                muestraMutableList[i].numeroMuestra = (i + 1).toString()
+                muestraMutableList[i].registroMuestra = tvFolio.text.toString()+ "-" +  muestraMutableList[i].numeroMuestra
+
+            }
+            adapter.notifyItemRangeChanged(position, muestraMutableList.size)
+
+            // Actualizar contador y TextView de número de muestra
+            contador = muestraMutableList.size
+            binding.tvNumeroMuestra.text = (contador + 1).toString()
+            Log.e("Prueba".toString(), "El contador es:$contador")
+
+        }catch (e: Exception){
+            Log.e("Error".toString(),"Hubo un error")
+        }
+
     }
 
     override fun onDestroy() {
