@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.aplicacionlesaa"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -48,8 +48,13 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE.md" // Agrega esta línea para excluir LICENSE.md
+            excludes += "META-INF/NOTICE.md"
         }
     }
+
+
+
 
     viewBinding {
         viewBinding.enable = true
@@ -77,4 +82,16 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("com.itextpdf:itext7-core:7.2.3")
+    implementation("org.postgresql:postgresql:42.6.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation ("com.sun.mail:android-mail:1.6.7")
+    implementation ("com.sun.mail:android-activation:1.6.7")
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+
+
+
+    // Otras dependencias aquí
+
 }

@@ -10,10 +10,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMuestras"
-        android:layout_width="match_parent"
-        android:layout_height="204dp"
+        android:layout_width="1288dp"
+        android:layout_height="203dp"
         android:layout_marginTop="108dp"
-        android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnStart" />
 
@@ -167,17 +166,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
     <TextView
-        android:id="@+id/tvidservicio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="172dp"
-        android:text="0"
-        android:textSize="25sp"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/textView17"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -188,26 +176,26 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/textview4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="172dp"
+
+        android:text="Descripcion:"
+        android:textSize="25sp"
+        app:layout_constraintStart_toEndOf="@+id/idSpinner1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/tvdescripcionmuestra"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="172dp"
         android:text="Desc"
         android:textSize="25sp"
         app:layout_constraintStart_toEndOf="@+id/textview4"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textview4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="172dp"
-        android:text="Descripcion:"
-
-        android:textSize="25sp"
-        app:layout_constraintStart_toEndOf="@+id/tvidservicio"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -514,6 +502,26 @@
         android:text="002119"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnSiguiente"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="372dp"
+        android:layout_marginEnd="156dp"
+        android:background="#00E676"
+        android:text="Siguiente"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/idSpinner1"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="172dp"
+        app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toTopOf="parent" />
 
 
