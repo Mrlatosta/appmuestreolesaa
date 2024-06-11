@@ -3,11 +3,12 @@ package com.example.aplicacionlesaa.adapter
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aplicacionlesaa.Muestra
+import com.example.aplicacionlesaa.databinding.ItemMuestra2Binding
 import com.example.aplicacionlesaa.databinding.ItemMuestraBinding
 
 class MuestraViewHolderActResumen(view: View) : RecyclerView.ViewHolder(view) {
 
-    val binding = ItemMuestraBinding.bind(view)
+    val binding = ItemMuestra2Binding.bind(view)
 
 
 //    val numMuestra = view.findViewById<TextView>(R.id.tvnumMuestra)

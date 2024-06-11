@@ -16,7 +16,7 @@ class muestraAdapterActResumen(
         //Elview holder es el encargado con el objeto que contiene de agarrar los atributos y pintarlos
         //Revuelve ese item al view holder, osea el xml a aca
         val layoutInflater = LayoutInflater.from(parent.context)
-        return MuestraViewHolderActResumen(layoutInflater.inflate(R.layout.item_muestra, parent, false))
+        return MuestraViewHolderActResumen(layoutInflater.inflate(R.layout.item_muestra2, parent, false))
     }
 
     override fun getItemCount(): Int {

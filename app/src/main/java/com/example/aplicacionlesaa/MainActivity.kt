@@ -1,37 +1,35 @@
 package com.example.aplicacionlesaa
 
 
-import android.content.pm.PackageManager
+import RetrofitClient
+import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Looper
 import android.os.Handler
+import android.os.Looper
+import android.text.Editable
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.databinding.ActivityMainBinding
+import com.example.aplicacionlesaa.model.Servicio
+import java.sql.DriverManager
 import java.text.SimpleDateFormat
 import java.util.*
-import android.Manifest
-import android.content.Intent
-import android.os.AsyncTask
-import android.os.Environment
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import androidx.core.app.ActivityCompat
-import com.itextpdf.kernel.pdf.PdfWriter
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.layout.Document
-import com.itextpdf.layout.element.Paragraph
-import java.io.File
-import java.sql.DriverManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
@@ -46,7 +44,10 @@ class MainActivity : AppCompatActivity() {
         muestraProvider.listademuestras.toMutableList()
     private lateinit var adapter: muestraAdapter
 
+    private val serviciosList: MutableList<Servicio> = mutableListOf()
+
     var contador = 0
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +62,69 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        //Inicio Api
+        val apiService = RetrofitClient.instance
+        val spinner: Spinner = findViewById(R.id.idSpinner1)
+
+
+        apiService.getPlanServicesByName("pmd-1").enqueue(object : Callback<List<Servicio>> {
+            override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { servicios ->
+                        for (servicio in servicios) {
+                            serviciosList.addAll(servicios)
+//                            Log.d("MainActivity", "ID: ${servicio.id}, Cantidad: ${servicio.cantidad}, " +
+//                                    "Estudios Micro: ${servicio.estudios_microbiologicos}, Estudios Fisico: ${servicio.estudios_fisicoquimicos}, " +
+//                                    "Descripcion: ${servicio.descripcion}, Cantidad Toma: ${servicio.cantidad_de_toma}")
+                            println("La lista de servicios es: "+ serviciosList)
+                            val ids = servicios.map { it.id.toString() } // Convertir IDs a Strings
+
+                            // Configurar el adaptador del Spinner con la lista de IDs
+
+                            val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, ids)
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                            spinner.adapter = adapter
+
+
+                        }
+                    }
+                } else {
+                    Log.e("MainActivity", "Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
+                Log.e("MainActivity", "Failure: ${t.message}")
+            }
+        })
+
+        val tvDescripcion = binding.tvdescripcionmuestra
+        val tvCantidad = binding.tvCantidadRestante
+        val txtCantidadAprox = binding.txtcantidadaprox
+        val txtEmicro = binding.txtMicro
+        val txtEfisico = binding.txtFisico
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                // Obtener el servicio seleccionado
+                val servicioSeleccionado = serviciosList[position]
+                println(position)
+
+                // Actualizar el TextView con la descripción del servicio seleccionado
+                tvDescripcion.text = servicioSeleccionado.descripcion
+                tvCantidad.text = servicioSeleccionado.cantidad.toString()
+                txtCantidadAprox.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.cantidad_de_toma)
+                txtEmicro.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.estudios_microbiologicos)
+                txtEfisico.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.estudios_fisicoquimicos)
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Manejar la situación en la que no se ha seleccionado nada en el Spinner (opcional)
+            }
+        }
+
 
         //obtenerServicios()
         //val spinner: Spinner = findViewById(R.id.idSpinner1)
@@ -126,6 +190,7 @@ class MainActivity : AppCompatActivity() {
             clearTextFields()
             Toast.makeText(this, txtPrueba.text, Toast.LENGTH_SHORT).show()
             Log.i("Ray", "Boton Pulsado")
+
         }
 
         //val muestraUno = Muestra(1,32,"Agua de Red - NOM-000-123-345","20/05/2024 ")
@@ -171,8 +236,36 @@ class MainActivity : AppCompatActivity() {
         val txtMicro = binding.txtMicro
         val txtFisico = binding.txtFisico
         val txtObserva = binding.txtobservaciones
+        val txtServicioId = binding.idSpinner1
+        val idServicioString = txtServicioId.selectedItem.toString()
+        var idServicioEntero: Int = 0
+        var tvCantidad = binding.tvCantidadRestante
+        val spinner1 = binding.idSpinner1
 
-        val numeroMuestra = tvNum.text
+        try {
+            idServicioEntero = idServicioString.toInt()
+        } catch (e: NumberFormatException) {
+            // Manejar la situación en la que la cadena no puede ser convertida a un entero
+            // Aquí puedes mostrar un mensaje de error o tomar alguna acción alternativa
+        }
+
+        val servicioSeleccionado = serviciosList.find { it.id == idServicioEntero }
+
+        if (servicioSeleccionado != null && servicioSeleccionado.cantidad > 0) {
+            // Restar la cantidad al servicio
+            servicioSeleccionado.cantidad--
+            println(    servicioSeleccionado.id.toString() + "= " + spinner1.selectedItem.toString() )
+            if (servicioSeleccionado.id == spinner1.selectedItem.toString().toInt() ){
+                tvCantidad.text = servicioSeleccionado.cantidad.toString()
+            }
+
+
+
+
+
+
+
+            val numeroMuestra = tvNum.text
 
         if (numeroMuestra != null) {
             val fechaSinBarras = tvfecham.text.toString().replace("/", "")
@@ -196,7 +289,8 @@ class MainActivity : AppCompatActivity() {
                     descripcionM = txtDescripcion.text.toString(),
                     emicro = txtMicro.text.toString(),
                     efisico = txtFisico.text.toString(),
-                    observaciones = txtObserva.text.toString()
+                    observaciones = txtObserva.text.toString(),
+                    servicioId = idServicioEntero
                 )
             muestraMutableList.add(muestraobjeto)
             contador = muestraMutableList.size
@@ -209,6 +303,12 @@ class MainActivity : AppCompatActivity() {
             Log.i("Ray", "Ingrese numero valido")
 
         }
+
+        }else{
+            Toast.makeText(this, "No hay suficiente cantidad disponible para este servicio", Toast.LENGTH_SHORT).show()
+        }
+
+
 
 
     }
@@ -233,6 +333,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun onDeletedItem(position: Int) {
         try {
+            val muestraEliminada = muestraMutableList[position]
+            val tvCantidad = binding.tvCantidadRestante
+            val servicioAsociado = serviciosList.find { it.id == muestraEliminada.servicioId }
+            val spinner1 = binding.idSpinner1
+
+            // Verificar si se encontró el servicio asociado
+            if (servicioAsociado != null) {
+                // Incrementar la cantidad del servicio
+                servicioAsociado.cantidad++
+                println(    muestraEliminada.servicioId.toString() + "= " + spinner1.selectedItem.toString() )
+                if (muestraEliminada.servicioId == spinner1.selectedItem.toString().toInt() ){
+                    tvCantidad.text = servicioAsociado.cantidad.toString()
+                }
+
+            }
+
             muestraMutableList.removeAt(position)
             //Notificar al listado que se ha en este caso borrado un item con una posicion
             adapter.notifyItemRemoved(position)
@@ -253,6 +369,10 @@ class MainActivity : AppCompatActivity() {
             binding.tvNumeroMuestra.text = (contador + 1).toString()
             binding.tvregistromuestra.text = tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
             Log.e("Prueba".toString(), "El contador es:$contador")
+
+
+
+
 
         } catch (e: Exception) {
             Log.e("Error".toString(), "Hubo un error")

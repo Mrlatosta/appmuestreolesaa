@@ -40,6 +40,9 @@ class MainActivity2 : AppCompatActivity() {
         setContentView(binding.root)
         muestraMutableList = intent.getParcelableArrayListExtra("muestraList") ?: mutableListOf()
 
+        val apiService = RetrofitClient.instance
+
+
 
         initRecyclerView()
         enableEdgeToEdge()
@@ -50,7 +53,7 @@ class MainActivity2 : AppCompatActivity() {
             insets
         }
 
-        makeGetRequest()
+
 
         Log.i("Ray", muestraMutableList.toString())
         val btnAceptar = binding.btnAceptar
@@ -185,27 +188,7 @@ private fun onDeletedItem(position: Int) {
         }
     }
 
-    fun makeGetRequest() {
-        val client = OkHttpClient()
 
-        val request = Request.Builder()
-            .url("http://192.168.1.73:4000/clientes")
-            .build()
-
-        client.newCall(request).enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                if (response.isSuccessful) {
-                    val responseData = response.body?.string()
-                    // Maneja la respuesta
-                    println(responseData)
-                }
-            }
-        })
-    }
 
 
 

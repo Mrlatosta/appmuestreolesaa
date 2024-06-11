@@ -189,12 +189,12 @@
 
     <TextView
         android:id="@+id/tvdescripcionmuestra"
-        android:layout_width="wrap_content"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="172dp"
         android:text="Desc"
-        android:textSize="25sp"
+        android:textSize="10sp"
         app:layout_constraintStart_toEndOf="@+id/textview4"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -522,6 +522,26 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="172dp"
         app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView21"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="128dp"
+        android:layout_marginEnd="260dp"
+        android:text="Cantidad Restante:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvCantidadRestante"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="128dp"
+        android:text="-"
+        app:layout_constraintStart_toEndOf="@+id/textView21"
         app:layout_constraintTop_toTopOf="parent" />
 
 

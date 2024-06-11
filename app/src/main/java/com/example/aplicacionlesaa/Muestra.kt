@@ -16,7 +16,8 @@ data class Muestra(
     val descripcionM: String,
     val emicro: String,
     val efisico: String,
-    val observaciones: String
+    val observaciones: String,
+    val servicioId: Int,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -31,7 +32,8 @@ data class Muestra(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: ""
+        parcel.readString() ?: "",
+        parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -48,6 +50,7 @@ data class Muestra(
         parcel.writeString(emicro)
         parcel.writeString(efisico)
         parcel.writeString(observaciones)
+        parcel.writeInt(servicioId)
     }
 
     override fun describeContents(): Int {
