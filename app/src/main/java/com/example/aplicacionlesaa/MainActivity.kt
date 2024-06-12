@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.databinding.ActivityMainBinding
+import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.Servicio
 import java.sql.DriverManager
 import java.text.SimpleDateFormat
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: muestraAdapter
 
     private val serviciosList: MutableList<Servicio> = mutableListOf()
+    private val descripcionesList: MutableList<Descripcion> = mutableListOf()
 
     var contador = 0
 
@@ -66,9 +68,40 @@ class MainActivity : AppCompatActivity() {
         //Inicio Api
         val apiService = RetrofitClient.instance
         val spinner: Spinner = findViewById(R.id.idSpinner1)
+        val txtDescripciones = binding.txtdescripcion
 
 
-        apiService.getPlanServicesByName("pmd-1").enqueue(object : Callback<List<Servicio>> {
+        apiService.getDescriptions().enqueue(object : Callback<List<Descripcion>> {
+            override fun onResponse(call: Call<List<Descripcion>>, response: Response<List<Descripcion>>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { descripciones ->
+                        for (descripcion in descripciones) {
+                            descripcionesList.addAll(descripciones)
+                            println("La lista de descripciones es: "+ descripcionesList)
+                            val descris = descripciones.map { it.descripcion.toString() } // Convertir IDs a Strings
+
+                            // Configurar Autocompleteview
+                            val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_dropdown_item_1line, descris)
+                            txtDescripciones.setAdapter(adapter)
+
+
+
+
+
+                        }
+                    }
+                } else {
+                    Log.e("MainActivity", "Error en Autocomplete: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Descripcion>>, t: Throwable) {
+                Log.e("MainActivity", "Failure en autocomplete: ${t.message}")
+            }
+        })
+
+
+        apiService.getPlanServicesByName("Plandemuestreoejemplo1").enqueue(object : Callback<List<Servicio>> {
             override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { servicios ->
@@ -204,21 +237,15 @@ class MainActivity : AppCompatActivity() {
     private fun clearTextFields(){
 
         val txtnombrem = binding.txtnombre
-        val txtcantidad = binding.txtcantidadaprox
         val txtTemp = binding.txtTemp
         val txtLugar = binding.txtLugar
         val txtDescripcion = binding.txtdescripcion
-        val txtMicro = binding.txtMicro
-        val txtFisico = binding.txtFisico
         val txtObserva = binding.txtobservaciones
 
         txtnombrem.text.clear()
-        txtcantidad.text.clear()
         txtTemp.text.clear()
         txtLugar.text.clear()
         txtDescripcion.text.clear()
-        txtMicro.text.clear()
-        txtFisico.text.clear()
         txtObserva.text.clear()
 
     }
