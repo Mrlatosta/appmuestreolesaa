@@ -1,8 +1,10 @@
 package com.example.aplicacionlesaa
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -25,6 +27,9 @@ import java.io.FileOutputStream
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import android.net.Uri
+import android.provider.Settings
+
 
 class MainActivity2 : AppCompatActivity() {
 
@@ -104,18 +109,33 @@ private fun onDeletedItem(position: Int) {
 }
 
     private fun checkStoragePermissionAndSavePdf() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                storagePermissionRequestCode
-            )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:" + applicationContext.packageName)
+                startActivityForResult(intent, storagePermissionRequestCode)
+            } else {
+                savePdfAndSendEmail("ray.contacto06@gmail.com")
+            }
         } else {
-            savePdfAndSendEmail("mrlatosta@gmail.com")
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    storagePermissionRequestCode
+                )
+            } else {
+                savePdfAndSendEmail("ray.contacto06@gmail.com")
+            }
         }
     }
+
+
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -131,6 +151,20 @@ private fun onDeletedItem(position: Int) {
             }
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == storagePermissionRequestCode) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    savePdfAndSendEmail("ray.contacto06@gmail.com")
+                } else {
+                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
     private fun savePdfAndSendEmail(emailAddress: String) {
         val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    >
+
+    <TextView
+        android:id="@+id/tvIdServicio"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="30dp"
+        tools:text="1"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvCantidad"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvIdServicio"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="5" />
+
+    <TextView
+        android:id="@+id/tvEstudiosMicro"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvCantidad"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Ph,Ct,Cl" />
+
+    <TextView
+        android:id="@+id/tvEstudiosFisico"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvEstudiosMicro"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Ph,Turbiedad" />
+
+    <TextView
+        android:textAlignment="textStart"
+        android:id="@+id/tvdescripcion"
+        android:layout_width="500dp"
+        android:maxWidth="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvEstudiosFisico"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Alimento Crudo asdkasdadafw" />
+
+    <TextView
+        android:id="@+id/tvCantidadToma"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2000ml" />
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

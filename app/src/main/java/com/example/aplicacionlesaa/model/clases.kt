@@ -2,12 +2,9 @@ package com.example.aplicacionlesaa.model
 
 
 data class Plandemuestreo(
-    val id: Int,
+
     val nombre_pdm: String,
-    val pq_atendera: String,
-    val folioIdCot: String,
-    val fecha_horacita: String,
-    val ingeniero_campo: String
+
 )
 
 data class Servicio(

@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -67,9 +68,10 @@ class MainActivity : AppCompatActivity() {
 
         //Inicio Api
         val apiService = RetrofitClient.instance
-        val spinner: Spinner = findViewById(R.id.idSpinner1)
+        val spinner: Spinner = binding.idSpinner1
         val txtDescripciones = binding.txtdescripcion
-
+        val pdmSeleccionado = intent.getStringExtra("plandemuestreo")  ?: "Error"
+        println("El plan de muestreo es: " + pdmSeleccionado)
 
         apiService.getDescriptions().enqueue(object : Callback<List<Descripcion>> {
             override fun onResponse(call: Call<List<Descripcion>>, response: Response<List<Descripcion>>) {
@@ -85,9 +87,6 @@ class MainActivity : AppCompatActivity() {
                             txtDescripciones.setAdapter(adapter)
 
 
-
-
-
                         }
                     }
                 } else {
@@ -101,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        apiService.getPlanServicesByName("Plandemuestreoejemplo1").enqueue(object : Callback<List<Servicio>> {
+        apiService.getPlanServicesByName(pdmSeleccionado).enqueue(object : Callback<List<Servicio>> {
             override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { servicios ->
@@ -143,13 +142,57 @@ class MainActivity : AppCompatActivity() {
                 // Obtener el servicio seleccionado
                 val servicioSeleccionado = serviciosList[position]
                 println(position)
+                try {
+                    try {
+                        txtEmicro.text.clear()
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al limpiar txtEmicro")
+                    }
 
-                // Actualizar el TextView con la descripción del servicio seleccionado
-                tvDescripcion.text = servicioSeleccionado.descripcion
-                tvCantidad.text = servicioSeleccionado.cantidad.toString()
-                txtCantidadAprox.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.cantidad_de_toma)
-                txtEmicro.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.estudios_microbiologicos)
-                txtEfisico.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.estudios_fisicoquimicos)
+                    try {
+                        txtEfisico.text.clear()
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al limpiar txtEfisico")
+                    }
+
+                    try {
+                        txtCantidadAprox.text.clear()
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al limpiar txtCantidadAprox")
+                    }
+
+                    try {
+                        tvDescripcion.text = servicioSeleccionado.descripcion
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al establecer la descripción en tvDescripcion")
+                    }
+
+                    try {
+                        tvCantidad.text = servicioSeleccionado.cantidad.toString()
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al establecer la cantidad en tvCantidad")
+                    }
+
+                    try {
+                        txtEmicro.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.estudios_microbiologicos)
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al establecer los estudios microbiológicos en txtEmicro")
+                    }
+
+                    try {
+                        txtEfisico.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.estudios_fisicoquimicos)
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al establecer los estudios físicoquímicos en txtEfisico")
+                    }
+
+                    try {
+                        txtCantidadAprox.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.cantidad_de_toma)
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al establecer la cantidad aproximada en txtCantidadAprox")
+                    }
+                } catch (e: Exception) {
+                    Log.e("Error", "Error al mostrar los datos en los txt y tv")
+                }
 
             }
 
@@ -221,7 +264,6 @@ class MainActivity : AppCompatActivity() {
             createMuestra()
             tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
             clearTextFields()
-            Toast.makeText(this, txtPrueba.text, Toast.LENGTH_SHORT).show()
             Log.i("Ray", "Boton Pulsado")
 
         }
@@ -324,6 +366,7 @@ class MainActivity : AppCompatActivity() {
             tvNum.text = (contador + 1).toString()
 
             adapter.notifyItemInserted(muestraMutableList.size - 1)
+            Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
         } else {
             // Manejar el caso donde la conversión falló
             Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT).show()
