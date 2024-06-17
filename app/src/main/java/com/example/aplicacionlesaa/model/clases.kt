@@ -130,6 +130,28 @@ data class FolioMuestreo(
     val folio_pdm: String
 )
 
+data class UltimoFolio(
+    val folio: String
+)
+
+data class Muestra_pdm(
+    val registro_muestra: String,
+    val folio_muestreo: String,
+    val fecha_muestreo: String,
+    val hora_muestreo: String,
+    val nombre_muestra: String,
+    val id_lab: String,
+    val cantidad_aprox: String,
+    val temperatura: String,
+    val lugar_toma: String,
+    val descripcion_toma: String,
+    val e_micro: String,
+    val e_fisico: String,
+    val observaciones: String,
+    val folio_pdm: String,
+    val servicio_id: Int
+)
+
 
 
 

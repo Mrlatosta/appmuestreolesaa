@@ -3,9 +3,11 @@ package com.example.aplicacionlesaa.api
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.FolioMuestreo
+import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Plandemuestreo
 import com.example.aplicacionlesaa.model.Servicio
+import com.example.aplicacionlesaa.model.UltimoFolio
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -34,6 +36,13 @@ interface ApiService {
     @POST("crearfoliomuestreo")
     fun createFolioMuestreo(@Body folioMuestreo: FolioMuestreo): Call<Void>
 
+
+    @GET("ultimofoliomuestreo")
+    fun getLastFolioMuestreo(): Call<UltimoFolio>
+
+
+    @POST("crearmuestra")
+    fun createMuestreo(@Body muestra: Muestra_pdm): Call<Void>
 
 
 //    @GET("posts/{id}")

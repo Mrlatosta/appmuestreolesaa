@@ -19,8 +19,10 @@ import com.example.aplicacionlesaa.adapter.servicioAdapter
 import com.example.aplicacionlesaa.databinding.ActivitySelePdmBinding
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
+import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Plandemuestreo
 import com.example.aplicacionlesaa.model.Servicio
+import com.example.aplicacionlesaa.model.UltimoFolio
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.awaitResponse
+import java.time.LocalDate
 
 
 class SelePdmActivity : AppCompatActivity() {
@@ -39,6 +42,8 @@ class SelePdmActivity : AppCompatActivity() {
         servicioProvider.listadeServicios.toMutableList()
     private lateinit var adapter: servicioAdapter
     private var clientePdm: ClientePdm? = null
+    private var ultimoFolio: UltimoFolio? = null
+    private var siguienteFolio: UltimoFolio? = null
 
 
     class servicioProvider {
@@ -67,8 +72,30 @@ class SelePdmActivity : AppCompatActivity() {
 
         initRecyclerView()
 
+
         val spinnerSele = binding.spinnerSelePdm
         val apiService = RetrofitClient.instance
+        //Obtener ultimo folio
+        apiService.getLastFolioMuestreo().enqueue(object : Callback<UltimoFolio> {
+            override fun onResponse(call: Call<UltimoFolio>, response: Response<UltimoFolio>) {
+                if (response.isSuccessful) {
+                     ultimoFolio = response.body()
+                    val siguienteFolio = ultimoFolio?.folio?.toIntOrNull()?.plus(1)?.let {
+                        String.format("%06d", it)  // Formatea el número con 6 dígitos, rellenando con ceros a la izquierda si es necesario
+                    }
+                    binding.tvFolioSiguiente.text = siguienteFolio
+                } else {
+                    Toast.makeText(this@SelePdmActivity, "Error en la obtencion del ultimo folio", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<UltimoFolio>, t: Throwable) {
+                Toast.makeText(this@SelePdmActivity, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+        //ObtenerPlanes
 
         apiService.getPlanes().enqueue(object : Callback<List<Plandemuestreo>> {
             override fun onResponse(call: Call<List<Plandemuestreo>>, response: Response<List<Plandemuestreo>>) {
@@ -223,18 +250,49 @@ class SelePdmActivity : AppCompatActivity() {
         builder.show()
     }
     private fun performAction() {
+
+        var sepudo = false
+
         val spinnerSele = binding.spinnerSelePdm
         // Realizar la acción deseada aquí
         // Por ejemplo, mostrar un mensaje de que la acción fue realizada
         val intent = Intent(this@SelePdmActivity, MainActivity::class.java)
-        intent.putExtra("plandemuestreo", spinnerSele.selectedItem.toString())
-        intent.putParcelableArrayListExtra("listaServicios", ArrayList(servicioMutableList))
-        intent.putExtra("clientePdm", clientePdm)
+        val folioSiguiente = binding.tvFolioSiguiente.text.toString()
+        val folio_cliente = clientePdm?.folio
+        val pdmSelecionado = spinnerSele.selectedItem.toString()
+        val folMuestreo = FolioMuestreo(
+            folio = folioSiguiente,
+            fecha = LocalDate.now().toString(),
+            folio_cliente = folio_cliente.toString(),
+            folio_pdm = pdmSelecionado
+        )
+
+        Log.d("SelePdmActivity", "Datos del folio: $folMuestreo")
+        sendDataToApi(folMuestreo, object : SendDataCallback {
+            override fun onSuccess() {
+                // Acción en caso de éxito
+                intent.putExtra("plandemuestreo", spinnerSele.selectedItem.toString())
+                intent.putParcelableArrayListExtra("listaServicios", ArrayList(servicioMutableList))
+                intent.putExtra("clientePdm", clientePdm)
+                intent.putExtra("folio", binding.tvFolioSiguiente.text.toString())
 
 
-        startActivity(intent)
-        println(spinnerSele.selectedItem.toString())
-        finish()
+                startActivity(intent)
+                println(spinnerSele.selectedItem.toString())
+                finish()
+
+                Log.d("MainActivity", "Datos enviados exitosamente.")
+            }
+
+            override fun onError(message: String) {
+                // Acción en caso de error
+                Log.e("MainActivity", "Error al enviar datos: $message")
+                Toast.makeText(this@SelePdmActivity, "Error al crear el folio", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+
     }
 
     private fun updateUI(clientePdm: ClientePdm) {
@@ -268,6 +326,37 @@ class SelePdmActivity : AppCompatActivity() {
 
 
     }
+    interface SendDataCallback {
+        fun onSuccess()
+        fun onError(message: String)
+    }
+    private fun sendDataToApi(folioMuestreo: FolioMuestreo, callback: SendDataCallback) {
+        Log.d("sendDataToApi", "Enviando datos: $folioMuestreo")
+
+        val call = RetrofitClient.instance.createFolioMuestreo(folioMuestreo)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("sendDataToApi", "Folio creado correctamente, iniciando Muestreo: ${response.body()}")
+                    Toast.makeText(this@SelePdmActivity, "Datos enviados con éxito", Toast.LENGTH_SHORT).show()
+                    callback.onSuccess()
+                } else {
+                    val errorMsg = "Error al enviar datos, código: ${response.code()}, mensaje: ${response.message()}"
+                    Log.e("sendDataToApi", errorMsg)
+                    Toast.makeText(this@SelePdmActivity, "Error al enviar datos", Toast.LENGTH_SHORT).show()
+                    callback.onError(errorMsg)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                val errorMsg = "Error de red: ${t.message}"
+                Log.e("sendDataToApi", errorMsg, t)
+                Toast.makeText(this@SelePdmActivity, errorMsg, Toast.LENGTH_SHORT).show()
+                callback.onError(errorMsg)
+            }
+        })
+    }
+
 
 
 }

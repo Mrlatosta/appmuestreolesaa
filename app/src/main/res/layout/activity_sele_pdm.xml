@@ -8,7 +8,7 @@
     tools:context=".SelePdmActivity">
 
     <TextView
-        android:id="@+id/textView23"
+        android:id="@+id/tvFolioSiguiente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"

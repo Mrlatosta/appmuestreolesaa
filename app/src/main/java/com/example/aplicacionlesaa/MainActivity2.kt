@@ -1,5 +1,6 @@
 package com.example.aplicacionlesaa
 
+import SendEmailWorker
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -39,6 +40,8 @@ import androidx.work.WorkManager
 import androidx.work.Data
 import androidx.work.Constraints
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.worker.SendDataWorker
 
 
@@ -51,7 +54,7 @@ class MainActivity2 : AppCompatActivity() {
     private var clientePdm: ClientePdm? = null
     private var pdmSeleccionado: String = ""
     val apiService = RetrofitClient.instance
-
+    private var folio: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,12 +77,16 @@ class MainActivity2 : AppCompatActivity() {
 
         clientePdm = intent.getParcelableExtra("clientePdm")
         pdmSeleccionado = intent.getStringExtra("plandemuestreo") ?: "Error"
-
+        folio = intent.getStringExtra("folio")
         binding.tvCliente.text = clientePdm?.nombre_empresa
         binding.tvPDM.text = pdmSeleccionado
+        binding.tvFolio.text = folio
+
+
 
 
         val folio_cliente = clientePdm?.folio
+        val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
 
         Log.i("Ray", muestraMutableList.toString())
         val btnAceptar = binding.btnAceptar
@@ -91,36 +98,75 @@ class MainActivity2 : AppCompatActivity() {
                     folio_cliente = folio_cliente.toString(),
                     folio_pdm = pdmSeleccionado
                 )
+                val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                    .toString()
 
                 if (NetworkUtils.isInternetAvailable(this)) {
                     Log.i("Internet", "Si hay internet")
-                    sendDataToApi(folioMuestreo)
+                    Toast.makeText(this, "Si hay internet, enviando muestras", Toast.LENGTH_SHORT).show()
+                    sendMuestrasToApi(muestraListaNueva)
                 } else {
+                    Toast.makeText(this, "No hay internet, los datos se enviarán cuando se establezca una conexión", Toast.LENGTH_SHORT).show()
                     Log.i("Internet", "No hay internet")
-                    val data = Data.Builder()
-                        .putString("folio", folioMuestreo.folio)
-                        .putString("fecha", folioMuestreo.fecha)
-                        .putString("folio_cliente", folioMuestreo.folio_cliente)
-                        .putString("folio_pdm", folioMuestreo.folio_pdm)
-                        .build()
+                    val tamaño = muestraListaNueva.size
 
-                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
-                        .setInputData(data)
-                        .setConstraints(
-                            Constraints.Builder()
-                                .setRequiredNetworkType(NetworkType.CONNECTED)
-                                .build()
-                        )
-                        .build()
+                    // Crear una lista de Data para cada muestra en muestraMutableList
+                    val dataList = mutableListOf<Data>()
+                    muestraListaNueva.forEachIndexed { index, muestra ->
+                        val data = Data.Builder()
+                            .putInt("muestra_count",tamaño)
+                            .putString("registro_muestra_$index", muestra.registro_muestra)
+                            .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                            .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                            .putString("hora_muestreo_$index", muestra.hora_muestreo)
+                            .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                            .putString("id_lab_$index", muestra.id_lab)
+                            .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                            .putString("temperatura_$index", muestra.temperatura)
+                            .putString("lugar_toma_$index", muestra.lugar_toma)
+                            .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                            .putString("e_micro_$index", muestra.e_micro)
+                            .putString("e_fisico_$index", muestra.e_fisico)
+                            .putString("observaciones_$index", muestra.observaciones)
+                            .putString("folio_pdm_$index", muestra.folio_pdm)
+                            .putInt("servicio_id_$index", muestra.servicio_id)
+                            .build()
 
-                    WorkManager.getInstance(this).enqueue(workRequest)
+                        dataList.add(data)
+                    }
+
+                    // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                    dataList.forEach { data ->
+                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                            .setInputData(data)
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+
+                        Log.i("Datos", "Entre al worker")
+                        WorkManager.getInstance(this).enqueue(workRequest)
+                    }
+
+                    // Envío de correo con el archivo PDF
+                    val file = File(pdfPath, "Muestras.pdf")
+                    enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
+                        "$pdfPath/Muestras.pdf")
                 }
 
 
+
                 checkStoragePermissionAndSavePdf()
+                enqueueSendEmailTask(this,
+                    "ray.contacto06@gmail.com",
+                    "$pdfPath/Muestras.pdf"
+                )
             } catch (e: Exception) {
                 Log.i("Error:", e.toString())
             }
+
 
             //SendEmailTask("mrlatosta@gmail.com").execute()
         }
@@ -140,6 +186,30 @@ class MainActivity2 : AppCompatActivity() {
 
 
     }
+
+    private fun sendMuestrasToApi(muestraListaNueva: List<Muestra_pdm>) {
+        Log.i("Muestras son:", muestraListaNueva.toString())
+        for (muestra in muestraListaNueva) {
+            Log.i("Muestras son:", muestra.toString())
+            val call = RetrofitClient.instance.createMuestreo(muestra)
+            call.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(applicationContext, "Muestras enviadas con éxito", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(applicationContext, "Error al enviar muestras", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        }
+
+    }
+
 
 
     private fun initRecyclerView() {
@@ -171,7 +241,7 @@ class MainActivity2 : AppCompatActivity() {
                 intent.data = Uri.parse("package:" + applicationContext.packageName)
                 startActivityForResult(intent, storagePermissionRequestCode)
             } else {
-                savePdfAndSendEmail("ray.contacto06@gmail.com")
+                savePdf("ray.contacto06@gmail.com")
             }
         } else {
             if (ContextCompat.checkSelfPermission(
@@ -185,7 +255,7 @@ class MainActivity2 : AppCompatActivity() {
                     storagePermissionRequestCode
                 )
             } else {
-                savePdfAndSendEmail("ray.contacto06@gmail.com")
+                savePdf("ray.contacto06@gmail.com")
             }
         }
     }
@@ -199,7 +269,7 @@ class MainActivity2 : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == storagePermissionRequestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                savePdfAndSendEmail("ray.contacto06@gmail.com")
+                savePdf("ray.contacto06@gmail.com")
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
@@ -211,7 +281,7 @@ class MainActivity2 : AppCompatActivity() {
         if (requestCode == storagePermissionRequestCode) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    savePdfAndSendEmail("ray.contacto06@gmail.com")
+                    savePdf("ray.contacto06@gmail.com")
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
                 }
@@ -220,7 +290,7 @@ class MainActivity2 : AppCompatActivity() {
     }
 
 
-    private fun savePdfAndSendEmail(emailAddress: String) {
+    private fun savePdf(emailAddress: String) {
         val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
             .toString()
         val file = File(pdfPath, "Muestras.pdf")
@@ -252,7 +322,7 @@ class MainActivity2 : AppCompatActivity() {
             Toast.makeText(this, "PDF saved at $pdfPath/Muestras.pdf", Toast.LENGTH_LONG).show()
 
             // Enviar el PDF por correo electrónico
-            SendEmailTask(emailAddress, file).execute()
+            //SendEmailWorker(emailAddress, file).execute()
             //SendEmailTask("atencionaclienteslab.lesa@gmail.com", file).execute()
 
         } catch (e: Exception) {
@@ -302,6 +372,49 @@ class MainActivity2 : AppCompatActivity() {
             }
         })
     }
+
+    fun enqueueSendEmailTask(context: Context, emailAddress: String, filePath: String) {
+        val data = Data.Builder()
+            .putString("emailAddress", emailAddress)
+            .putString("filePath", filePath)
+            .putString("subject","Envio de muestras realizadas")
+            .putString("messageText","Le hago entrega de las muestras realizadas correspondiente al dia ${LocalDate.now()} y el folio de muestreo: ${binding.tvFolio.text}. Le agradecemos su preferencia")
+            .build()
+
+        val sendEmailWorkRequest = OneTimeWorkRequest.Builder(SendEmailWorker::class.java)
+            .setInputData(data)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(sendEmailWorkRequest)
+    }
+
+    fun convertirAMuestraPdm(muestras: List<Muestra>): List<Muestra_pdm> {
+        val listaMuestrasPdm = mutableListOf<Muestra_pdm>()
+
+        for (muestra in muestras) {
+            val muestraPdm = Muestra_pdm(
+                registro_muestra = muestra.registroMuestra,
+                folio_muestreo = binding.tvFolio.text.toString(),
+                fecha_muestreo = muestra.fechaMuestra,
+                hora_muestreo = muestra.horaMuestra,
+                nombre_muestra = muestra.nombreMuestra,
+                id_lab = muestra.idLab,
+                cantidad_aprox = muestra.cantidadAprox,
+                temperatura = muestra.tempM,
+                lugar_toma = muestra.lugarToma,
+                descripcion_toma = muestra.descripcionM,
+                e_micro = muestra.emicro,
+                e_fisico = muestra.efisico,
+                observaciones = muestra.observaciones,
+                folio_pdm = binding.tvPDM.text.toString(),
+                servicio_id = muestra.servicioId
+            )
+            listaMuestrasPdm.add(muestraPdm)
+        }
+
+        return listaMuestrasPdm
+    }
+
 
 
 

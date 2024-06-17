@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private val descripcionesList: MutableList<Descripcion> = mutableListOf()
     private var clientePdm: ClientePdm? = null
     private var pdmSeleccionado: String? = null
-
+    private var folio: String? = null
 
     var contador = 0
 
@@ -84,6 +84,8 @@ class MainActivity : AppCompatActivity() {
         val apiService = RetrofitClient.instance
         val spinner: Spinner = binding.idSpinner1
         val txtDescripciones = binding.txtdescripcion
+        folio = intent.getStringExtra("folio")
+        binding.tvFolio.text = folio
         pdmSeleccionado = intent.getStringExtra("plandemuestreo") ?: "Error"
         println("El plan de muestreo es: " + pdmSeleccionado)
         binding.tvPDM.text = pdmSeleccionado
@@ -345,6 +347,7 @@ class MainActivity : AppCompatActivity() {
         intent.putParcelableArrayListExtra("muestraList", ArrayList(muestraMutableList))
         intent.putExtra("plandemuestreo", pdmSeleccionado)
         intent.putExtra("clientePdm", clientePdm)
+        intent.putExtra("folio",folio)
 
 
 
