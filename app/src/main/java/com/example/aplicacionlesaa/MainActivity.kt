@@ -16,6 +16,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
@@ -23,6 +24,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.databinding.ActivityMainBinding
+import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.Servicio
 import java.sql.DriverManager
@@ -47,10 +49,11 @@ class MainActivity : AppCompatActivity() {
 
     private val serviciosList: MutableList<Servicio> = mutableListOf()
     private val descripcionesList: MutableList<Descripcion> = mutableListOf()
+    private var clientePdm: ClientePdm? = null
+    private var pdmSeleccionado: String? = null
+
 
     var contador = 0
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,28 +69,44 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        val serviciosRecibidos = intent.getParcelableArrayListExtra<Servicio>("listaServicios")
+        if (serviciosRecibidos != null) {
+            serviciosList.addAll(serviciosRecibidos)
+        }
+
+        clientePdm = intent.getParcelableExtra("clientePdm")
+
+        println("El clientePdm es: $clientePdm")
+
+        binding.tvCliente.text = clientePdm?.nombre_empresa
+
         //Inicio Api
         val apiService = RetrofitClient.instance
         val spinner: Spinner = binding.idSpinner1
         val txtDescripciones = binding.txtdescripcion
-        val pdmSeleccionado = intent.getStringExtra("plandemuestreo")  ?: "Error"
+        pdmSeleccionado = intent.getStringExtra("plandemuestreo") ?: "Error"
         println("El plan de muestreo es: " + pdmSeleccionado)
+        binding.tvPDM.text = pdmSeleccionado
 
         apiService.getDescriptions().enqueue(object : Callback<List<Descripcion>> {
-            override fun onResponse(call: Call<List<Descripcion>>, response: Response<List<Descripcion>>) {
+            override fun onResponse(
+                call: Call<List<Descripcion>>,
+                response: Response<List<Descripcion>>
+            ) {
                 if (response.isSuccessful) {
                     response.body()?.let { descripciones ->
-                        for (descripcion in descripciones) {
-                            descripcionesList.addAll(descripciones)
-                            println("La lista de descripciones es: "+ descripcionesList)
-                            val descris = descripciones.map { it.descripcion.toString() } // Convertir IDs a Strings
 
-                            // Configurar Autocompleteview
-                            val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_dropdown_item_1line, descris)
-                            txtDescripciones.setAdapter(adapter)
-
-
-                        }
+                        descripcionesList.addAll(descripciones)
+                        println("La lista de descripciones es: " + descripcionesList)
+                        val descris =
+                            descripciones.map { it.descripcion.toString() } // Convertir IDs a Strings
+                        // Configurar Autocompleteview
+                        val adapter = ArrayAdapter(
+                            this@MainActivity,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            descris
+                        )
+                        txtDescripciones.setAdapter(adapter)
                     }
                 } else {
                     Log.e("MainActivity", "Error en Autocomplete: ${response.code()}")
@@ -100,36 +119,17 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        apiService.getPlanServicesByName(pdmSeleccionado).enqueue(object : Callback<List<Servicio>> {
-            override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
-                if (response.isSuccessful) {
-                    response.body()?.let { servicios ->
-                        for (servicio in servicios) {
-                            serviciosList.addAll(servicios)
-//                            Log.d("MainActivity", "ID: ${servicio.id}, Cantidad: ${servicio.cantidad}, " +
-//                                    "Estudios Micro: ${servicio.estudios_microbiologicos}, Estudios Fisico: ${servicio.estudios_fisicoquimicos}, " +
-//                                    "Descripcion: ${servicio.descripcion}, Cantidad Toma: ${servicio.cantidad_de_toma}")
-                            println("La lista de servicios es: "+ serviciosList)
-                            val ids = servicios.map { it.id.toString() } // Convertir IDs a Strings
 
-                            // Configurar el adaptador del Spinner con la lista de IDs
+        println("La lista de servicios es: " + serviciosList)
 
-                            val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, ids)
-                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                            spinner.adapter = adapter
+        val ids = serviciosList.map { it.id.toString() } // Convertir IDs a Strings
 
+        // Configurar el adaptador del Spinner con la lista de IDs
 
-                        }
-                    }
-                } else {
-                    Log.e("MainActivity", "Error: ${response.code()}")
-                }
-            }
+        val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, ids)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
 
-            override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
-                Log.e("MainActivity", "Failure: ${t.message}")
-            }
-        })
 
         val tvDescripcion = binding.tvdescripcionmuestra
         val tvCantidad = binding.tvCantidadRestante
@@ -138,7 +138,12 @@ class MainActivity : AppCompatActivity() {
         val txtEfisico = binding.txtFisico
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 // Obtener el servicio seleccionado
                 val servicioSeleccionado = serviciosList[position]
                 println(position)
@@ -174,21 +179,33 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     try {
-                        txtEmicro.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.estudios_microbiologicos)
+                        txtEmicro.text = Editable.Factory.getInstance()
+                            .newEditable(servicioSeleccionado.estudios_microbiologicos)
                     } catch (e: Exception) {
-                        Log.e("Error", "Error al establecer los estudios microbiológicos en txtEmicro")
+                        Log.e(
+                            "Error",
+                            "Error al establecer los estudios microbiológicos en txtEmicro"
+                        )
                     }
 
                     try {
-                        txtEfisico.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.estudios_fisicoquimicos)
+                        txtEfisico.text = Editable.Factory.getInstance()
+                            .newEditable(servicioSeleccionado.estudios_fisicoquimicos)
                     } catch (e: Exception) {
-                        Log.e("Error", "Error al establecer los estudios físicoquímicos en txtEfisico")
+                        Log.e(
+                            "Error",
+                            "Error al establecer los estudios físicoquímicos en txtEfisico"
+                        )
                     }
 
                     try {
-                        txtCantidadAprox.text = Editable.Factory.getInstance().newEditable(servicioSeleccionado.cantidad_de_toma)
+                        txtCantidadAprox.text = Editable.Factory.getInstance()
+                            .newEditable(servicioSeleccionado.cantidad_de_toma)
                     } catch (e: Exception) {
-                        Log.e("Error", "Error al establecer la cantidad aproximada en txtCantidadAprox")
+                        Log.e(
+                            "Error",
+                            "Error al establecer la cantidad aproximada en txtCantidadAprox"
+                        )
                     }
                 } catch (e: Exception) {
                     Log.e("Error", "Error al mostrar los datos en los txt y tv")
@@ -217,20 +234,18 @@ class MainActivity : AppCompatActivity() {
         //ActivityCompat.requestPermissions(this, arrayOf(permission), "1003")
 
 
-        try{
+        try {
             println("Hola")
             //obtenerServicios()
-            }catch (e:Exception){
-                Log.e("Error", "Error al obtener los servicios")
-            }
+        } catch (e: Exception) {
+            Log.e("Error", "Error al obtener los servicios")
+        }
 
         val btnSiguiente = binding.btnSiguiente
 
         btnSiguiente.setOnClickListener {
-            Log.e("Hola", "Hola boton siguiente apretado")
-            val intent = Intent(this, MainActivity2::class.java)
-            intent.putParcelableArrayListExtra("muestraList", ArrayList(muestraMutableList))
-            startActivity(intent)
+
+            showConfirmationDialog()
 
             //checkStoragePermissionAndSavePdf()
         }
@@ -258,13 +273,17 @@ class MainActivity : AppCompatActivity() {
         val tvRegM = binding.tvregistromuestra
         val tvNum = binding.tvNumeroMuestra
         tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
-        val txtPrueba = findViewById<TextView>(R.id.txtnombre)
-        val btnStart = findViewById<AppCompatButton>(R.id.btnStart)
+        var sepudo = false
         binding.btnStart.setOnClickListener {
-            createMuestra()
-            tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
-            clearTextFields()
-            Log.i("Ray", "Boton Pulsado")
+
+            sepudo = createMuestra()
+            if (sepudo == true){
+                tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
+                clearTextFields()
+                Log.i("Ray", "Boton Pulsado")
+            }
+
+
 
         }
 
@@ -274,9 +293,67 @@ class MainActivity : AppCompatActivity() {
 
         initRecyclerView()
 
+
+
     }
 
-    private fun clearTextFields(){
+    override fun onBackPressed() {
+        // Crear un AlertDialog para la confirmación
+        AlertDialog.Builder(this).apply {
+            setTitle("Confirmación")
+            setMessage("¿Estás seguro de que deseas salir?")
+            setPositiveButton("Sí") { dialog, _ ->
+                dialog.dismiss()
+                super.onBackPressed() // Llamar al método onBackPressed original
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss() // Cerrar el cuadro de diálogo y no hacer nada más
+            }
+            create()
+            show()
+        }
+    }
+
+    private fun showConfirmationDialog() {
+        val totalServiciosFaltante = serviciosList.filter { it.cantidad > 0 }.sumOf { it.cantidad }
+        // Crear y mostrar el cuadro de diálogo de confirmación
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirmación")
+        if (totalServiciosFaltante > 0) {
+            builder.setMessage("¿Estás seguro de que quieres avanzar, quedan $totalServiciosFaltante servicios sin asignar?")
+        } else {
+            builder.setMessage("¿Estás seguro de que quieres avanzar?")
+        }
+        // Configurar el botón "Sí"
+        builder.setPositiveButton("Sí") { dialog, which ->
+            performAction()
+
+        }
+
+        // Configurar el botón "No"
+        builder.setNegativeButton("No") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        // Mostrar el cuadro de diálogo
+        builder.show()
+    }
+
+    private fun performAction() {
+        Log.e("Hola", "Hola boton siguiente apretado")
+        val intent = Intent(this, MainActivity2::class.java)
+        intent.putParcelableArrayListExtra("muestraList", ArrayList(muestraMutableList))
+        intent.putExtra("plandemuestreo", pdmSeleccionado)
+        intent.putExtra("clientePdm", clientePdm)
+
+
+
+
+        startActivity(intent)
+    }
+
+
+    private fun clearTextFields() {
 
         val txtnombrem = binding.txtnombre
         val txtTemp = binding.txtTemp
@@ -292,7 +369,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun createMuestra() {
+    private fun createMuestra(): Boolean {
+        var sepudo = false
         val tvNum = binding.tvNumeroMuestra
         val tvfecham = binding.tvfechamuestreo
         val tvhoram = binding.tvHora
@@ -311,76 +389,88 @@ class MainActivity : AppCompatActivity() {
         var tvCantidad = binding.tvCantidadRestante
         val spinner1 = binding.idSpinner1
 
-        try {
-            idServicioEntero = idServicioString.toInt()
-        } catch (e: NumberFormatException) {
-            // Manejar la situación en la que la cadena no puede ser convertida a un entero
-            // Aquí puedes mostrar un mensaje de error o tomar alguna acción alternativa
-        }
-
-        val servicioSeleccionado = serviciosList.find { it.id == idServicioEntero }
-
-        if (servicioSeleccionado != null && servicioSeleccionado.cantidad > 0) {
-            // Restar la cantidad al servicio
-            servicioSeleccionado.cantidad--
-            println(    servicioSeleccionado.id.toString() + "= " + spinner1.selectedItem.toString() )
-            if (servicioSeleccionado.id == spinner1.selectedItem.toString().toInt() ){
-                tvCantidad.text = servicioSeleccionado.cantidad.toString()
+        if (txtnombrem.text.toString().trim().isEmpty() || txtcantidad.text.toString().trim()
+                .isEmpty() || txtTemp.text.toString().trim().isEmpty() || txtLugar.text.toString()
+                .trim().isEmpty() || txtDescripcion.text.toString().trim().isEmpty()
+        ) {
+            Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+            sepudo = false
+        } else {
+            try {
+                idServicioEntero = idServicioString.toInt()
+            } catch (e: NumberFormatException) {
+                // Manejar la situación en la que la cadena no puede ser convertida a un entero
+                // Aquí puedes mostrar un mensaje de error o tomar alguna acción alternativa
             }
 
+            val servicioSeleccionado = serviciosList.find { it.id == idServicioEntero }
+
+            if (servicioSeleccionado != null && servicioSeleccionado.cantidad > 0) {
+                // Restar la cantidad al servicio
+                servicioSeleccionado.cantidad--
+                println(servicioSeleccionado.id.toString() + "= " + spinner1.selectedItem.toString())
+                if (servicioSeleccionado.id == spinner1.selectedItem.toString().toInt()) {
+                    tvCantidad.text = servicioSeleccionado.cantidad.toString()
+                }
 
 
+                val numeroMuestra = tvNum.text
 
+                if (numeroMuestra != null) {
+                    val fechaSinBarras = tvfecham.text.toString().replace("/", "")
+                    val horaSinPuntos = tvhoram.text.toString().replace(":", "")
+                    val horaRecortada =
+                        if (horaSinPuntos.length >= 4) horaSinPuntos.substring(
+                            0,
+                            4
+                        ) else horaSinPuntos
+                    val idLab = fechaSinBarras + horaRecortada
 
+                    // El valor de idServicio es un entero válido, puedes usarlo aquí
+                    val muestraobjeto =
+                        Muestra(
+                            numeroMuestra = numeroMuestra.toString(),
+                            fechaMuestra = tvfecham.text.toString(),
+                            horaMuestra = tvhoram.text.toString(),
+                            registroMuestra = tvregistromuestra.text.toString(),
+                            nombreMuestra = txtnombrem.text.toString().trim(),
+                            idLab = idLab,
+                            cantidadAprox = txtcantidad.text.toString().trim(),
+                            tempM = txtTemp.text.toString().trim(),
+                            lugarToma = txtLugar.text.toString().trim(),
+                            descripcionM = txtDescripcion.text.toString().trim(),
+                            emicro = txtMicro.text.toString().trim(),
+                            efisico = txtFisico.text.toString().trim(),
+                            observaciones = txtObserva.text.toString().trim(),
+                            servicioId = idServicioEntero
+                        )
+                    muestraMutableList.add(muestraobjeto)
+                    contador = muestraMutableList.size
+                    tvNum.text = (contador + 1).toString()
 
+                    adapter.notifyItemInserted(muestraMutableList.size - 1)
+                    Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
+                    sepudo = true
+                } else {
+                    // Manejar el caso donde la conversión falló
+                    Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT)
+                        .show()
+                    Log.i("Ray", "Ingrese numero valido")
 
-            val numeroMuestra = tvNum.text
+                }
 
-        if (numeroMuestra != null) {
-            val fechaSinBarras = tvfecham.text.toString().replace("/", "")
-            val horaSinPuntos = tvhoram.text.toString().replace(":", "")
-            val horaRecortada =
-                if (horaSinPuntos.length >= 4) horaSinPuntos.substring(0, 4) else horaSinPuntos
-            val idLab = fechaSinBarras + horaRecortada
-
-            // El valor de idServicio es un entero válido, puedes usarlo aquí
-            val muestraobjeto =
-                Muestra(
-                    numeroMuestra = numeroMuestra.toString(),
-                    fechaMuestra = tvfecham.text.toString(),
-                    horaMuestra = tvhoram.text.toString(),
-                    registroMuestra = tvregistromuestra.text.toString(),
-                    nombreMuestra = txtnombrem.text.toString(),
-                    idLab = idLab,
-                    cantidadAprox = txtcantidad.text.toString(),
-                    tempM = txtTemp.text.toString(),
-                    lugarToma = txtLugar.text.toString(),
-                    descripcionM = txtDescripcion.text.toString(),
-                    emicro = txtMicro.text.toString(),
-                    efisico = txtFisico.text.toString(),
-                    observaciones = txtObserva.text.toString(),
-                    servicioId = idServicioEntero
-                )
-            muestraMutableList.add(muestraobjeto)
-            contador = muestraMutableList.size
-            tvNum.text = (contador + 1).toString()
-
-            adapter.notifyItemInserted(muestraMutableList.size - 1)
-            Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
-        } else {
-            // Manejar el caso donde la conversión falló
-            Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT).show()
-            Log.i("Ray", "Ingrese numero valido")
+            } else {
+                Toast.makeText(
+                    this,
+                    "No hay suficiente cantidad disponible para este servicio",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
         }
 
-        }else{
-            Toast.makeText(this, "No hay suficiente cantidad disponible para este servicio", Toast.LENGTH_SHORT).show()
-        }
-
-
-
-
+        Toast.makeText(this, "El estado de sepudo es: $sepudo", Toast.LENGTH_SHORT).show()
+        return sepudo
     }
 
     private fun initRecyclerView() {
@@ -403,6 +493,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onDeletedItem(position: Int) {
         try {
+
             val muestraEliminada = muestraMutableList[position]
             val tvCantidad = binding.tvCantidadRestante
             val servicioAsociado = serviciosList.find { it.id == muestraEliminada.servicioId }
@@ -412,8 +503,8 @@ class MainActivity : AppCompatActivity() {
             if (servicioAsociado != null) {
                 // Incrementar la cantidad del servicio
                 servicioAsociado.cantidad++
-                println(    muestraEliminada.servicioId.toString() + "= " + spinner1.selectedItem.toString() )
-                if (muestraEliminada.servicioId == spinner1.selectedItem.toString().toInt() ){
+                println(muestraEliminada.servicioId.toString() + "= " + spinner1.selectedItem.toString())
+                if (muestraEliminada.servicioId == spinner1.selectedItem.toString().toInt()) {
                     tvCantidad.text = servicioAsociado.cantidad.toString()
                 }
 
@@ -437,11 +528,9 @@ class MainActivity : AppCompatActivity() {
             // Actualizar contador y TextView de número de muestra
             contador = muestraMutableList.size
             binding.tvNumeroMuestra.text = (contador + 1).toString()
-            binding.tvregistromuestra.text = tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
+            binding.tvregistromuestra.text =
+                tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
             Log.e("Prueba".toString(), "El contador es:$contador")
-
-
-
 
 
         } catch (e: Exception) {
@@ -485,7 +574,8 @@ class MainActivity : AppCompatActivity() {
             // Actualizar el spinner en el hilo principal
             runOnUiThread {
                 val spinner: Spinner = findViewById(R.id.idSpinner1)
-                val arrayAdapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, ids)
+                val arrayAdapter =
+                    ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, ids)
                 spinner.adapter = arrayAdapter
             }
         }

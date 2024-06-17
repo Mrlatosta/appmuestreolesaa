@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "314039419987",
+    "project_id": "applesaa-6de3a",
+    "storage_bucket": "applesaa-6de3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314039419987:android:47757f2a53fad99ca7b2a6",
+        "android_client_info": {
+          "package_name": "com.example.aplicacionlesaa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuDoroy7u5Rq2-LrFSsH5T1JP0owxA-gI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

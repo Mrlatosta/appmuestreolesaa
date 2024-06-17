@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="10dp"
     >
 
     <TextView
         android:id="@+id/tvnumMuestra"
-        android:layout_width="wrap_content"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="30dp"
@@ -20,29 +20,29 @@
 
     <TextView
         android:id="@+id/tvfecham"
-        android:layout_width="wrap_content"
+        android:layout_width="85dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="12dp"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="32" />
+        tools:text="13/06/2024" />
 
     <TextView
         android:id="@+id/tvhoram"
-        android:layout_width="wrap_content"
+        android:layout_width="75dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="8dp"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Agua Cruda" />
+        tools:text="14:22:47" />
 
     <TextView
         android:id="@+id/tvregistroM"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -52,8 +52,7 @@
 
     <TextView
         android:id="@+id/tvnombre"
-        android:layout_width="100dp"
-        android:maxWidth="200dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -64,7 +63,6 @@
     <TextView
         android:id="@+id/tvidLab"
         android:layout_width="110dp"
-        android:maxWidth="110dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -75,7 +73,6 @@
     <TextView
         android:id="@+id/tvcantidadAprox"
         android:layout_width="60dp"
-        android:maxWidth="100dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -86,7 +83,6 @@
     <TextView
         android:id="@+id/tvtemperatura"
         android:layout_width="50dp"
-        android:maxWidth="100dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -96,8 +92,7 @@
 
     <TextView
         android:id="@+id/tvlugar"
-        android:layout_width="80dp"
-        android:maxWidth="100dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -107,7 +102,6 @@
     <TextView
         android:id="@+id/tvdescripcion"
         android:layout_width="230dp"
-        android:maxWidth="230dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -117,7 +111,6 @@
     <TextView
         android:id="@+id/tvMicro"
         android:layout_width="50dp"
-        android:maxWidth="100dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -126,8 +119,7 @@
         tools:text="Ct,Cf" />
     <TextView
         android:id="@+id/tvFisico"
-        android:layout_width="50dp"
-        android:maxWidth="100dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
@@ -140,7 +132,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvhoram"
         tools:text="Se observo que se lavo las manos el señor" />

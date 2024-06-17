@@ -2,10 +2,14 @@ package com.example.aplicacionlesaa
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -34,6 +38,7 @@ class SelePdmActivity : AppCompatActivity() {
     private var servicioMutableList: MutableList<Servicio> =
         servicioProvider.listadeServicios.toMutableList()
     private lateinit var adapter: servicioAdapter
+    private var clientePdm: ClientePdm? = null
 
 
     class servicioProvider {
@@ -87,41 +92,14 @@ class SelePdmActivity : AppCompatActivity() {
                     }
                 } else {
                     Log.e("SelePdmActivity", "Error en Spinner: ${response.code()}")
+                    Toast.makeText(this@SelePdmActivity, "Error en la conexión", Toast.LENGTH_SHORT).show()
+
                 }
             }
 
             override fun onFailure(call: Call<List<Plandemuestreo>>, t: Throwable) {
                 Log.e("SelePdmActivity", "Failure en autocomplete: ${t.message}")
-            }
-        })
-
-        apiService.getPlanes().enqueue(object : Callback<List<Plandemuestreo>> {
-            override fun onResponse(call: Call<List<Plandemuestreo>>, response: Response<List<Plandemuestreo>>) {
-                if (response.isSuccessful) {
-                    response.body()?.let { planes ->
-                        for (plan in planes) {
-                            planesList.addAll(planes)
-                            println("La lista de planes es: "+ planesList)
-                            val nomplanes = planes.map { it.nombre_pdm.toString() } // Convertir IDs a Strings
-
-                            // Configurar Autocompleteview
-                            val adapter = ArrayAdapter(this@SelePdmActivity, android.R.layout.simple_spinner_item,nomplanes )
-                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                            spinnerSele.adapter = adapter
-
-
-
-
-
-                        }
-                    }
-                } else {
-                    Log.e("SelePdmActivity", "Error en Spinner: ${response.code()}")
-                }
-            }
-
-            override fun onFailure(call: Call<List<Plandemuestreo>>, t: Throwable) {
-                Log.e("SelePdmActivity", "Failure en autocomplete: ${t.message}")
+                Toast.makeText(this@SelePdmActivity, "Error en la conexión", Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -135,50 +113,85 @@ class SelePdmActivity : AppCompatActivity() {
         val txtCorreo = binding.txtCorreo
 
         btnBuscar.setOnClickListener {
+            try {
 
-            var clientId = spinnerSele.selectedItem.toString()
+                var clientId = spinnerSele.selectedItem.toString()
 
-            CoroutineScope(Dispatchers.IO).launch {
-                val response =
-                    RetrofitClient.instance.getPlanClienteByPdmName(clientId).awaitResponse()
-                if (response.isSuccessful) {
-                    val clientePdm = response.body()
-                    withContext(Dispatchers.Main) {
-                        clientePdm?.let { updateUI(it) }
-
-                    }
-                } else {
-                    Log.e("SelePdmActivity", "Error: ${response.code()}")
-                }
-            }
-            apiService.getPlanServicesByName(spinnerSele.selectedItem.toString()).enqueue(object : Callback<List<Servicio>> {
-                override fun onResponse(call: Call<List<Servicio>>, response: Response<List<Servicio>>) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val response =
+                        RetrofitClient.instance.getPlanClienteByPdmName(clientId).awaitResponse()
                     if (response.isSuccessful) {
-                        response.body()?.let { servicios ->
-                                servicioMutableList.addAll(servicios)
-                                adapter.notifyDataSetChanged()
+                        clientePdm = response.body()
+                        withContext(Dispatchers.Main) {
+                            clientePdm?.let { updateUI(it) }
 
                         }
                     } else {
-                        Log.e("MainActivity", "Error: ${response.code()}")
+                        Log.e("SelePdmActivity", "Error: ${response.code()}")
                     }
                 }
 
-                override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
-                    Log.e("MainActivity", "Failure: ${t.message}")
-                }
-            })
+                apiService.getPlanServicesByName(spinnerSele.selectedItem.toString())
+                    .enqueue(object : Callback<List<Servicio>> {
+                        override fun onResponse(
+                            call: Call<List<Servicio>>,
+                            response: Response<List<Servicio>>
+                        ) {
+                            if (response.isSuccessful) {
+                                response.body()?.let { servicios ->
 
+                                    servicioMutableList.addAll(servicios)
+                                    adapter.notifyDataSetChanged()
+
+
+                                }
+                            } else {
+                                Log.e("MainActivity", "Error: ${response.code()}")
+                            }
+                        }
+
+                        override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
+                            Log.e("MainActivity", "Failure: ${t.message}")
+                        }
+                    })
+
+            }catch (e:Exception){
+                Toast.makeText(this@SelePdmActivity, "Error al buscar, probablemente no hayas seleccionado ningun pdm", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        spinnerSele.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+
+                txtCorreo.text = ""
+                txtTelefono.text = ""
+                txtPuesto.text = ""
+                txtAtencion.text = ""
+                txtDireccion.text = ""
+                txtNombre.text = ""
+
+                servicioMutableList.clear()
+                adapter.notifyDataSetChanged()
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Manejar la situación en la que no se ha seleccionado nada en el Spinner (opcional)
+            }
         }
 
         val btnSiguiente = binding.btnSiguiente
 
         btnSiguiente.setOnClickListener {
-            val intent = Intent(this@SelePdmActivity, MainActivity::class.java)
-            intent.putExtra("plandemuestreo", spinnerSele.selectedItem.toString())
-            startActivity(intent)
-            println(spinnerSele.selectedItem.toString())
-            //finish()
+
+            showConfirmationDialog()
+
         }
 
 
@@ -188,6 +201,42 @@ class SelePdmActivity : AppCompatActivity() {
 
 
     }
+
+    private fun showConfirmationDialog() {
+        // Crear y mostrar el cuadro de diálogo de confirmación
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirmación")
+        builder.setMessage("¿Estás seguro de que quieres crear un Folio de solicitud de servicio?")
+
+        // Configurar el botón "Sí"
+        builder.setPositiveButton("Sí") { dialog, which ->
+            performAction()
+
+        }
+
+        // Configurar el botón "No"
+        builder.setNegativeButton("No") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        // Mostrar el cuadro de diálogo
+        builder.show()
+    }
+    private fun performAction() {
+        val spinnerSele = binding.spinnerSelePdm
+        // Realizar la acción deseada aquí
+        // Por ejemplo, mostrar un mensaje de que la acción fue realizada
+        val intent = Intent(this@SelePdmActivity, MainActivity::class.java)
+        intent.putExtra("plandemuestreo", spinnerSele.selectedItem.toString())
+        intent.putParcelableArrayListExtra("listaServicios", ArrayList(servicioMutableList))
+        intent.putExtra("clientePdm", clientePdm)
+
+
+        startActivity(intent)
+        println(spinnerSele.selectedItem.toString())
+        finish()
+    }
+
     private fun updateUI(clientePdm: ClientePdm) {
         binding.txtNombre.text = clientePdm.nombre_empresa
         binding.txtDireccion.text = clientePdm.direccion

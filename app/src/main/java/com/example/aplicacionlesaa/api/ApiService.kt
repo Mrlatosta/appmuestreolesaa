@@ -2,11 +2,14 @@ package com.example.aplicacionlesaa.api
 
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
+import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Plandemuestreo
 import com.example.aplicacionlesaa.model.Servicio
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiService {
@@ -27,6 +30,9 @@ interface ApiService {
 
     @GET("planinfo/{id}")
     fun getPlanInfoByPdmName(@Path("id") id: String): Call<Pdm>
+
+    @POST("crearfoliomuestreo")
+    fun createFolioMuestreo(@Body folioMuestreo: FolioMuestreo): Call<Void>
 
 
 

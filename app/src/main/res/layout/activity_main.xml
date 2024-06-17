@@ -11,55 +11,23 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMuestras"
         android:layout_width="match_parent"
-        android:layout_height="203dp"
-        android:layout_marginTop="108dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="76dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnStart" />
+
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:text="Bienvenido"
-        android:textSize="60sp"
+        android:layout_marginTop="72dp"
+        android:text="Registro de Muestras"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvFecha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="32dp"
-        android:text="Registro m."
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/tvhoram" />
-
-    <TextView
-        android:id="@+id/tvIDMuestra"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="32dp"
-        android:text="Fecha m."
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/tvNummuestra" />
-
-    <TextView
-        android:id="@+id/tvhoram"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="32dp"
-        android:text="Hora m."
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/tvIDMuestra" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnStart"
@@ -73,6 +41,141 @@
         app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvnumMuestra"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="30dp"
+        android:text="#"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvfecham"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
+        android:text="Fecha M."
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvhoram"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="Hora M."
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvfecham"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvregistroM"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
+        android:text="Registro M"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvhoram"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvnombre"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="Nombre Muestra"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvregistroM"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvidLab"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
+        android:text="ID Lab"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvnombre"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvcantidadAprox"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="C. Aprox"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvidLab"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvtemperatura"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="Temp"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvlugar"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="Lugar toma"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvdescripcion"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="Descripcion de la toma"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvlugar"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvMicro"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="E.Micro"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
+
+    <TextView
+        android:id="@+id/tvFisico"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="E.Fisico"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvMicro"
+        app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
     <EditText
         android:id="@+id/txtcantidadaprox"
@@ -142,17 +245,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="172dp"
-        android:text="No."
-        android:textSize="25sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
         android:id="@+id/txtTemp"
         android:layout_width="150dp"
@@ -180,7 +272,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="172dp"
+        android:layout_marginTop="152dp"
 
         android:text="Descripcion:"
         android:textSize="25sp"
@@ -188,11 +280,53 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="152dp"
+        android:text="No."
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvNumeroMuestra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="152dp"
+        android:text="1"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="152dp"
+        android:text="ID servicio"
+        android:textSize="25sp"
+        app:layout_constraintStart_toEndOf="@+id/tvNumeroMuestra"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/idSpinner1"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="152dp"
+        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/tvdescripcionmuestra"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="172dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="152dp"
         android:text="Desc"
         android:textSize="10sp"
         app:layout_constraintStart_toEndOf="@+id/textview4"
@@ -217,28 +351,6 @@
         android:layout_marginTop="232dp"
         android:text="Registro M:"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="172dp"
-        android:text="ID servicio"
-        android:textSize="25sp"
-        app:layout_constraintStart_toEndOf="@+id/tvNumeroMuestra"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvNumeroMuestra"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="172dp"
-        android:text="1"
-        android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -274,17 +386,6 @@
         android:inputType="text"
         app:layout_constraintStart_toEndOf="@+id/tvregistromuestra"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-    <TextView
-        android:id="@+id/tvNummuestra"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="32dp"
-        android:text="#"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toStartOf="parent" />
 
 
     <TextView
@@ -398,138 +499,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="32dp"
-        android:text="Nombre m."
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/tvFecha" />
-
-    <TextView
-        android:id="@+id/textView24"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginBottom="32dp"
-        android:text="ID Lab."
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/textView4" />
-
-    <TextView
-        android:id="@+id/textView25"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginBottom="32dp"
-        android:text="Cantidad Aprox."
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/textView24" />
-
-    <TextView
-        android:id="@+id/textView26"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="32dp"
-        android:text="Temp. [°C]"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/textView25" />
-
-    <TextView
-        android:id="@+id/textView27"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="32dp"
-        android:text="Lugar Toma"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/textView26" />
-    <TextView
-        android:id="@+id/textView28"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="32dp"
-        android:text="Descripcion"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/textView27" />
-    <TextView
-        android:id="@+id/textView29"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="32dp"
-        android:text="E.micro"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/textView28" />
-    <TextView
-        android:id="@+id/textView30"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="32dp"
-        android:text="E.Fisico"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
-        app:layout_constraintStart_toEndOf="@+id/textView29" />
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="72dp"
-        android:text="Folio:"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvFolio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="56dp"
         android:text="002119"
+        android:textColor="@color/red"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="56dp"
+        android:text="Pdm:"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/tvFolio"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPDM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="56dp"
+        android:text="-"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="56dp"
+        android:text="Folio:"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnSiguiente"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="372dp"
-        android:layout_marginEnd="156dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="88dp"
         android:background="#00E676"
         android:text="Siguiente"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/idSpinner1"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="172dp"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/recyclerMuestras" />
 
     <TextView
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
-        android:layout_marginEnd="260dp"
+        android:layout_marginTop="368dp"
+        android:layout_marginEnd="956dp"
         android:text="Cantidad Restante:"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -538,10 +573,34 @@
         android:id="@+id/tvCantidadRestante"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="368dp"
         android:text="-"
         app:layout_constraintStart_toEndOf="@+id/textView21"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView24"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="20dp"
+        android:text="Cliente:"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/tvCliente"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="100dp"
+        android:text="-"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/textView24"
         app:layout_constraintTop_toTopOf="parent" />
 
 

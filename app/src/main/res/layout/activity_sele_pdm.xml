@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="68dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="-"
         app:layout_constraintStart_toEndOf="@+id/txtPuesto"
         app:layout_constraintTop_toBottomOf="@+id/textView37" />
 
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="108dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:text="-"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView33" />
 
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="-"
         app:layout_constraintStart_toEndOf="@+id/txtAtencion"
         app:layout_constraintTop_toBottomOf="@+id/textView36" />
 
@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="-"
         app:layout_constraintStart_toEndOf="@+id/txtDireccion"
         app:layout_constraintTop_toBottomOf="@+id/textView35" />
 
@@ -127,7 +127,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="-"
         app:layout_constraintStart_toEndOf="@+id/txtNombre"
         app:layout_constraintTop_toBottomOf="@+id/textView34" />
 
@@ -165,7 +165,7 @@
         android:id="@+id/textView38"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="172dp"
+        android:layout_marginStart="132dp"
         android:layout_marginTop="28dp"
         android:text="Correo"
         app:layout_constraintStart_toEndOf="@+id/textView37"
@@ -185,9 +185,9 @@
         android:id="@+id/txtCorreo"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
+        android:layout_marginStart="80dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="-"
         app:layout_constraintStart_toEndOf="@+id/txtTelefono"
         app:layout_constraintTop_toBottomOf="@+id/textView38" />
 
@@ -208,7 +208,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="56dp"
         android:layout_marginBottom="32dp"
-        android:text="Siguiente"
+        android:text="Crear"
+        android:background="#00E676"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -241,7 +242,7 @@
         android:id="@+id/tvCantidadToma"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="28dp"
         android:layout_marginTop="36dp"
         android:text="Cantidad Toma"
         android:textSize="15sp"
@@ -263,7 +264,7 @@
         android:id="@+id/tvdescripcion"
         android:layout_width="500dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="36dp"
         android:maxWidth="200dp"
         android:text="Descripcion"
@@ -293,6 +294,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvEstudiosFisico"
         app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="236dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="92dp"
+        android:layout_marginEnd="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logorectangulartrans" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.example.aplicacionlesaa
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -24,11 +25,21 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import java.io.File
 import java.io.FileOutputStream
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.IOException
 import android.net.Uri
 import android.provider.Settings
+import com.example.aplicacionlesaa.model.ClientePdm
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import com.example.aplicacionlesaa.model.FolioMuestreo
+import com.example.aplicacionlesaa.utils.NetworkUtils
+import java.time.LocalDate
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.Data
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import com.example.aplicacionlesaa.worker.SendDataWorker
 
 
 class MainActivity2 : AppCompatActivity() {
@@ -37,6 +48,9 @@ class MainActivity2 : AppCompatActivity() {
     private lateinit var muestraMutableList: MutableList<Muestra>
     private lateinit var adapter: muestraAdapterActResumen
     private val storagePermissionRequestCode = 1001
+    private var clientePdm: ClientePdm? = null
+    private var pdmSeleccionado: String = ""
+    val apiService = RetrofitClient.instance
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,14 +72,53 @@ class MainActivity2 : AppCompatActivity() {
             insets
         }
 
+        clientePdm = intent.getParcelableExtra("clientePdm")
+        pdmSeleccionado = intent.getStringExtra("plandemuestreo") ?: "Error"
 
+        binding.tvCliente.text = clientePdm?.nombre_empresa
+        binding.tvPDM.text = pdmSeleccionado
+
+
+        val folio_cliente = clientePdm?.folio
 
         Log.i("Ray", muestraMutableList.toString())
         val btnAceptar = binding.btnAceptar
         btnAceptar.setOnClickListener {
             try {
+                val folioMuestreo = FolioMuestreo(
+                    folio = binding.tvFolio.text.toString(),
+                    fecha = LocalDate.now().toString(),
+                    folio_cliente = folio_cliente.toString(),
+                    folio_pdm = pdmSeleccionado
+                )
+
+                if (NetworkUtils.isInternetAvailable(this)) {
+                    Log.i("Internet", "Si hay internet")
+                    sendDataToApi(folioMuestreo)
+                } else {
+                    Log.i("Internet", "No hay internet")
+                    val data = Data.Builder()
+                        .putString("folio", folioMuestreo.folio)
+                        .putString("fecha", folioMuestreo.fecha)
+                        .putString("folio_cliente", folioMuestreo.folio_cliente)
+                        .putString("folio_pdm", folioMuestreo.folio_pdm)
+                        .build()
+
+                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                        .setInputData(data)
+                        .setConstraints(
+                            Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+                        )
+                        .build()
+
+                    WorkManager.getInstance(this).enqueue(workRequest)
+                }
+
+
                 checkStoragePermissionAndSavePdf()
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.i("Error:", e.toString())
             }
 
@@ -88,6 +141,7 @@ class MainActivity2 : AppCompatActivity() {
 
     }
 
+
     private fun initRecyclerView() {
         //val recyclerView = findViewById<RecyclerView>(R.id.recyclerMuestras)
         //adapter = muestraAdapter(){}
@@ -100,13 +154,15 @@ class MainActivity2 : AppCompatActivity() {
         binding.recyclerResumen.adapter = adapter
 
     }
+
     private fun onItemSelected(muestra: Muestra) {
         Toast.makeText(this, muestra.nombreMuestra, Toast.LENGTH_SHORT).show()
         Log.i("Ray", muestra.nombreMuestra)
     }
-private fun onDeletedItem(position: Int) {
-    println("Funcion desactivada")
-}
+
+    private fun onDeletedItem(position: Int) {
+        println("Funcion desactivada")
+    }
 
     private fun checkStoragePermissionAndSavePdf() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -133,8 +189,6 @@ private fun onDeletedItem(position: Int) {
             }
         }
     }
-
-
 
 
     override fun onRequestPermissionsResult(
@@ -208,7 +262,8 @@ private fun onDeletedItem(position: Int) {
     }
 
     private fun saveBitmap(bitmap: Bitmap) {
-        val filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/signature.png"
+        val filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            .toString() + "/signature.png"
         val fileOutputStream: FileOutputStream
         try {
             fileOutputStream = FileOutputStream(filePath)
@@ -222,7 +277,31 @@ private fun onDeletedItem(position: Int) {
         }
     }
 
+    private fun sendDataToApi(folioMuestreo: FolioMuestreo) {
+        Log.d("sendDataToApi", "Enviando datos: $folioMuestreo")
 
+        val call = RetrofitClient.instance.createFolioMuestreo(folioMuestreo)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("sendDataToApi", "Datos enviados con éxito, respuesta: ${response.body()}")
+                    Toast.makeText(
+                        this@MainActivity2,
+                        "Datos enviados con éxito",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Log.e("sendDataToApi", "Error al enviar datos, código: ${response.code()}, mensaje: ${response.message()}")
+                    Toast.makeText(this@MainActivity2, "Error al enviar datos", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("sendDataToApi", "Error de red: ${t.message}", t)
+                Toast.makeText(this@MainActivity2, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
 
 

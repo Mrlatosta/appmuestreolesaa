@@ -24,6 +24,7 @@
         android:text="Bienvenido"
         android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.527"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,8 +32,8 @@
         android:id="@+id/btnCrearFolio"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="564dp"
-        android:layout_marginTop="132dp"
+        android:layout_marginStart="568dp"
+        android:layout_marginTop="144dp"
         android:backgroundTint="#69F0AE"
         android:text="Crear Folio"
         app:layout_constraintStart_toStartOf="parent"
