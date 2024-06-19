@@ -7,6 +7,50 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity2">
 
+    <EditText
+        android:id="@+id/editTextText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Puesto"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="434dp"
+        tools:layout_editor_absoluteY="564dp" />
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre:"
+        tools:layout_editor_absoluteX="368dp"
+        tools:layout_editor_absoluteY="523dp" />
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Nombre"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="433dp"
+        tools:layout_editor_absoluteY="507dp" />
+
+    <TextView
+        android:id="@+id/textView26"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Puesto:"
+        tools:layout_editor_absoluteX="368dp"
+        tools:layout_editor_absoluteY="578dp" />
+
+    <TextView
+        android:id="@+id/textView23"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quién toma las muestras"
+        tools:layout_editor_absoluteX="434dp"
+        tools:layout_editor_absoluteY="475dp" />
+
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
@@ -96,11 +140,11 @@
         android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="#"
+        android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="#" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvfecham"
@@ -108,11 +152,11 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="12dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="Fecha M"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="Fecha M" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvhoram"
@@ -120,107 +164,110 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="8dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="Hora M"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvfecham"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="Hora M" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvregistroM"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="Registro m"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvhoram"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="Registro m" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvnombre"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="Nombre Muestra"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvregistroM"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="Nombre Muestra" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvidLab"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="ID Lab"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvnombre"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="ID Lab" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvcantidadAprox"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="C. Aprox"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvidLab"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="C. Aprox" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvtemperatura"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="Temp"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="Temp" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvlugar"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="Lugar toma"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="Lugar toma" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
     <TextView
         android:id="@+id/tvdescripcion"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="Descripcion de la toma"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvlugar"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="Descripcion de la toma" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
     <TextView
         android:id="@+id/tvMicro"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="E.micro"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="E.micro" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
     <TextView
         android:id="@+id/tvFisico"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
         android:layout_marginTop="30dp"
+        android:text="E.Fisico"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvMicro"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:text="E.Fisico" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -231,35 +278,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.aplicacionlesaa.SignatureView
-        android:id="@+id/signatureView"
-        android:layout_width="282dp"
-        android:layout_height="96dp"
-        android:layout_marginStart="708dp"
-        android:layout_marginTop="44dp"
-        android:background="#FFFFFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
-
-    <Button
-        android:id="@+id/btnClear"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="216dp"
-        android:text="X"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
     <Button
         android:id="@+id/btnSaveSignature"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="204dp"
         android:text="Save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnClear" />
+        tools:layout_editor_absoluteX="397dp"
+        tools:layout_editor_absoluteY="701dp" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Firma"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="622dp" />
+    <com.example.aplicacionlesaa.SignatureView
+        android:id="@+id/signatureView"
+        android:layout_width="282dp"
+        android:layout_height="96dp"
+        android:background="#FFFFFF"
+        tools:layout_editor_absoluteX="46dp"
+        tools:layout_editor_absoluteY="649dp" />
+
+    <Button
+        android:id="@+id/btnClear"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="X"
+        tools:layout_editor_absoluteX="395dp"
+        tools:layout_editor_absoluteY="633dp" />
 
     <Button
         android:id="@+id/btnAceptar"
@@ -272,14 +321,70 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="536dp"
-        android:layout_marginBottom="8dp"
-        android:text="Firma"
-        app:layout_constraintBottom_toTopOf="@+id/signatureView"
+        android:layout_marginEnd="436dp"
+        android:layout_marginBottom="132dp"
+        android:text="Correo para envio de muestras"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextTextEmailAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="412dp"
+        android:ems="10"
+        android:hint="Correo"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <TextView
+        android:id="@+id/textView23"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quien autoriza los analisis"
+        tools:layout_editor_absoluteX="115dp"
+        tools:layout_editor_absoluteY="475dp" />
+
+    <EditText
+        android:id="@+id/editTextText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Puesto"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="115dp"
+        tools:layout_editor_absoluteY="564dp" />
+
+    <TextView
+        android:id="@+id/textView26"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Puesto:"
+        tools:layout_editor_absoluteX="49dp"
+        tools:layout_editor_absoluteY="578dp" />
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Nombre"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="114dp"
+        tools:layout_editor_absoluteY="507dp" />
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre:"
+        tools:layout_editor_absoluteX="49dp"
+        tools:layout_editor_absoluteY="523dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

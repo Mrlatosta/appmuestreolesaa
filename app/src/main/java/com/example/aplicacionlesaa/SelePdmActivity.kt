@@ -172,6 +172,16 @@ class SelePdmActivity : AppCompatActivity() {
 
 
                                 }
+                                for (servicio in servicioMutableList) {
+                                    if (servicio.descripcion.contains("AGUA DE USO RECREATIVO") || servicio.descripcion.contains("AGUA DE ALBERCA")) {
+                                        if (servicio.estudios_fisicoquimicos == "*"){
+                                            println("Por dos")
+                                            servicio.cantidad *= 2
+                                        }else{
+                                            servicio.cantidad *= 3
+                                        }
+                                    }
+                                }
                             } else {
                                 Log.e("MainActivity", "Error: ${response.code()}")
                             }

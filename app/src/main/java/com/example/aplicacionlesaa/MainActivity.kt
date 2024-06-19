@@ -38,7 +38,7 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var handler: Handler
+    //private lateinit var handler: Handler
     private lateinit var runnable: Runnable
 
     //Lista a la cual le vamos a quitar o poner muestras
@@ -227,7 +227,7 @@ class MainActivity : AppCompatActivity() {
         //spinner.adapter = arrayAdapter
 
         val tvfecham = binding.tvfechamuestreo
-        val tvhoram = binding.tvHora
+        //val tvhoram = binding.tvHora
         val tvFolio = binding.tvFolio
 
         //val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -253,11 +253,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Establecer la fecha actual
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
         val currentDate = dateFormat.format(Date())
         tvfecham.text = currentDate
 
-        // Configurar el handler para actualizar la hora
+        /*// Configurar el handler para actualizar la hora
         handler = Handler(Looper.getMainLooper())
         runnable = object : Runnable {
             override fun run() {
@@ -269,7 +269,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Iniciar la actualización de la hora
-        handler.post(runnable)
+        handler.post(runnable)*/
 
 
         val tvRegM = binding.tvregistromuestra
@@ -376,7 +376,7 @@ class MainActivity : AppCompatActivity() {
         var sepudo = false
         val tvNum = binding.tvNumeroMuestra
         val tvfecham = binding.tvfechamuestreo
-        val tvhoram = binding.tvHora
+        //val tvhoram = binding.tvHora
         val tvregistromuestra = binding.tvregistromuestra
         val txtnombrem = binding.txtnombre
         val txtcantidad = binding.txtcantidadaprox
@@ -420,21 +420,32 @@ class MainActivity : AppCompatActivity() {
                 val numeroMuestra = tvNum.text
 
                 if (numeroMuestra != null) {
-                    val fechaSinBarras = tvfecham.text.toString().replace("/", "")
-                    val horaSinPuntos = tvhoram.text.toString().replace(":", "")
-                    val horaRecortada =
+                    val formatoEntrada = SimpleDateFormat("MM/dd/yyyy")
+                    val formatoSalida = SimpleDateFormat("yyyyMMdd")
+
+                    val fecha = formatoEntrada.parse(tvfecham.text.toString())
+
+                    // Formatea la fecha al nuevo formato sin barras
+                    val fechaSinBarras = formatoSalida.format(fecha)
+
+
+
+
+                    //val fechaSinBarras = tvfecham.text.toString().replace("/", "")
+                    //val horaSinPuntos = tvhoram.text.toString().replace(":", "")
+                    /*val horaRecortada =
                         if (horaSinPuntos.length >= 4) horaSinPuntos.substring(
                             0,
                             4
-                        ) else horaSinPuntos
-                    val idLab = fechaSinBarras + horaRecortada
+                        ) else horaSinPuntos*/
+                    val idLab = fechaSinBarras + tvregistromuestra.text.toString()
 
                     // El valor de idServicio es un entero válido, puedes usarlo aquí
                     val muestraobjeto =
                         Muestra(
                             numeroMuestra = numeroMuestra.toString(),
                             fechaMuestra = tvfecham.text.toString(),
-                            horaMuestra = tvhoram.text.toString(),
+                            horaMuestra = "",
                             registroMuestra = tvregistromuestra.text.toString(),
                             nombreMuestra = txtnombrem.text.toString().trim(),
                             idLab = idLab,
@@ -544,7 +555,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(runnable) // Detener la actualización de la hora cuando se destruye la actividad
+        //.removeCallbacks(runnable) // Detener la actualización de la hora cuando se destruye la actividad
     }
 
 

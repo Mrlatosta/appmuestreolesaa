@@ -1,5 +1,6 @@
 package com.example.aplicacionlesaa.worker
 
+import android.Manifest
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -10,6 +11,17 @@ import com.example.aplicacionlesaa.utils.NetworkUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import com.example.aplicacionlesaa.R
+import android.os.Build
+
 
 class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
 
@@ -69,6 +81,15 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
                             "Muestras enviadas con éxito",
                             Toast.LENGTH_SHORT
                         ).show()
+                        if (hasNotificationPermission()) {
+                            showNotification(
+                                "Muestras enviadas",
+                                "Las muestras se han enviado con éxito."
+                            )
+                        } else {
+                            Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
+                        }
+
                     } else {
                         Toast.makeText(
                             applicationContext,
@@ -88,5 +109,56 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
             })
         }
     }
+
+    private fun hasNotificationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+    }
+
+    private fun showNotification(title: String, message: String) {
+        val channelId = "MuestraNotificationChannel"
+        val channelName = "Muestra Notification"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(channelId, channelName, importance)
+            val notificationManager =
+                applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+
+        val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
+            .setSmallIcon(R.mipmap.ic_launcher)  // Asegúrate de tener un icono en tu drawable
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(applicationContext)) {
+            if (ActivityCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            notify(1, notificationBuilder.build())
+        }
+
+    }
+
 }
 

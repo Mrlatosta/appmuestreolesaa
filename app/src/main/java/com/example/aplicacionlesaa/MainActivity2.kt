@@ -92,6 +92,7 @@ class MainActivity2 : AppCompatActivity() {
         val btnAceptar = binding.btnAceptar
         btnAceptar.setOnClickListener {
             try {
+                val nombreArchivoPdf = "Muestras-Folio-${binding.tvFolio.text}.pdf"
                 val folioMuestreo = FolioMuestreo(
                     folio = binding.tvFolio.text.toString(),
                     fecha = LocalDate.now().toString(),
@@ -150,10 +151,13 @@ class MainActivity2 : AppCompatActivity() {
                         WorkManager.getInstance(this).enqueue(workRequest)
                     }
 
+
                     // Envío de correo con el archivo PDF
-                    val file = File(pdfPath, "Muestras.pdf")
+                    val file = File(pdfPath, nombreArchivoPdf)
+                    /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
+                        "$pdfPath/$nombreArchivoPdf")*/
                     enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
-                        "$pdfPath/Muestras.pdf")
+                        "$pdfPath/$nombreArchivoPdf")
                 }
 
 
@@ -161,8 +165,11 @@ class MainActivity2 : AppCompatActivity() {
                 checkStoragePermissionAndSavePdf()
                 enqueueSendEmailTask(this,
                     "ray.contacto06@gmail.com",
-                    "$pdfPath/Muestras.pdf"
+                    "$pdfPath/$nombreArchivoPdf"
                 )
+                /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
+                    "$pdfPath/$nombreArchivoPdf")*/
+
             } catch (e: Exception) {
                 Log.i("Error:", e.toString())
             }
@@ -293,7 +300,7 @@ class MainActivity2 : AppCompatActivity() {
     private fun savePdf(emailAddress: String) {
         val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
             .toString()
-        val file = File(pdfPath, "Muestras.pdf")
+        val file = File(pdfPath,"Muestras-Folio-${binding.tvFolio.text}.pdf")
 
         try {
             val pdfWriter = PdfWriter(file)
@@ -319,7 +326,7 @@ class MainActivity2 : AppCompatActivity() {
             }
 
             document.close()
-            Toast.makeText(this, "PDF saved at $pdfPath/Muestras.pdf", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "PDF saved at $pdfPath/Muestras-Folio-${binding.tvFolio.text}.pdf", Toast.LENGTH_LONG).show()
 
             // Enviar el PDF por correo electrónico
             //SendEmailWorker(emailAddress, file).execute()
