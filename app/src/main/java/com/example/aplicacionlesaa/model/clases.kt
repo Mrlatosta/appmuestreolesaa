@@ -159,4 +159,11 @@ data class MuestraData(
     val muestras: List<Muestra>
 )
 
+data class DatosFinalesFolioMuestreo(
+    val nombre_autoriza_muestras: String,
+    val puesto_autoriza_muestra: String,
+    val nombre_tomador_muestra: String,
+    val puesto_tomador_muestra: String,
+)
+
 

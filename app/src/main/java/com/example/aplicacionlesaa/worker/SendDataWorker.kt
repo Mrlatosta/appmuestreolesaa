@@ -1,27 +1,27 @@
 package com.example.aplicacionlesaa.worker
 
+import RetrofitClient
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.aplicacionlesaa.R
+import com.example.aplicacionlesaa.api.ApiService
+import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
 import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.utils.NetworkUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Intent
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import com.example.aplicacionlesaa.R
-import android.os.Build
-import com.example.aplicacionlesaa.api.ApiService
 
 
 class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
@@ -103,7 +103,9 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
                                     } else {
                                         Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
                                     }
+
                                     Toast.makeText(applicationContext, "Cantidad actualizada con éxito", Toast.LENGTH_SHORT).show()
+                                    sendDatosFaltantesToApi()
                                 } else {
                                     if (hasNotificationPermission()) {
                                         showNotification(
@@ -140,48 +142,6 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
             })
         }
     }
-
-    /*private fun sendDataToApi(muestras: List<Muestra_pdm>) {
-        for (muestra in muestras) {
-            Log.e("Muestra es:", muestra.toString())
-
-            val call = RetrofitClient.instance.createMuestreo(muestra)
-            call.enqueue(object : Callback<Void> {
-                override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(
-                            applicationContext,
-                            "Muestras enviadas con éxito",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        if (hasNotificationPermission()) {
-                            showNotification(
-                                "Muestras enviadas",
-                                "Las muestras se han enviado con éxito."
-                            )
-                        } else {
-                            Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
-                        }
-
-                    } else {
-                        Toast.makeText(
-                            applicationContext,
-                            "Error al enviar muestras",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Toast.makeText(
-                        applicationContext,
-                        "Error de red: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
-        }
-    }*/
 
     private fun hasNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -232,6 +192,36 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
         }
 
     }
+
+    private fun sendDatosFaltantesToApi() {
+        val nombreAutoAnalisis = inputData.getString("nombreAutoAnalisis") ?: ""
+        val puestoAutoAnalisis = inputData.getString("puestoAutoAnalisis") ?: ""
+        val nombreMuestreador = inputData.getString("nombreMuestreador") ?: ""
+        val puestoMuestreador = inputData.getString("puestoMuestreador") ?: ""
+        val folioText = inputData.getString("folioText") ?: ""
+
+        val datos = DatosFinalesFolioMuestreo(
+            nombreAutoAnalisis,
+            puestoAutoAnalisis,
+            nombreMuestreador,
+            puestoMuestreador
+        )
+        val callDatosFaltantes = RetrofitClient.instance.completarFolio(folioText, datos)
+        callDatosFaltantes.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(applicationContext, "Folio completado con éxito", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(applicationContext, "Error al completar folio", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
 
 }
 

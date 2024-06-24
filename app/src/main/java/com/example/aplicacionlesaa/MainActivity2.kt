@@ -15,6 +15,7 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -31,11 +32,13 @@ import com.example.aplicacionlesaa.adapter.muestraAdapterActResumen
 import com.example.aplicacionlesaa.api.ApiService
 import com.example.aplicacionlesaa.databinding.ActivityMain2Binding
 import com.example.aplicacionlesaa.model.ClientePdm
+import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
 import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.utils.NetworkUtils
 import com.example.aplicacionlesaa.worker.SendDataWorker
+import com.example.aplicacionlesaa.worker.SendDatosFaltantesWorker
 import com.google.gson.Gson
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.kernel.geom.PageSize
@@ -55,7 +58,7 @@ import java.io.FileOutputStream
 import java.time.LocalDate
 
 
-class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialogListener  {
+class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialogListener,SignatureDialogFragmentDos.SignatureDialogListener  {
 
     private lateinit var binding: ActivityMain2Binding
     private lateinit var muestraMutableList: MutableList<Muestra>
@@ -85,18 +88,22 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             insets
         }
         val btnInsertSignature = binding.btnInsertSignature
-        val btnClear = binding.btnClear
+        val btnInsertSignatureDos = binding.btnInsertSignatureDos
+
+
         btnInsertSignature.setOnClickListener {
             val signatureDialog = SignatureDialogFragment()
             signatureDialog.setSignatureDialogListener(this)
             signatureDialog.show(supportFragmentManager, "SignatureDialogFragment")
         }
 
-        btnClear.setOnClickListener {
-            var signatureView = binding.signatureView
-
-            signatureView.clear()
+        btnInsertSignatureDos.setOnClickListener {
+            val signatureDialogDos = SignatureDialogFragmentDos()
+            signatureDialogDos.setSignatureDialogListenerDos(this)
+            signatureDialogDos.show(supportFragmentManager, "SignatureDialogFragmentDos")
         }
+
+
 
 
         clientePdm = intent.getParcelableExtra("clientePdm")
@@ -115,76 +122,123 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         Log.i("Ray", muestraMutableList.toString())
         val btnAceptar = binding.btnAceptar
         btnAceptar.setOnClickListener {
-            try {
-                val nombreArchivoPdf = "Muestras-Folio-${binding.tvFolio.text}.pdf"
-                /*try{
-                    //saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
-                    Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
-                    }catch (e: Exception){
-                        Log.i("Error guardand0:", e.toString())
-                }*/
 
-                val folioMuestreo = FolioMuestreo(
-                    folio = binding.tvFolio.text.toString(),
-                    fecha = LocalDate.now().toString(),
-                    folio_cliente = folio_cliente.toString(),
-                    folio_pdm = pdmSeleccionado
-                )
-                val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                    .toString()
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Confirmación")
+            builder.setMessage("¿Estás seguro de que enviar y concluir el folio ${binding.tvFolio.text}?")
 
-                if (NetworkUtils.isInternetAvailable(this)) {
-                    Log.i("Internet", "Si hay internet")
+            // Configurar el botón "Sí"
+            builder.setPositiveButton("Sí") { dialog, which ->
 
-                    Toast.makeText(this, "Si hay internet, enviando muestras", Toast.LENGTH_SHORT).show()
-                    sendMuestrasToApi(muestraListaNueva)
-                    enqueueSendEmailTask(this,
-                        "ray.contacto06@gmail.com",
-                        "$pdfPath/$nombreArchivoPdf"
+                try {
+                    val nombreArchivoPdf = "Muestras-Folio-${binding.tvFolio.text}.pdf"
+                    /*try{
+                        //saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                        Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
+                        }catch (e: Exception){
+                            Log.i("Error guardand0:", e.toString())
+                    }*/
+
+                    val folioMuestreo = FolioMuestreo(
+                        folio = binding.tvFolio.text.toString(),
+                        fecha = LocalDate.now().toString(),
+                        folio_cliente = folio_cliente.toString(),
+                        folio_pdm = pdmSeleccionado
                     )
-                    /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
-                        "$pdfPath/$nombreArchivoPdf")*/
-                    try{
-                        val correo = binding.txtCorreo.text.toString()
-                        enqueueSendEmailTask(this, correo,
-                            "$pdfPath/$nombreArchivoPdf")
-                    }catch (e: Exception){
-                        Log.i("Error:", e.toString())
-                    }
-                } else {
-                    Toast.makeText(this, "No hay internet, los datos se enviarán cuando se establezca una conexión", Toast.LENGTH_SHORT).show()
-                    Log.i("Internet", "No hay internet")
-                    val tamaño = muestraListaNueva.size
+                    val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                        .toString()
 
-                    // Crear una lista de Data para cada muestra en muestraMutableList
-                    val dataList = mutableListOf<Data>()
-                    muestraListaNueva.forEachIndexed { index, muestra ->
-                        val data = Data.Builder()
-                            .putInt("muestra_count",tamaño)
-                            .putString("registro_muestra_$index", muestra.registro_muestra)
-                            .putString("folio_muestreo_$index", muestra.folio_muestreo)
-                            .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
-                            .putString("hora_muestreo_$index", muestra.hora_muestreo)
-                            .putString("nombre_muestra_$index", muestra.nombre_muestra)
-                            .putString("id_lab_$index", muestra.id_lab)
-                            .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
-                            .putString("temperatura_$index", muestra.temperatura)
-                            .putString("lugar_toma_$index", muestra.lugar_toma)
-                            .putString("descripcion_toma_$index", muestra.descripcion_toma)
-                            .putString("e_micro_$index", muestra.e_micro)
-                            .putString("e_fisico_$index", muestra.e_fisico)
-                            .putString("observaciones_$index", muestra.observaciones)
-                            .putString("folio_pdm_$index", muestra.folio_pdm)
-                            .putInt("servicio_id_$index", muestra.servicio_id)
+                    if (NetworkUtils.isInternetAvailable(this)) {
+                        Log.i("Internet", "Si hay internet")
+
+                        Toast.makeText(this, "Si hay internet, enviando muestras", Toast.LENGTH_SHORT).show()
+                        sendMuestrasToApi(muestraListaNueva)
+                        enqueueSendEmailTask(this,
+                            "ray.contacto06@gmail.com",
+                            "$pdfPath/$nombreArchivoPdf"
+                        )
+                        sendDatosFaltantesToApi()
+                        /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
+                            "$pdfPath/$nombreArchivoPdf")*/
+                        try{
+                            val correo = binding.txtCorreo.text.toString()
+                            enqueueSendEmailTask(this, correo,
+                                "$pdfPath/$nombreArchivoPdf")
+                        }catch (e: Exception){
+                            Log.i("Error:", e.toString())
+                        }
+                    } else {
+                        Toast.makeText(this, "No hay internet, los datos se enviarán cuando se establezca una conexión", Toast.LENGTH_SHORT).show()
+                        Log.i("Internet", "No hay internet")
+                        val tamaño = muestraListaNueva.size
+
+                        // Crear una lista de Data para cada muestra en muestraMutableList
+                        val dataList = mutableListOf<Data>()
+                        muestraListaNueva.forEachIndexed { index, muestra ->
+                            val data = Data.Builder()
+                                .putInt("muestra_count",tamaño)
+                                .putString("registro_muestra_$index", muestra.registro_muestra)
+                                .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                                .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                                .putString("hora_muestreo_$index", muestra.hora_muestreo)
+                                .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                                .putString("id_lab_$index", muestra.id_lab)
+                                .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                                .putString("temperatura_$index", muestra.temperatura)
+                                .putString("lugar_toma_$index", muestra.lugar_toma)
+                                .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                                .putString("e_micro_$index", muestra.e_micro)
+                                .putString("e_fisico_$index", muestra.e_fisico)
+                                .putString("observaciones_$index", muestra.observaciones)
+                                .putString("folio_pdm_$index", muestra.folio_pdm)
+                                .putInt("servicio_id_$index", muestra.servicio_id)
+                                .build()
+
+                            dataList.add(data)
+                        }
+
+                        // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                        dataList.forEach { data ->
+                            val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                                .setInputData(data)
+                                .setConstraints(
+                                    Constraints.Builder()
+                                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                                        .build()
+                                )
+                                .build()
+
+                            Log.i("Datos", "Entre al worker")
+                            WorkManager.getInstance(this).enqueue(workRequest)
+                        }
+
+
+                        // Envío de correo con el archivo PDF
+                        val file = File(pdfPath, nombreArchivoPdf)
+                        /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
+                            "$pdfPath/$nombreArchivoPdf")*/
+                        enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
+                            "$pdfPath/$nombreArchivoPdf")
+
+                        val nombreAutoAnalisis = binding.txtNombreAutoAnalisis.text.toString()
+                        val puestoAutoAnalisis = binding.txtPuestoAutoAnalisis.text.toString()
+                        val nombreMuestreador = binding.txtNombreMuestreador.text.toString()
+                        val puestoMuestreador = binding.txtPuestoMuestreador.text.toString()
+                        val folioText = binding.tvFolio.text.toString()
+
+                        // Crear Data object para pasar los datos al Worker
+                        val datosFaltantesData = Data.Builder()
+                            .putString("nombreAutoAnalisis", nombreAutoAnalisis)
+                            .putString("puestoAutoAnalisis", puestoAutoAnalisis)
+                            .putString("nombreMuestreador", nombreMuestreador)
+                            .putString("puestoMuestreador", puestoMuestreador)
+                            .putString("folioText", folioText)
                             .build()
 
-                        dataList.add(data)
-                    }
+                        println("Datos son: ${nombreAutoAnalisis},${puestoAutoAnalisis},${nombreMuestreador},${puestoMuestreador},${folioText}")
 
-                    // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
-                    dataList.forEach { data ->
-                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
-                            .setInputData(data)
+                        val sendDataWorkRequest = OneTimeWorkRequestBuilder<SendDatosFaltantesWorker>()
+                            .setInputData(datosFaltantesData)
                             .setConstraints(
                                 Constraints.Builder()
                                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -192,27 +246,32 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                             )
                             .build()
 
-                        Log.i("Datos", "Entre al worker")
-                        WorkManager.getInstance(this).enqueue(workRequest)
+                        // Encolar la solicitud de trabajo
+                        WorkManager.getInstance(this).enqueue(sendDataWorkRequest)
+
+
                     }
 
 
-                    // Envío de correo con el archivo PDF
-                    val file = File(pdfPath, nombreArchivoPdf)
-                    /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
-                        "$pdfPath/$nombreArchivoPdf")*/
-                    enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
-                        "$pdfPath/$nombreArchivoPdf")
+
+                    checkStoragePermissionAndSavePdf()
+
+
+                } catch (e: Exception) {
+                    Log.i("Error:", e.toString())
                 }
 
-
-
-                checkStoragePermissionAndSavePdf()
-
-
-            } catch (e: Exception) {
-                Log.i("Error:", e.toString())
             }
+
+            // Configurar el botón "No"
+            builder.setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            // Mostrar el cuadro de diálogo
+            builder.show()
+
+
 
 
             //SendEmailTask("mrlatosta@gmail.com").execute()
@@ -300,7 +359,29 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     }
 
 
+    private fun sendDatosFaltantesToApi(){
+        val datos = DatosFinalesFolioMuestreo(
+            binding.txtNombreAutoAnalisis.text.toString(),
+            binding.txtPuestoAutoAnalisis.text.toString(),
+            binding.txtNombreMuestreador.text.toString(),
+            binding.txtPuestoMuestreador.text.toString()
+        )
+        val folioText = binding.tvFolio.text.toString()
+        val callDatosFaltantes = RetrofitClient.instance.completarFolio(folioText,datos)
+        callDatosFaltantes.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(applicationContext, "Folio completado Con exito", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(applicationContext, "Error al completar Folio", Toast.LENGTH_SHORT).show()
+                }
+            }
 
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
 
     private fun initRecyclerView() {
@@ -413,7 +494,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             document.add(Paragraph("Muestras Realizadas"))
 
             // Crear la tabla
-            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f))
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f))
             table.setWidth(UnitValue.createPercentValue(100f))
 
             // Agregar encabezados de celda
@@ -444,7 +525,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
     private fun addTableHeader(table: Table) {
         val headers = arrayOf(
-            "Número de Muestra", "Fecha de Muestra", "Hora de Muestra",
+            "Número de Muestra", "Fecha de Muestra",
             "Registro de Muestra", "Nombre de Muestra", "ID de Lab",
             "Cantidad Aproximada", "Temperatura", "Lugar de Toma",
             "Descripción", "Estudios Microbiológicos", "Estudios Fisicoquímicos",
@@ -462,7 +543,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     private fun addTableRow(table: Table, muestra: Muestra) {
         table.addCell(muestra.numeroMuestra)
         table.addCell(muestra.fechaMuestra)
-        table.addCell(muestra.horaMuestra)
         table.addCell(muestra.registroMuestra)
         table.addCell(muestra.nombreMuestra)
         table.addCell(muestra.idLab)
@@ -539,9 +619,13 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     }
 
     override fun onSignatureSaved(bitmap: Bitmap) {
-        var signatureView = binding.signatureView
-
+        var signatureView = binding.signatureViewUno
         signatureView.setSignatureBitmap(bitmap)
+    }
+
+    override fun onSignatureSavedDos(bitmap: Bitmap) {
+        var signatureViewDos = binding.signatureViewDos
+        signatureViewDos.setSignatureBitmap(bitmap)
     }
 
     fun saveDataToJson(context: Context, muestraData: MuestraData, filename: String) {

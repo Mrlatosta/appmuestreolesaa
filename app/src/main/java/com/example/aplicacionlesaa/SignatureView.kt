@@ -79,8 +79,8 @@ class SignatureView @JvmOverloads constructor(
     }
 
     fun clear() {
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        canvas = Canvas(bitmap!!)
+        path.reset()
+        canvas?.drawColor(Color.WHITE)
         invalidate()
     }
 }

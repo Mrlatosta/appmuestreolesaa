@@ -6,6 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <View
+        android:id="@+id/viewUnamed"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginBottom="14dp"
+        android:background="#062D70"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -563,8 +571,8 @@
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="368dp"
-        android:layout_marginEnd="956dp"
+        android:layout_marginTop="376dp"
+        android:layout_marginEnd="1008dp"
         android:text="Cantidad Restante:"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -573,8 +581,8 @@
         android:id="@+id/tvCantidadRestante"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="368dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="376dp"
         android:text="-"
         app:layout_constraintStart_toEndOf="@+id/textView21"
         app:layout_constraintTop_toTopOf="parent" />

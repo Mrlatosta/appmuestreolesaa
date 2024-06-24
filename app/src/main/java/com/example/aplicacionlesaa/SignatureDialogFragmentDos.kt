@@ -8,16 +8,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
 
-class SignatureDialogFragment : DialogFragment() {
+class SignatureDialogFragmentDos : DialogFragment() {
 
     private var signatureView: SignatureView? = null
     private var listener: SignatureDialogListener? = null
 
     interface SignatureDialogListener {
-        fun onSignatureSaved(bitmap: Bitmap)
+        fun onSignatureSavedDos(bitmap: Bitmap)
     }
 
-    fun setSignatureDialogListener(listener: SignatureDialogListener) {
+    fun setSignatureDialogListenerDos(listener: SignatureDialogListener) {
         this.listener = listener
     }
 
@@ -33,7 +33,7 @@ class SignatureDialogFragment : DialogFragment() {
         btnSave.setOnClickListener {
             signatureView?.let {
                 val bitmap = it.getSignatureBitmap()
-                listener?.onSignatureSaved(bitmap)
+                listener?.onSignatureSavedDos(bitmap)
                 dismiss()
             }
         }

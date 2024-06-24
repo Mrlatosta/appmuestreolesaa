@@ -1,6 +1,7 @@
 package com.example.aplicacionlesaa.api
 
 import com.example.aplicacionlesaa.model.ClientePdm
+import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
 import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Muestra_pdm
@@ -51,6 +52,11 @@ interface ApiService {
     data class RestarServicioRequest(
         val cantidad: Int
     )
+
+    @PUT("completarfolio/{id}")
+    fun completarFolio(@Path("id") id: String, @Body data: DatosFinalesFolioMuestreo): Call<Void>
+
+
 
 //    @GET("posts/{id}")
 //    fun getPostById(@Path("id") id: Int): Call<Post>

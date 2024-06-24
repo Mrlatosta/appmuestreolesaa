@@ -7,33 +7,65 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity2">
 
-    <EditText
-        android:id="@+id/editTextText2"
+    <com.example.aplicacionlesaa.SignatureView
+        android:id="@+id/signatureViewDos"
+        android:layout_width="282dp"
+        android:layout_height="96dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="28dp"
+        android:background="#FFFFFF"
+        app:layout_constraintStart_toEndOf="@+id/btnInsertSignature"
+        app:layout_constraintTop_toBottomOf="@+id/txtPuestoMuestreador" />
+
+    <Button
+        android:id="@+id/btnInsertSignature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
+        android:text="Ver"
+        app:layout_constraintStart_toEndOf="@+id/signatureViewUno"
+        app:layout_constraintTop_toBottomOf="@+id/txtPuestoAutoAnalisis" />
+
+    <TextView
+        android:id="@+id/textView9Dos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="468dp"
+        android:layout_marginBottom="8dp"
+        android:text="Firma"
+        app:layout_constraintBottom_toTopOf="@+id/signatureViewDos"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtPuestoMuestreador"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <EditText
+        android:id="@+id/txtPuestoMuestreador"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="Puesto"
         android:inputType="text"
         app:layout_constraintStart_toEndOf="@+id/tv26"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+        app:layout_constraintTop_toBottomOf="@+id/txtNombreMuestreador" />
 
     <TextView
-        android:id="@+id/textView25"
+        android:id="@+id/tv26"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="68dp"
-        android:text="Nombre:"
-        app:layout_constraintStart_toEndOf="@+id/txtNombreAutoAnalisis"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
+        android:layout_marginStart="152dp"
+        android:layout_marginTop="44dp"
+        android:text="Puesto:"
+        app:layout_constraintStart_toEndOf="@+id/txtPuestoAutoAnalisis"
+        app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/txtNombreMuestreador"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="Nombre"
@@ -42,23 +74,24 @@
         app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
     <TextView
-        android:id="@+id/tv26"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="32dp"
-        android:text="Puesto:"
-        app:layout_constraintStart_toEndOf="@+id/txtPuestoAutoAnalisis"
-        app:layout_constraintTop_toBottomOf="@+id/textView25" />
-
-    <TextView
         android:id="@+id/textView23"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
+        android:layout_marginStart="192dp"
         android:layout_marginTop="24dp"
         android:text="Quién toma las muestras"
+        android:textSize="20dp"
         app:layout_constraintStart_toEndOf="@+id/textViewKienaturiza"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="64dp"
+        android:text="Nombre:"
+        app:layout_constraintStart_toEndOf="@+id/txtNombreAutoAnalisis"
         app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
     <TextView
@@ -239,10 +272,10 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="Temp"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
-        android:textColor="#000000" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/tvlugar"
@@ -310,17 +343,17 @@
 
 
     <Button
-        android:id="@+id/btnInsertSignature"
+        android:id="@+id/btnInsertSignatureDos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:text="Insertar Firma"
-        app:layout_constraintStart_toEndOf="@+id/signatureView"
-        app:layout_constraintTop_toBottomOf="@+id/btnClear" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="44dp"
+        android:text="Ver"
+        app:layout_constraintStart_toEndOf="@+id/signatureViewDos"
+        app:layout_constraintTop_toBottomOf="@+id/txtPuestoMuestreador" />
 
     <com.example.aplicacionlesaa.SignatureView
-        android:id="@+id/signatureView"
+        android:id="@+id/signatureViewUno"
         android:layout_width="282dp"
         android:layout_height="96dp"
         android:layout_marginStart="48dp"
@@ -339,43 +372,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtPuestoAutoAnalisis" />
 
-    <Button
-        android:id="@+id/btnClear"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="36dp"
-        android:text="X"
-        app:layout_constraintStart_toEndOf="@+id/signatureView"
-        app:layout_constraintTop_toBottomOf="@+id/tv26" />
-
-    <Button
-        android:id="@+id/btnAceptar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="128dp"
-        android:layout_marginBottom="72dp"
-        android:text="Aceptar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <EditText
         android:id="@+id/txtCorreo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="240dp"
+        android:layout_marginEnd="168dp"
         android:ems="10"
         android:hint="Correo"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
+    <Button
+        android:id="@+id/btnAceptar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="56dp"
+        android:layout_marginBottom="72dp"
+        android:text="Aceptar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="264dp"
+        android:layout_marginEnd="192dp"
         android:layout_marginBottom="136dp"
         android:text="Correo para envio de muestras"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -388,6 +411,7 @@
         android:layout_marginStart="112dp"
         android:layout_marginTop="24dp"
         android:text="Quien autoriza los analisis"
+        android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
