@@ -2,6 +2,7 @@ package com.example.aplicacionlesaa.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.example.aplicacionlesaa.Muestra
 
 
 data class Plandemuestreo(
@@ -152,6 +153,10 @@ data class Muestra_pdm(
     val servicio_id: Int
 )
 
-
+data class MuestraData(
+    val folio: String,
+    val planMuestreo: String,
+    val muestras: List<Muestra>
+)
 
 

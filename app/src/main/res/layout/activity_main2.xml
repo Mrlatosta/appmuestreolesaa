@@ -11,45 +11,55 @@
         android:id="@+id/editTextText2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="Puesto"
         android:inputType="text"
-        tools:layout_editor_absoluteX="434dp"
-        tools:layout_editor_absoluteY="564dp" />
+        app:layout_constraintStart_toEndOf="@+id/tv26"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
 
     <TextView
         android:id="@+id/textView25"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="68dp"
         android:text="Nombre:"
-        tools:layout_editor_absoluteX="368dp"
-        tools:layout_editor_absoluteY="523dp" />
+        app:layout_constraintStart_toEndOf="@+id/txtNombreAutoAnalisis"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
     <EditText
         android:id="@+id/editTextText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="Nombre"
         android:inputType="text"
-        tools:layout_editor_absoluteX="433dp"
-        tools:layout_editor_absoluteY="507dp" />
+        app:layout_constraintStart_toEndOf="@+id/textView25"
+        app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
     <TextView
-        android:id="@+id/textView26"
+        android:id="@+id/tv26"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="32dp"
         android:text="Puesto:"
-        tools:layout_editor_absoluteX="368dp"
-        tools:layout_editor_absoluteY="578dp" />
+        app:layout_constraintStart_toEndOf="@+id/txtPuestoAutoAnalisis"
+        app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
     <TextView
         android:id="@+id/textView23"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="24dp"
         android:text="Quién toma las muestras"
-        tools:layout_editor_absoluteX="434dp"
-        tools:layout_editor_absoluteY="475dp" />
+        app:layout_constraintStart_toEndOf="@+id/textViewKienaturiza"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
     <TextView
         android:id="@+id/textView5"
@@ -129,6 +139,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="88dp"
         android:text="Resumen de muestras"
+        android:textColor="#000000"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.524"
@@ -142,6 +153,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="30dp"
         android:text="#"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -154,6 +166,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="30dp"
         android:text="Fecha M"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -166,6 +179,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="30dp"
         android:text="Hora M"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -177,6 +191,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="Registro m"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvhoram"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -188,6 +203,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="Nombre Muestra"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvregistroM"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -199,6 +215,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="ID Lab"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvnombre"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -210,6 +227,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="C. Aprox"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvidLab"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -223,7 +241,8 @@
         android:text="Temp"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        android:textColor="#000000" />
 
     <TextView
         android:id="@+id/tvlugar"
@@ -232,6 +251,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="Lugar toma"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -243,6 +263,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="Descripcion de la toma"
+        android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvlugar"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -270,6 +291,15 @@
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
 
+    <View
+        android:id="@+id/viewUnamed"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginBottom="14dp"
+        android:background="#062D70"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerResumen"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerResumen"
         android:layout_width="match_parent"
@@ -280,35 +310,44 @@
 
 
     <Button
-        android:id="@+id/btnSaveSignature"
-        android:layout_width="70dp"
+        android:id="@+id/btnInsertSignature"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
-        tools:layout_editor_absoluteX="397dp"
-        tools:layout_editor_absoluteY="701dp" />
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:text="Insertar Firma"
+        app:layout_constraintStart_toEndOf="@+id/signatureView"
+        app:layout_constraintTop_toBottomOf="@+id/btnClear" />
+
+    <com.example.aplicacionlesaa.SignatureView
+        android:id="@+id/signatureView"
+        android:layout_width="282dp"
+        android:layout_height="96dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:background="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp"
         android:text="Firma"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="622dp" />
-    <com.example.aplicacionlesaa.SignatureView
-        android:id="@+id/signatureView"
-        android:layout_width="282dp"
-        android:layout_height="96dp"
-        android:background="#FFFFFF"
-        tools:layout_editor_absoluteX="46dp"
-        tools:layout_editor_absoluteY="649dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtPuestoAutoAnalisis" />
 
     <Button
         android:id="@+id/btnClear"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="36dp"
         android:text="X"
-        tools:layout_editor_absoluteX="395dp"
-        tools:layout_editor_absoluteY="633dp" />
+        app:layout_constraintStart_toEndOf="@+id/signatureView"
+        app:layout_constraintTop_toBottomOf="@+id/tv26" />
 
     <Button
         android:id="@+id/btnAceptar"
@@ -320,22 +359,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="436dp"
-        android:layout_marginBottom="132dp"
-        android:text="Correo para envio de muestras"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <EditText
-        android:id="@+id/editTextTextEmailAddress"
+        android:id="@+id/txtCorreo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="412dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="240dp"
         android:ems="10"
         android:hint="Correo"
         android:inputType="textEmailAddress"
@@ -343,48 +372,68 @@
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <TextView
-        android:id="@+id/textView23"
+        android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="264dp"
+        android:layout_marginBottom="136dp"
+        android:text="Correo para envio de muestras"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewKienaturiza"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="24dp"
         android:text="Quien autoriza los analisis"
-        tools:layout_editor_absoluteX="115dp"
-        tools:layout_editor_absoluteY="475dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
     <EditText
-        android:id="@+id/editTextText2"
+        android:id="@+id/txtPuestoAutoAnalisis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="Puesto"
         android:inputType="text"
-        tools:layout_editor_absoluteX="115dp"
-        tools:layout_editor_absoluteY="564dp" />
+        app:layout_constraintStart_toEndOf="@+id/textView26"
+        app:layout_constraintTop_toBottomOf="@+id/txtNombreAutoAnalisis" />
 
     <TextView
         android:id="@+id/textView26"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="44dp"
         android:text="Puesto:"
-        tools:layout_editor_absoluteX="49dp"
-        tools:layout_editor_absoluteY="578dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv25" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/txtNombreAutoAnalisis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="Nombre"
         android:inputType="text"
-        tools:layout_editor_absoluteX="114dp"
-        tools:layout_editor_absoluteY="507dp" />
+        app:layout_constraintStart_toEndOf="@+id/tv25"
+        app:layout_constraintTop_toBottomOf="@+id/textViewKienaturiza" />
 
     <TextView
-        android:id="@+id/textView25"
+        android:id="@+id/tv25"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="64dp"
         android:text="Nombre:"
-        tools:layout_editor_absoluteX="49dp"
-        tools:layout_editor_absoluteY="523dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

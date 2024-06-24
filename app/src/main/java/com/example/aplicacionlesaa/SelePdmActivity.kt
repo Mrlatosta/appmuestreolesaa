@@ -166,21 +166,24 @@ class SelePdmActivity : AppCompatActivity() {
                         ) {
                             if (response.isSuccessful) {
                                 response.body()?.let { servicios ->
-
+                                    servicioMutableList.clear()
                                     servicioMutableList.addAll(servicios)
                                     adapter.notifyDataSetChanged()
 
 
                                 }
-                                for (servicio in servicioMutableList) {
+                                /*for (servicio in servicioMutableList) {
                                     if (servicio.descripcion.contains("AGUA DE USO RECREATIVO") || servicio.descripcion.contains("AGUA DE ALBERCA")) {
-                                        if (servicio.estudios_fisicoquimicos == "*"){
+                                        if (servicio.descripcion.contains("microbiológico") || servicio.descripcion.contains("microbiologico")){
                                             println("Por dos")
-                                            servicio.cantidad *= 2
-                                        }else{
-                                            servicio.cantidad *= 3
+                                            servicio.cantidad *= 4
                                         }
                                     }
+                                }*/
+                                for (servicio in servicioMutableList) {
+                                    if (servicio.descripcion.contains("RECOLECCION DE MUESTRAS")){
+                                        servicio.cantidad = 0
+                                        }
                                 }
                             } else {
                                 Log.e("MainActivity", "Error: ${response.code()}")

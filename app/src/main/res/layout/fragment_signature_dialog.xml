@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#155389"
+    android:padding="20dp">
+
+    <com.example.aplicacionlesaa.SignatureView
+        android:id="@+id/signatureView"
+        android:layout_width="282dp"
+        android:layout_height="96dp"
+        android:layout_centerInParent="true"
+        android:background="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signatureView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:background="#34A86F"
+        android:text="Guardar"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btnClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signatureView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:background="#FF5252"
+        android:text="Borrar"
+        android:textColor="#FFFFFF" />
+</RelativeLayout>

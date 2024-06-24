@@ -2,11 +2,18 @@ package com.example.aplicacionlesaa
 
 
 import RetrofitClient
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.text.Editable
 import android.util.Log
 import android.view.View
@@ -19,6 +26,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,13 +35,16 @@ import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.databinding.ActivityMainBinding
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
+import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Servicio
+import com.google.gson.Gson
 import java.sql.DriverManager
 import java.text.SimpleDateFormat
 import java.util.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -50,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     private val serviciosList: MutableList<Servicio> = mutableListOf()
     private val descripcionesList: MutableList<Descripcion> = mutableListOf()
     private var clientePdm: ClientePdm? = null
-    private var pdmSeleccionado: String? = null
+    private var pdmSeleccionado: String = ""
     private var folio: String? = null
 
     var contador = 0
@@ -284,6 +296,9 @@ class MainActivity : AppCompatActivity() {
                 clearTextFields()
                 Log.i("Ray", "Boton Pulsado")
             }
+            checkStoragePermissionAndSavePdf()
+
+
 
 
 
@@ -483,7 +498,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        Toast.makeText(this, "El estado de sepudo es: $sepudo", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, "El estado de sepudo es: $sepudo", Toast.LENGTH_SHORT).show()
         return sepudo
     }
 
@@ -546,6 +561,8 @@ class MainActivity : AppCompatActivity() {
                 tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
             Log.e("Prueba".toString(), "El contador es:$contador")
 
+            checkStoragePermissionAndSavePdf()
+
 
         } catch (e: Exception) {
             Log.e("Error".toString(), "Hubo un error")
@@ -593,5 +610,48 @@ class MainActivity : AppCompatActivity() {
                 spinner.adapter = arrayAdapter
             }
         }
+    }
+    private fun checkStoragePermissionAndSavePdf() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:" + applicationContext.packageName)
+                startActivityForResult(intent, storagePermissionRequestCode)
+            } else {
+                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    storagePermissionRequestCode
+                )
+            } else {
+                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+            }
+        }
+    }
+
+    fun saveDataToJson(context: Context, muestraData: MuestraData, filename: String) {
+        val gson = Gson()
+        val jsonString = gson.toJson(muestraData)
+
+        // Obtener la ruta de la carpeta Documents
+        val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+            .toString()
+
+
+        // Crear el archivo en la carpeta Documents
+        val file = File(documentsDir, filename)
+
+        // Escribir el archivo
+        file.writeText(jsonString)
     }
 }

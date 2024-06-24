@@ -21,6 +21,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.aplicacionlesaa.R
 import android.os.Build
+import com.example.aplicacionlesaa.api.ApiService
 
 
 class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
@@ -72,6 +73,78 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
         for (muestra in muestras) {
             Log.e("Muestra es:", muestra.toString())
 
+            val callCreateMuestreo = RetrofitClient.instance.createMuestreo(muestra)
+            callCreateMuestreo.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(applicationContext, "Muestra enviada con éxito", Toast.LENGTH_SHORT).show()
+                        if (hasNotificationPermission()) {
+                            showNotification(
+                                "Muestras enviadas",
+                                "Las muestras se han enviado con éxito."
+                            )
+                        } else {
+                            Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
+                        }
+
+                        // Preparar la solicitud de actualización
+                        val restarServicioRequest = ApiService.RestarServicioRequest(cantidad = 1)
+
+                        // Actualizar la cantidad del servicio
+                        val callUpdateServicio = RetrofitClient.instance.restarServicio(muestra.servicio_id, restarServicioRequest)
+                        callUpdateServicio.enqueue(object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                if (response.isSuccessful) {
+                                    if (hasNotificationPermission()) {
+                                        showNotification(
+                                            "Cantidad Actualizada",
+                                            "Las cantidad de muestras se han actualizado con exito."
+                                        )
+                                    } else {
+                                        Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
+                                    }
+                                    Toast.makeText(applicationContext, "Cantidad actualizada con éxito", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    if (hasNotificationPermission()) {
+                                        showNotification(
+                                            "Cantidad NO Actualizada",
+                                            "Las cantidad de muestras no se ha actualizado, error."
+                                        )
+                                    } else {
+                                        Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
+                                    }
+                                    Toast.makeText(applicationContext, "Error al actualizar cantidad", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                    } else {
+                        if (hasNotificationPermission()) {
+                            showNotification(
+                                "Muestras no enviadas",
+                                "Las muestras no se han podido enviar a la base de datos, ha ocurrido un error."
+                            )
+                        } else {
+                            Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
+                        }
+                        Toast.makeText(applicationContext, "Error al enviar muestra", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
+
+    /*private fun sendDataToApi(muestras: List<Muestra_pdm>) {
+        for (muestra in muestras) {
+            Log.e("Muestra es:", muestra.toString())
+
             val call = RetrofitClient.instance.createMuestreo(muestra)
             call.enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -108,7 +181,7 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
                 }
             })
         }
-    }
+    }*/
 
     private fun hasNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

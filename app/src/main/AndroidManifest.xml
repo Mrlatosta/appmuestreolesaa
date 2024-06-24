@@ -31,6 +31,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AplicacionLesaa">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,13 +40,15 @@
         </activity>
         <activity
             android:name=".SelePdmActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="false" />
         <activity
             android:name=".MainActivity2"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+        android:exported="false" />
     </application>
 
 </manifest>

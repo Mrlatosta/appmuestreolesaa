@@ -137,4 +137,5 @@
         app:layout_constraintTop_toBottomOf="@+id/tvhoram"
         tools:text="Se observo que se lavo las manos el señor" />
 
+
 </androidx.constraintlayout.widget.ConstraintLayout>

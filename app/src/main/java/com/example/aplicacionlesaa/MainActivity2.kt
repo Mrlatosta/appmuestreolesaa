@@ -1,14 +1,17 @@
 package com.example.aplicacionlesaa
 
+import RetrofitClient
 import SendEmailWorker
 import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -18,34 +21,41 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.aplicacionlesaa.adapter.muestraAdapterActResumen
+import com.example.aplicacionlesaa.api.ApiService
 import com.example.aplicacionlesaa.databinding.ActivityMain2Binding
+import com.example.aplicacionlesaa.model.ClientePdm
+import com.example.aplicacionlesaa.model.FolioMuestreo
+import com.example.aplicacionlesaa.model.MuestraData
+import com.example.aplicacionlesaa.model.Muestra_pdm
+import com.example.aplicacionlesaa.utils.NetworkUtils
+import com.example.aplicacionlesaa.worker.SendDataWorker
+import com.google.gson.Gson
+import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
-import java.io.File
-import java.io.FileOutputStream
-import android.net.Uri
-import android.provider.Settings
-import com.example.aplicacionlesaa.model.ClientePdm
+import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.properties.TextAlignment
+import com.itextpdf.layout.properties.UnitValue
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.aplicacionlesaa.model.FolioMuestreo
-import com.example.aplicacionlesaa.utils.NetworkUtils
+import java.io.File
+import java.io.FileOutputStream
 import java.time.LocalDate
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.Data
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
-import com.example.aplicacionlesaa.model.Muestra_pdm
-import com.example.aplicacionlesaa.worker.SendDataWorker
 
 
-class MainActivity2 : AppCompatActivity() {
+class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialogListener  {
 
     private lateinit var binding: ActivityMain2Binding
     private lateinit var muestraMutableList: MutableList<Muestra>
@@ -74,6 +84,20 @@ class MainActivity2 : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val btnInsertSignature = binding.btnInsertSignature
+        val btnClear = binding.btnClear
+        btnInsertSignature.setOnClickListener {
+            val signatureDialog = SignatureDialogFragment()
+            signatureDialog.setSignatureDialogListener(this)
+            signatureDialog.show(supportFragmentManager, "SignatureDialogFragment")
+        }
+
+        btnClear.setOnClickListener {
+            var signatureView = binding.signatureView
+
+            signatureView.clear()
+        }
+
 
         clientePdm = intent.getParcelableExtra("clientePdm")
         pdmSeleccionado = intent.getStringExtra("plandemuestreo") ?: "Error"
@@ -93,6 +117,13 @@ class MainActivity2 : AppCompatActivity() {
         btnAceptar.setOnClickListener {
             try {
                 val nombreArchivoPdf = "Muestras-Folio-${binding.tvFolio.text}.pdf"
+                /*try{
+                    //saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                    Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
+                    }catch (e: Exception){
+                        Log.i("Error guardand0:", e.toString())
+                }*/
+
                 val folioMuestreo = FolioMuestreo(
                     folio = binding.tvFolio.text.toString(),
                     fecha = LocalDate.now().toString(),
@@ -104,8 +135,22 @@ class MainActivity2 : AppCompatActivity() {
 
                 if (NetworkUtils.isInternetAvailable(this)) {
                     Log.i("Internet", "Si hay internet")
+
                     Toast.makeText(this, "Si hay internet, enviando muestras", Toast.LENGTH_SHORT).show()
                     sendMuestrasToApi(muestraListaNueva)
+                    enqueueSendEmailTask(this,
+                        "ray.contacto06@gmail.com",
+                        "$pdfPath/$nombreArchivoPdf"
+                    )
+                    /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
+                        "$pdfPath/$nombreArchivoPdf")*/
+                    try{
+                        val correo = binding.txtCorreo.text.toString()
+                        enqueueSendEmailTask(this, correo,
+                            "$pdfPath/$nombreArchivoPdf")
+                    }catch (e: Exception){
+                        Log.i("Error:", e.toString())
+                    }
                 } else {
                     Toast.makeText(this, "No hay internet, los datos se enviarán cuando se establezca una conexión", Toast.LENGTH_SHORT).show()
                     Log.i("Internet", "No hay internet")
@@ -163,12 +208,7 @@ class MainActivity2 : AppCompatActivity() {
 
 
                 checkStoragePermissionAndSavePdf()
-                enqueueSendEmailTask(this,
-                    "ray.contacto06@gmail.com",
-                    "$pdfPath/$nombreArchivoPdf"
-                )
-                /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
-                    "$pdfPath/$nombreArchivoPdf")*/
+
 
             } catch (e: Exception) {
                 Log.i("Error:", e.toString())
@@ -178,33 +218,77 @@ class MainActivity2 : AppCompatActivity() {
             //SendEmailTask("mrlatosta@gmail.com").execute()
         }
 
-        val btnClear = binding.btnClear
-        val btnSaveSignature = binding.btnSaveSignature
-        val signatureView = binding.signatureView
-
-        btnClear.setOnClickListener {
-            signatureView.clear()
-        }
-
-        btnSaveSignature.setOnClickListener {
-            val signatureBitmap = signatureView.getSignatureBitmap()
-            saveBitmap(signatureBitmap)
-        }
+//        val btnClear = binding.btnClear
+//        val btnSaveSignature = binding.btnInsertSignature
+//        val signatureView = binding.signatureView
+//
+//        btnClear.setOnClickListener {
+//            signatureView.clear()
+//        }
+//
+//        btnSaveSignature.setOnClickListener {
+//            val signatureBitmap = signatureView.getSignatureBitmap()
+//            saveBitmap(signatureBitmap)
+//        }
 
 
     }
+
+    /*private fun restarServicio(id: Int, cantidad: Int) {
+        val data = ApiService.RestarServicioRequest(cantidad)
+        val call = RetrofitClient.instance.restarServicio(id, data)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("restarServicio", "Servicio actualizado correctamente.")
+                    Toast.makeText(this@MainActivity2, "Servicio actualizado correctamente", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.e("restarServicio", "Error al actualizar servicio, código: ${response.code()}, mensaje: ${response.message()}")
+                    Toast.makeText(this@MainActivity2, "Error al actualizar servicio", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("restarServicio", "Error de red: ${t.message}", t)
+                Toast.makeText(this@MainActivity2, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }*/
+
 
     private fun sendMuestrasToApi(muestraListaNueva: List<Muestra_pdm>) {
         Log.i("Muestras son:", muestraListaNueva.toString())
         for (muestra in muestraListaNueva) {
             Log.i("Muestras son:", muestra.toString())
-            val call = RetrofitClient.instance.createMuestreo(muestra)
-            call.enqueue(object : Callback<Void> {
+
+            // Enviar la muestra a la API
+            val callCreateMuestreo = RetrofitClient.instance.createMuestreo(muestra)
+            callCreateMuestreo.enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
-                        Toast.makeText(applicationContext, "Muestras enviadas con éxito", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Muestra enviada con éxito", Toast.LENGTH_SHORT).show()
+
+                        // Preparar la solicitud de actualización
+                        val restarServicioRequest =
+                            ApiService.RestarServicioRequest(cantidad = 1) // O la cantidad que desees restar
+
+                        // Actualizar la cantidad del servicio
+                        val callUpdateServicio = RetrofitClient.instance.restarServicio(muestra.servicio_id, restarServicioRequest)
+                        callUpdateServicio.enqueue(object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                if (response.isSuccessful) {
+                                    Toast.makeText(applicationContext, "Cantidad actualizada con éxito", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(applicationContext, "Error al actualizar cantidad", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        })
                     } else {
-                        Toast.makeText(applicationContext, "Error al enviar muestras", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Error al enviar muestra", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -212,10 +296,10 @@ class MainActivity2 : AppCompatActivity() {
                     Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
-
         }
-
     }
+
+
 
 
 
@@ -248,6 +332,8 @@ class MainActivity2 : AppCompatActivity() {
                 intent.data = Uri.parse("package:" + applicationContext.packageName)
                 startActivityForResult(intent, storagePermissionRequestCode)
             } else {
+                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 savePdf("ray.contacto06@gmail.com")
             }
         } else {
@@ -262,7 +348,9 @@ class MainActivity2 : AppCompatActivity() {
                     storagePermissionRequestCode
                 )
             } else {
-                savePdf("ray.contacto06@gmail.com")
+                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                                savePdf("ray.contacto06@gmail.com")
             }
         }
     }
@@ -276,7 +364,10 @@ class MainActivity2 : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == storagePermissionRequestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 savePdf("ray.contacto06@gmail.com")
+
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
@@ -289,6 +380,8 @@ class MainActivity2 : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
                     savePdf("ray.contacto06@gmail.com")
+                    val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                    saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
                 }
@@ -299,43 +392,87 @@ class MainActivity2 : AppCompatActivity() {
 
     private fun savePdf(emailAddress: String) {
         val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-            .toString()
-        val file = File(pdfPath,"Muestras-Folio-${binding.tvFolio.text}.pdf")
+        val file = File(pdfPath, "Muestras-Folio-${binding.tvFolio.text}.pdf")
 
         try {
             val pdfWriter = PdfWriter(file)
             val pdfDocument = PdfDocument(pdfWriter)
-            val document = Document(pdfDocument)
+            val document = Document(pdfDocument, PageSize.A4.rotate())
 
+            document.add(Paragraph("El folio es: ${binding.tvFolio.text}"))
+            document.add(Paragraph("-------------------------------------------------------------"))
+            document.add(Paragraph(clientePdm?.nombre_empresa))
+            document.add(Paragraph(clientePdm?.direccion))
+            document.add(Paragraph(clientePdm?.telefono))
+            document.add(Paragraph(clientePdm?.correo))
+            document.add(Paragraph(clientePdm?.atencion))
+            document.add(Paragraph(clientePdm?.puesto))
+            document.add(Paragraph(clientePdm?.departamento))
+            document.add(Paragraph("La fecha es: ${LocalDate.now()}"))
+            document.add(Paragraph("-------------------------------------------------------------"))
+            document.add(Paragraph("Muestras Realizadas"))
+
+            // Crear la tabla
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f))
+            table.setWidth(UnitValue.createPercentValue(100f))
+
+            // Agregar encabezados de celda
+            addTableHeader(table)
+
+            // Agregar filas de datos
             for (muestra in muestraMutableList) {
-                document.add(Paragraph("Número de Muestra: ${muestra.numeroMuestra}"))
-                document.add(Paragraph("Fecha de Muestra: ${muestra.fechaMuestra}"))
-                document.add(Paragraph("Hora de Muestra: ${muestra.horaMuestra}"))
-                document.add(Paragraph("Registro de Muestra: ${muestra.registroMuestra}"))
-                document.add(Paragraph("Nombre de Muestra: ${muestra.nombreMuestra}"))
-                document.add(Paragraph("ID de Lab: ${muestra.idLab}"))
-                document.add(Paragraph("Cantidad Aproximada: ${muestra.cantidadAprox}"))
-                document.add(Paragraph("Temperatura: ${muestra.tempM}"))
-                document.add(Paragraph("Lugar de Toma: ${muestra.lugarToma}"))
-                document.add(Paragraph("Descripción: ${muestra.descripcionM}"))
-                document.add(Paragraph("Estudios Microbiologicos: ${muestra.emicro}"))
-                document.add(Paragraph("Estudios Fisicoquimicos: ${muestra.efisico}"))
-                document.add(Paragraph("Observaciones: ${muestra.observaciones}"))
-
-                document.add(Paragraph("-------------------------------------------------------------"))
+                addTableRow(table, muestra)
             }
 
+            // Configurar el tamaño de fuente para las celdas
+            table.setFontSize(8f)
+
+            document.add(table)
             document.close()
+
             Toast.makeText(this, "PDF saved at $pdfPath/Muestras-Folio-${binding.tvFolio.text}.pdf", Toast.LENGTH_LONG).show()
 
             // Enviar el PDF por correo electrónico
-            //SendEmailWorker(emailAddress, file).execute()
-            //SendEmailTask("atencionaclienteslab.lesa@gmail.com", file).execute()
+            // SendEmailWorker(emailAddress, file).execute()
+            // SendEmailTask(emailAddress, file).execute()
 
         } catch (e: Exception) {
-            Log.e("PDF", "Error saving PDF", e)
             Toast.makeText(this, "Error saving PDF: ${e.message}", Toast.LENGTH_LONG).show()
         }
+
+    }
+
+    private fun addTableHeader(table: Table) {
+        val headers = arrayOf(
+            "Número de Muestra", "Fecha de Muestra", "Hora de Muestra",
+            "Registro de Muestra", "Nombre de Muestra", "ID de Lab",
+            "Cantidad Aproximada", "Temperatura", "Lugar de Toma",
+            "Descripción", "Estudios Microbiológicos", "Estudios Fisicoquímicos",
+            "Observaciones"
+        )
+
+        headers.forEach {
+            val headerCell = Cell().add(Paragraph(it))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setBackgroundColor(DeviceRgb(30,19,51)).setFontColor(DeviceRgb(255,255,255))
+            table.addHeaderCell(headerCell)
+        }
+    }
+
+    private fun addTableRow(table: Table, muestra: Muestra) {
+        table.addCell(muestra.numeroMuestra)
+        table.addCell(muestra.fechaMuestra)
+        table.addCell(muestra.horaMuestra)
+        table.addCell(muestra.registroMuestra)
+        table.addCell(muestra.nombreMuestra)
+        table.addCell(muestra.idLab)
+        table.addCell(muestra.cantidadAprox)
+        table.addCell(muestra.tempM)
+        table.addCell(muestra.lugarToma)
+        table.addCell(muestra.descripcionM)
+        table.addCell(muestra.emicro)
+        table.addCell(muestra.efisico)
+        table.addCell(muestra.observaciones)
     }
 
     private fun saveBitmap(bitmap: Bitmap) {
@@ -354,38 +491,17 @@ class MainActivity2 : AppCompatActivity() {
         }
     }
 
-    private fun sendDataToApi(folioMuestreo: FolioMuestreo) {
-        Log.d("sendDataToApi", "Enviando datos: $folioMuestreo")
-
-        val call = RetrofitClient.instance.createFolioMuestreo(folioMuestreo)
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Log.d("sendDataToApi", "Datos enviados con éxito, respuesta: ${response.body()}")
-                    Toast.makeText(
-                        this@MainActivity2,
-                        "Datos enviados con éxito",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Log.e("sendDataToApi", "Error al enviar datos, código: ${response.code()}, mensaje: ${response.message()}")
-                    Toast.makeText(this@MainActivity2, "Error al enviar datos", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Log.e("sendDataToApi", "Error de red: ${t.message}", t)
-                Toast.makeText(this@MainActivity2, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
     fun enqueueSendEmailTask(context: Context, emailAddress: String, filePath: String) {
         val data = Data.Builder()
             .putString("emailAddress", emailAddress)
             .putString("filePath", filePath)
-            .putString("subject","Envio de muestras realizadas")
-            .putString("messageText","Le hago entrega de las muestras realizadas correspondiente al dia ${LocalDate.now()} y el folio de muestreo: ${binding.tvFolio.text}. Le agradecemos su preferencia")
+            .putString("subject","Solicitud de servicio GRUPO LESAA")
+            .putString("messageText","Hola ${clientePdm?.atencion} \n\n" +
+                    "Reciba un cordial saludo, por este medio le notificamos que ha recibido la solicitud de servicio correspondiente al muestreo del día ${LocalDate.now()} con No. de folio ${binding.tvFolio.text} el cual está en proceso y garantizamos la terminación de este en tiempo y forma. \n"+
+
+        "Sin más por el momento, quedamos a sus órdenes.\n\n"+
+        "! Tenga un excelente día ¡"
+        )
             .build()
 
         val sendEmailWorkRequest = OneTimeWorkRequest.Builder(SendEmailWorker::class.java)
@@ -421,6 +537,29 @@ class MainActivity2 : AppCompatActivity() {
 
         return listaMuestrasPdm
     }
+
+    override fun onSignatureSaved(bitmap: Bitmap) {
+        var signatureView = binding.signatureView
+
+        signatureView.setSignatureBitmap(bitmap)
+    }
+
+    fun saveDataToJson(context: Context, muestraData: MuestraData, filename: String) {
+        val gson = Gson()
+        val jsonString = gson.toJson(muestraData)
+
+        // Obtener la ruta de la carpeta Documents
+        val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+            .toString()
+
+
+        // Crear el archivo en la carpeta Documents
+        val file = File(documentsDir, filename)
+
+        // Escribir el archivo
+        file.writeText(jsonString)
+    }
+
 
 
 

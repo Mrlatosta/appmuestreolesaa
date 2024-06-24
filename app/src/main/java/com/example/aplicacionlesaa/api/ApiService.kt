@@ -12,6 +12,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ApiService {
@@ -44,6 +45,12 @@ interface ApiService {
     @POST("crearmuestra")
     fun createMuestreo(@Body muestra: Muestra_pdm): Call<Void>
 
+    @PUT("restarservicio/{id}")
+    fun restarServicio(@Path("id") id: Int, @Body data: RestarServicioRequest): Call<Void>
+
+    data class RestarServicioRequest(
+        val cantidad: Int
+    )
 
 //    @GET("posts/{id}")
 //    fun getPostById(@Path("id") id: Int): Call<Post>
