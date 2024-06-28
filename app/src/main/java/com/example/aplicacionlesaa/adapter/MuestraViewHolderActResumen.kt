@@ -4,7 +4,6 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aplicacionlesaa.Muestra
 import com.example.aplicacionlesaa.databinding.ItemMuestra2Binding
-import com.example.aplicacionlesaa.databinding.ItemMuestraBinding
 
 class MuestraViewHolderActResumen(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -21,7 +20,6 @@ class MuestraViewHolderActResumen(view: View) : RecyclerView.ViewHolder(view) {
 
         binding.tvnumMuestra.text = muestra.numeroMuestra.toString()
         binding.tvfecham.text = muestra.fechaMuestra.toString()
-        binding.tvhoram.text = muestra.horaMuestra
         binding.tvregistroM.text = muestra.registroMuestra
         binding.tvnombre.text = muestra.nombreMuestra
         binding.tvidLab.text = muestra.idLab

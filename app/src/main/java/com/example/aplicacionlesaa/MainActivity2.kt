@@ -205,7 +205,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                 .putString("registro_muestra_$index", muestra.registro_muestra)
                                 .putString("folio_muestreo_$index", muestra.folio_muestreo)
                                 .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
-                                .putString("hora_muestreo_$index", muestra.hora_muestreo)
                                 .putString("nombre_muestra_$index", muestra.nombre_muestra)
                                 .putString("id_lab_$index", muestra.id_lab)
                                 .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
@@ -667,7 +666,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 registro_muestra = muestra.registroMuestra,
                 folio_muestreo = binding.tvFolio.text.toString(),
                 fecha_muestreo = muestra.fechaMuestra,
-                hora_muestreo = muestra.horaMuestra,
                 nombre_muestra = muestra.nombreMuestra,
                 id_lab = muestra.idLab,
                 cantidad_aprox = muestra.cantidadAprox,

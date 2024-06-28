@@ -41,7 +41,6 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
                         registro_muestra = inputData.getString("registro_muestra_$i") ?: "",
                         folio_muestreo = inputData.getString("folio_muestreo_$i") ?: "",
                         fecha_muestreo = inputData.getString("fecha_muestreo_$i") ?: "",
-                        hora_muestreo = inputData.getString("hora_muestreo_$i") ?: "",
                         nombre_muestra = inputData.getString("nombre_muestra_$i") ?: "",
                         id_lab = inputData.getString("id_lab_$i") ?: "",
                         cantidad_aprox = inputData.getString("cantidad_aprox_$i") ?: "",

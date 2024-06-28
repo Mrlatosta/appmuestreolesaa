@@ -6,17 +6,16 @@ import android.os.Parcelable
 data class Muestra(
     var numeroMuestra: String,
     val fechaMuestra: String,
-    val horaMuestra: String,
     var registroMuestra: String,
-    val nombreMuestra: String,
-    val idLab: String,
-    val cantidadAprox: String,
-    val tempM: String,
-    val lugarToma: String,
-    val descripcionM: String,
-    val emicro: String,
-    val efisico: String,
-    val observaciones: String,
+    var nombreMuestra: String,
+    var idLab: String,
+    var cantidadAprox: String,
+    var tempM: String,
+    var lugarToma: String,
+    var descripcionM: String,
+    var emicro: String,
+    var efisico: String,
+    var observaciones: String,
     val servicioId: Int,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -32,14 +31,13 @@ data class Muestra(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readInt()
+        parcel.readInt(),
+
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(numeroMuestra)
         parcel.writeString(fechaMuestra)
-        parcel.writeString(horaMuestra)
         parcel.writeString(registroMuestra)
         parcel.writeString(nombreMuestra)
         parcel.writeString(idLab)

@@ -9,7 +9,8 @@ import com.example.aplicacionlesaa.R
 class muestraAdapter(
     private val muestraList: List<Muestra>,
     private val onClickListener: (Muestra) -> Unit,
-    private val onclickDelete:(Int) -> Unit
+    private val onclickDelete:(Int) -> Unit,
+    private val onclickEdit:(Int) -> Unit
 ) : RecyclerView.Adapter<MuestraViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MuestraViewHolder {
@@ -27,7 +28,7 @@ class muestraAdapter(
 
         //Pasa por cada uno de los items y va a llamar al fun render, devuelve la isntancia del viewholder y la posicion
         val item = muestraList[position]
-        holder.render(item, onClickListener,onclickDelete)
+        holder.render(item, onClickListener,onclickDelete,onclickEdit)
 
     }
 

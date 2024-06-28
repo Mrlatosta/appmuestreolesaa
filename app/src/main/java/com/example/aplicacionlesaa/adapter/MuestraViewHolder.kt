@@ -16,11 +16,15 @@ class MuestraViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 //    val fechaMuestreo = view.findViewById<TextView>(R.id.tvFechaMuestreo)
 
 
-    fun render(muestra: Muestra, onClickListener: (Muestra) -> Unit, onclickDelete: (Int) -> Unit) {
+    fun render(
+        muestra: Muestra,
+        onClickListener: (Muestra) -> Unit,
+        onclickDelete: (Int) -> Unit,
+        onclickEdit: (Int) -> Unit
+    ) {
 
         binding.tvnumMuestra.text = muestra.numeroMuestra.toString()
         binding.tvfecham.text = muestra.fechaMuestra.toString()
-        binding.tvhoram.text = muestra.horaMuestra
         binding.tvregistroM.text = muestra.registroMuestra
         binding.tvnombre.text = muestra.nombreMuestra
         binding.tvidLab.text = muestra.idLab
@@ -35,6 +39,7 @@ class MuestraViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         itemView.setOnClickListener { onClickListener(muestra) }
 
         binding.btnDelete.setOnClickListener{onclickDelete(adapterPosition)}
+        binding.btnEditar.setOnClickListener{onclickEdit(adapterPosition)}
 
 
     }

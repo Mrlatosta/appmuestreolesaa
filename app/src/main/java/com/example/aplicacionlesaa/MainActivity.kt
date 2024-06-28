@@ -50,18 +50,21 @@ class MainActivity : AppCompatActivity() {
 
     //private lateinit var handler: Handler
     private lateinit var runnable: Runnable
+    private var modoEdicion = false
 
     //Lista a la cual le vamos a quitar o poner muestras
     private val storagePermissionRequestCode = 1001
     private var muestraMutableList: MutableList<Muestra> =
         muestraProvider.listademuestras.toMutableList()
     private lateinit var adapter: muestraAdapter
+    private var indexMuestraAEditar: Int = -1
 
     private val serviciosList: MutableList<Servicio> = mutableListOf()
     private val descripcionesList: MutableList<Descripcion> = mutableListOf()
     private var clientePdm: ClientePdm? = null
     private var pdmSeleccionado: String = ""
     private var folio: String? = null
+    private var adapterEdicion: muestraAdapter? = null
 
     var contador = 0
 
@@ -148,6 +151,7 @@ class MainActivity : AppCompatActivity() {
         val txtCantidadAprox = binding.txtcantidadaprox
         val txtEmicro = binding.txtMicro
         val txtEfisico = binding.txtFisico
+        val txtNombre = binding.txtnombre
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -156,6 +160,7 @@ class MainActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
+
                 // Obtener el servicio seleccionado
                 val servicioSeleccionado = serviciosList[position]
                 println(position)
@@ -179,6 +184,12 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     try {
+                        txtNombre.text.clear()
+                    } catch (e: Exception) {
+                        Log.e("Error", "Error al limpiar txtNombre")
+                    }
+
+                    try {
                         tvDescripcion.text = servicioSeleccionado.descripcion
                     } catch (e: Exception) {
                         Log.e("Error", "Error al establecer la descripción en tvDescripcion")
@@ -188,6 +199,16 @@ class MainActivity : AppCompatActivity() {
                         tvCantidad.text = servicioSeleccionado.cantidad.toString()
                     } catch (e: Exception) {
                         Log.e("Error", "Error al establecer la cantidad en tvCantidad")
+                    }
+
+                    try{
+                        if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
+                            servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
+                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                        }
+                    }catch (e:Exception){
+                        Log.e("Error", "Error al establecer el nombre en txtNombre")
                     }
 
                     try {
@@ -256,8 +277,11 @@ class MainActivity : AppCompatActivity() {
         val btnSiguiente = binding.btnSiguiente
 
         btnSiguiente.setOnClickListener {
-
-            showConfirmationDialog()
+            if (modoEdicion == true) {
+                Toast.makeText(this, "No se puede avanzar en modo edicion", Toast.LENGTH_SHORT).show()
+            }else{
+                showConfirmationDialog()
+            }
 
             //checkStoragePermissionAndSavePdf()
         }
@@ -288,13 +312,104 @@ class MainActivity : AppCompatActivity() {
         var sepudo = false
         binding.btnStart.setOnClickListener {
 
-            sepudo = createMuestra()
-            if (sepudo == true) {
-                tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
-                clearTextFields()
-                Log.i("Ray", "Boton Pulsado")
+            if (modoEdicion == true){
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Confirmación")
+                builder.setMessage("¿Estás seguro de que deseas editar la muestra?")
+                builder.setPositiveButton("Sí") { dialog, which ->
+                    try {
+
+
+                        if (binding.txtnombre.text.trim().isEmpty() ||
+                            binding.txtcantidadaprox.text.trim().isEmpty() ||
+                            binding.txtTemp.text.trim().isEmpty() ||
+                            binding.txtLugar.text.trim().isEmpty() ||
+                            binding.txtdescripcion.text.trim().isEmpty()
+                        ) {
+
+                            Toast.makeText(
+                                this,
+                                "Por favor, complete todos los campos",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        } else {
+                            muestraMutableList[indexMuestraAEditar].nombreMuestra =
+                                binding.txtnombre.text.toString()
+                            muestraMutableList[indexMuestraAEditar].cantidadAprox =
+                                binding.txtcantidadaprox.text.toString()
+                            muestraMutableList[indexMuestraAEditar].tempM =
+                                binding.txtTemp.text.toString()
+                            muestraMutableList[indexMuestraAEditar].lugarToma =
+                                binding.txtLugar.text.toString()
+                            muestraMutableList[indexMuestraAEditar].descripcionM =
+                                binding.txtdescripcion.text.toString()
+                            muestraMutableList[indexMuestraAEditar].emicro =
+                                binding.txtMicro.text.toString()
+                            muestraMutableList[indexMuestraAEditar].efisico =
+                                binding.txtFisico.text.toString()
+                            muestraMutableList[indexMuestraAEditar].observaciones =
+                                binding.txtobservaciones.text.toString()
+
+                            adapterEdicion?.notifyItemChanged(indexMuestraAEditar)
+                            clearTextFields()
+                            Toast.makeText(this, "Muestra editada", Toast.LENGTH_SHORT).show()
+                            modoEdicion = false
+                            binding.tvTitulo.text = "Registro de Muestras"
+                            binding.btnStart.text = "Agregar"
+                            indexMuestraAEditar = -1
+                        }
+
+                    } catch (e: Exception) {
+                        Log.e("Error".toString(), "Hubo un error ${e}")
+                        modoEdicion = false
+                        binding.tvTitulo.text = "Registro de Muestras"
+                        binding.btnStart.text = "Agregar"
+                        clearTextFields()
+                        Toast.makeText(
+                            this,
+                            "Error al editar la muestra, Saliendo del modo edicion",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        indexMuestraAEditar = -1
+                    }
+
+                }
+
+                builder.setNegativeButton("No") { dialog, which ->
+                    dialog.dismiss()
+                }
+
+                builder.setNeutralButton("Cancelar Edicion") { dialog, which ->
+                    modoEdicion = false
+                    binding.tvTitulo.text = "Registro de Muestras"
+                    binding.btnStart.text = "Agregar"
+                    clearTextFields()
+                    Toast.makeText(
+                        this,
+                        "Saliendo del modo edicion",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    indexMuestraAEditar = -1
+                }
+
+                builder.show()
+
+
+
+
+
+            }else{
+                Toast.makeText(this, "Modo edicion ya es false", Toast.LENGTH_SHORT).show()
+                sepudo = createMuestra()
+                if (sepudo == true) {
+                    tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
+                    clearTextFields()
+                    Log.i("Ray", "Boton Pulsado")
+                }
+                checkStoragePermissionAndSavePdf()
             }
-            checkStoragePermissionAndSavePdf()
+
 
 
         }
@@ -453,7 +568,6 @@ class MainActivity : AppCompatActivity() {
                         Muestra(
                             numeroMuestra = numeroMuestra.toString(),
                             fechaMuestra = tvfecham.text.toString(),
-                            horaMuestra = "",
                             registroMuestra = tvregistromuestra.text.toString(),
                             nombreMuestra = txtnombrem.text.toString().trim(),
                             idLab = idLab,
@@ -501,65 +615,147 @@ class MainActivity : AppCompatActivity() {
         adapter = muestraAdapter(
             muestraList = muestraMutableList,
             onClickListener = { muestra -> onItemSelected(muestra) },
-            onclickDelete = { position -> onDeletedItem(position) })
+            onclickDelete = { position -> onDeletedItem(position) },
+            onclickEdit = { position -> onEditItem(position) })
 
         binding.recyclerMuestras.layoutManager = LinearLayoutManager(this)
         binding.recyclerMuestras.adapter = adapter
 
     }
 
-    private fun onItemSelected(muestra: Muestra) {
-        Toast.makeText(this, muestra.nombreMuestra, Toast.LENGTH_SHORT).show()
-        Log.i("Ray", muestra.nombreMuestra)
+    private fun onItemSelected(muestra: Muestra) { //pendiente
+        if (modoEdicion == true){
+            Toast.makeText(this, "No se puede copiar una muestra en modo edicion", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this, muestra.nombreMuestra, Toast.LENGTH_SHORT).show()
+            Log.i("Ray", muestra.nombreMuestra)
+        }
+
     }
 
     private fun onDeletedItem(position: Int) {
-        try {
+        if (modoEdicion == true){
+            Toast.makeText(this, "No se puede eliminar una muestra en modo edicion", Toast.LENGTH_SHORT).show()
+        }else {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Confirmación")
 
-            val muestraEliminada = muestraMutableList[position]
-            val tvCantidad = binding.tvCantidadRestante
-            val servicioAsociado = serviciosList.find { it.id == muestraEliminada.servicioId }
-            val spinner1 = binding.idSpinner1
+            builder.setMessage("¿Estás seguro de que deseas eliminar la muestra?")
 
-            // Verificar si se encontró el servicio asociado
-            if (servicioAsociado != null) {
-                // Incrementar la cantidad del servicio
-                servicioAsociado.cantidad++
-                println(muestraEliminada.servicioId.toString() + "= " + spinner1.selectedItem.toString())
-                if (muestraEliminada.servicioId == spinner1.selectedItem.toString().toInt()) {
-                    tvCantidad.text = servicioAsociado.cantidad.toString()
+            builder.setPositiveButton("Sí") { dialog, which ->
+                try {
+
+                    val muestraEliminada = muestraMutableList[position]
+                    val tvCantidad = binding.tvCantidadRestante
+                    val servicioAsociado =
+                        serviciosList.find { it.id == muestraEliminada.servicioId }
+                    val spinner1 = binding.idSpinner1
+
+                    // Verificar si se encontró el servicio asociado
+                    if (servicioAsociado != null) {
+                        // Incrementar la cantidad del servicio
+                        servicioAsociado.cantidad++
+                        println(muestraEliminada.servicioId.toString() + "= " + spinner1.selectedItem.toString())
+                        if (muestraEliminada.servicioId == spinner1.selectedItem.toString()
+                                .toInt()
+                        ) {
+                            tvCantidad.text = servicioAsociado.cantidad.toString()
+                        }
+
+                    }
+
+                    muestraMutableList.removeAt(position)
+                    //Notificar al listado que se ha en este caso borrado un item con una posicion
+                    adapter.notifyItemRemoved(position)
+                    val tvFolio = binding.tvFolio
+
+
+                    // Actualizar los números de muestra en la lista
+                    for (i in position until muestraMutableList.size) {
+                        muestraMutableList[i].numeroMuestra = (i + 1).toString()
+                        muestraMutableList[i].registroMuestra =
+                            tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
+
+                    }
+                    adapter.notifyItemRangeChanged(position, muestraMutableList.size)
+
+                    // Actualizar contador y TextView de número de muestra
+                    contador = muestraMutableList.size
+                    binding.tvNumeroMuestra.text = (contador + 1).toString()
+                    binding.tvregistromuestra.text =
+                        tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
+                    Log.e("Prueba".toString(), "El contador es:$contador")
+
+                    checkStoragePermissionAndSavePdf()
+
+
+                } catch (e: Exception) {
+                    Log.e("Error".toString(), "Hubo un error")
                 }
 
             }
 
-            muestraMutableList.removeAt(position)
-            //Notificar al listado que se ha en este caso borrado un item con una posicion
-            adapter.notifyItemRemoved(position)
-            val tvFolio = binding.tvFolio
-
-
-            // Actualizar los números de muestra en la lista
-            for (i in position until muestraMutableList.size) {
-                muestraMutableList[i].numeroMuestra = (i + 1).toString()
-                muestraMutableList[i].registroMuestra =
-                    tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
-
+            // Configurar el botón "No"
+            builder.setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
             }
-            adapter.notifyItemRangeChanged(position, muestraMutableList.size)
 
-            // Actualizar contador y TextView de número de muestra
-            contador = muestraMutableList.size
-            binding.tvNumeroMuestra.text = (contador + 1).toString()
-            binding.tvregistromuestra.text =
-                tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
-            Log.e("Prueba".toString(), "El contador es:$contador")
+            // Mostrar el cuadro de diálogo
+            builder.show()
 
-            checkStoragePermissionAndSavePdf()
-
-
-        } catch (e: Exception) {
-            Log.e("Error".toString(), "Hubo un error")
         }
+
+
+    }
+
+    private fun onEditItem(position: Int) {
+        if (modoEdicion == true){
+            Toast.makeText(this, "No se puede elegir editar otra muestra en modo edicion", Toast.LENGTH_SHORT).show()
+        }else{
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Confirmación")
+            builder.setMessage("¿Estás seguro de que deseas editar la muestra?")
+            builder.setPositiveButton("Sí") { dialog, which ->
+                try {
+                    modoEdicion = true
+                    val servicioSeleccionado = muestraMutableList[position].servicioId
+                    for (servicio in serviciosList) {
+                        if (servicio.id == servicioSeleccionado) {
+                            val spinner1 = binding.idSpinner1
+                            spinner1.setSelection(serviciosList.indexOf(servicio))
+                            break
+                        }
+                    }
+
+                    Toast.makeText(this, "Editando la muestra ${muestraMutableList[position].nombreMuestra}", Toast.LENGTH_SHORT).show()
+                    binding.tvTitulo.text = "Editando Muestra ${muestraMutableList[position].registroMuestra}"
+                    binding.btnStart.text = "Aceptar Edicion"
+                    binding.txtnombre.setText(muestraMutableList[position].nombreMuestra)
+                    binding.txtcantidadaprox.setText(muestraMutableList[position].cantidadAprox)
+                    binding.txtTemp.setText(muestraMutableList[position].tempM)
+                    binding.txtLugar.setText(muestraMutableList[position].lugarToma)
+                    binding.txtdescripcion.setText(muestraMutableList[position].descripcionM)
+                    binding.txtMicro.setText(muestraMutableList[position].emicro)
+                    binding.txtFisico.setText(muestraMutableList[position].efisico)
+                    binding.txtobservaciones.setText(muestraMutableList[position].observaciones)
+
+                    indexMuestraAEditar = position
+
+                    adapterEdicion = adapter
+
+
+                }catch (e:Exception){
+                    modoEdicion = false
+                    Log.e("Error".toString(), "Hubo un error ${e}")
+                }
+            }
+            builder.setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            builder.show()
+        }
+
 
     }
 

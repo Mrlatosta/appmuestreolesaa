@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    >
+    android:layout_marginTop="10dp">
 
     <TextView
         android:id="@+id/tvnumMuestra"
@@ -13,10 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="30dp"
-        tools:text="1"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1" />
 
     <TextView
         android:id="@+id/tvfecham"
@@ -30,23 +29,12 @@
         tools:text="13/06/2024" />
 
     <TextView
-        android:id="@+id/tvhoram"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginStart="8dp"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvfecham"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="14:22:47" />
-
-    <TextView
         android:id="@+id/tvregistroM"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvhoram"
+        app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="002118-1" />
 
@@ -138,10 +126,21 @@
         android:background="@color/red"
         android:text="X"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/tvFisico" />
+        app:layout_constraintStart_toEndOf="@+id/tvFisico"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/btnEditar"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginStart="12dp"
+        android:background="#006315"
+        android:text="✏️"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/btnDelete"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvObservaciones"
@@ -150,7 +149,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvhoram"
+        app:layout_constraintTop_toBottomOf="@+id/tvregistroM"
         tools:text="Se observo que se lavo las manos el señor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

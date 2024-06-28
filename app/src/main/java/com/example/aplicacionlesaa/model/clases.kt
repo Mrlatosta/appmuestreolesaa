@@ -139,7 +139,6 @@ data class Muestra_pdm(
     val registro_muestra: String,
     val folio_muestreo: String,
     val fecha_muestreo: String,
-    val hora_muestreo: String,
     val nombre_muestra: String,
     val id_lab: String,
     val cantidad_aprox: String,

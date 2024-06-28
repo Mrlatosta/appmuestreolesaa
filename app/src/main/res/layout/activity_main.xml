@@ -26,7 +26,7 @@
 
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="72dp"
@@ -75,26 +75,14 @@
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
     <TextView
-        android:id="@+id/tvhoram"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:text="Hora M."
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvfecham"
-        app:layout_constraintTop_toBottomOf="@id/btnStart" />
-
-    <TextView
         android:id="@+id/tvregistroM"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
         android:layout_marginTop="20dp"
         android:text="Registro M"
         android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvhoram"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
     <TextView
@@ -323,7 +311,7 @@
     <Spinner
         android:id="@+id/idSpinner1"
         android:layout_width="110dp"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="152dp"
         app:layout_constraintStart_toEndOf="@+id/textView3"
@@ -414,9 +402,8 @@
         android:layout_marginStart="84dp"
         android:layout_marginTop="24dp"
         android:text="Fecha M."
-
         android:textSize="25sp"
-        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintStart_toEndOf="@+id/tvTitulo"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!--<TextView
