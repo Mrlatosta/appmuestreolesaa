@@ -205,28 +205,15 @@
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
-        android:id="@+id/tvhoram"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="30dp"
-        android:text="Hora M"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvfecham"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
-
-    <TextView
         android:id="@+id/tvregistroM"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="Registro m"
         android:textColor="#000000"
         android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvhoram"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView

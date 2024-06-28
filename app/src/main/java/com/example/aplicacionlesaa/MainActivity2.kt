@@ -41,6 +41,7 @@ import com.example.aplicacionlesaa.worker.SendDataWorker
 import com.example.aplicacionlesaa.worker.SendDatosFaltantesWorker
 import com.google.gson.Gson
 import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.colors.WebColors
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
@@ -147,6 +148,30 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     )
                     val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
                         .toString()
+
+                    /*var htmlContent = createHtmlWithTable(this,muestraMutableList)
+                    val datosActualizar = mapOf(
+                        "año" to "2024",
+                        "mes" to LocalDate.now().monthValue.toString(),
+                        "dia" to LocalDate.now().dayOfMonth.toString(),
+                        "folio" to binding.tvFolio.text.toString(),
+                        "nombre" to clientePdm?.nombre_empresa.toString(),
+                        "direccion" to clientePdm?.direccion.toString(),
+                        "atencion" to clientePdm?.atencion.toString(),
+                        "puesto" to clientePdm?.puesto.toString(),
+                        "telefono" to clientePdm?.telefono.toString(),
+                        "correo" to clientePdm?.correo.toString()
+                        // Añade más según sea necesario
+                    )*/
+                    /*htmlContent = actualizarTablaHtml(htmlContent!!, datosActualizar)
+
+
+                    // Crear el PDF a partir del HTML generado
+                    if (htmlContent != null) {
+                        generatePdfFromHtml(htmlContent, "$pdfPath/listado_muestras.pdf")
+                    }else{
+                        println("No se pudo generar el PDF")
+                    }*/
 
                     if (NetworkUtils.isInternetAvailable(this)) {
                         Log.i("Internet", "Si hay internet")
@@ -480,16 +505,59 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val pdfDocument = PdfDocument(pdfWriter)
             val document = Document(pdfDocument, PageSize.A4.rotate())
 
-            document.add(Paragraph("El folio es: ${binding.tvFolio.text}"))
-            document.add(Paragraph("-------------------------------------------------------------"))
-            document.add(Paragraph(clientePdm?.nombre_empresa))
-            document.add(Paragraph(clientePdm?.direccion))
-            document.add(Paragraph(clientePdm?.telefono))
-            document.add(Paragraph(clientePdm?.correo))
-            document.add(Paragraph(clientePdm?.atencion))
-            document.add(Paragraph(clientePdm?.puesto))
-            document.add(Paragraph(clientePdm?.departamento))
-            document.add(Paragraph("La fecha es: ${LocalDate.now()}"))
+            // Colores
+            val headerColor = WebColors.getRGBColor("#002060")
+            val textColor = WebColors.getRGBColor("#FFFFFF")
+
+            // Crear la tabla con 4 columnas
+            val tableEncabezado = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            tableEncabezado.setWidth(UnitValue.createPercentValue(100f))
+
+            // Encabezados
+            val header1 = Cell(1, 2).add(Paragraph("DATOS DE SOLICITUD"))
+                .setBackgroundColor(headerColor).setFontColor(textColor)
+                .setTextAlignment(TextAlignment.CENTER)
+            val header2 = Cell(1, 2).add(Paragraph("DATOS DE QUIEN SOLICITA EL ANÁLISIS"))
+                .setBackgroundColor(headerColor).setFontColor(textColor)
+                .setTextAlignment(TextAlignment.CENTER)
+
+            tableEncabezado.addHeaderCell(header1)
+            tableEncabezado.addHeaderCell(header2)
+
+            // Añadir celdas de datos
+            tableEncabezado.addCell(Cell().add(Paragraph("AÑO")))
+            tableEncabezado.addCell(Cell().add(Paragraph(LocalDate.now().year.toString())))
+            tableEncabezado.addCell(Cell().add(Paragraph("NOMBRE")))
+            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.nombre_empresa.toString())))  // Replace with actual data
+
+            tableEncabezado.addCell(Cell().add(Paragraph("MES")))
+            tableEncabezado.addCell(Cell().add(Paragraph(LocalDate.now().monthValue.toString())))
+            tableEncabezado.addCell(Cell().add(Paragraph("DIRECCIÓN")))
+            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.direccion.toString())))  // Replace with actual data
+
+            tableEncabezado.addCell(Cell().add(Paragraph("DÍA")))
+            tableEncabezado.addCell(Cell().add(Paragraph(LocalDate.now().dayOfMonth.toString())))
+            tableEncabezado.addCell(Cell().add(Paragraph("ATENCIÓN A:")))
+            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.atencion.toString())))  // Replace with actual data
+
+            tableEncabezado.addCell(Cell().add(Paragraph("FOLIO")))
+            tableEncabezado.addCell(Cell().add(Paragraph(binding.tvFolio.text.toString())))  // Replace with binding.tvFolio.text
+            tableEncabezado.addCell(Cell().add(Paragraph("PUESTO")))
+            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.puesto.toString())))  // Replace with actual data
+
+            tableEncabezado.addCell(Cell(1, 2).add(Paragraph("")))  // Empty cells for alignment
+            tableEncabezado.addCell(Cell().add(Paragraph("Teléfono")))
+            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.telefono.toString())))  // Replace with actual data
+            tableEncabezado.addCell(Cell().add(Paragraph("Correo")))
+            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.correo.toString())))  // Replace with actual data
+
+            tableEncabezado.setFontSize(9f)
+
+            document.add(tableEncabezado)
+
+//            val logoPath = "res/raw/logorectangulartrans.png" // Ruta a tu imagen
+//            val img = Image(ImageDataFactory.create(logoPath))
+//            document.add(img)
             document.add(Paragraph("-------------------------------------------------------------"))
             document.add(Paragraph("Muestras Realizadas"))
 
@@ -643,6 +711,101 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         // Escribir el archivo
         file.writeText(jsonString)
     }
+
+
+
+    /*fun generatePdfFromHtml(html: String, outputPdfPath: String) {
+
+        val outputStream = FileOutputStream(outputPdfPath)
+        val writer = PdfWriter(outputStream)
+        val pdfDocument = com.itextpdf.kernel.pdf.PdfDocument(writer)
+        pdfDocument.defaultPageSize = PageSize.A4.rotate()
+
+        val document = Document(pdfDocument)
+
+        val fontProvider: FontProvider = DefaultFontProvider()
+        val converterProperties = ConverterProperties()
+        HtmlConverter.convertToPdf(html, pdfDocument, converterProperties)
+        document.close()
+
+    }
+
+    fun createHtmlWithTable(context: Context, muestras: List<Muestra>): String? {
+        // Cargar el HTML base desde el directorio raw
+        val inputStream = context.resources.openRawResource(R.raw.template)
+
+        val templateContent: String
+        try {
+            templateContent = inputStream.bufferedReader().use { it.readText() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+
+        val document: JsoupDocument = Jsoup.parse(templateContent)
+
+        // Encontrar el cuerpo de la tabla
+        val tableBody: Element = document.getElementById("table-body")!!
+
+        // Agregar filas a la tabla
+        for (muestra in muestras) {
+            val row = Element("tr")
+            row.appendElement("td").text(muestra.numeroMuestra)
+            row.appendElement("td").text(muestra.fechaMuestra)
+            row.appendElement("td").text(muestra.registroMuestra)
+            row.appendElement("td").text(muestra.nombreMuestra)
+            row.appendElement("td").text(muestra.idLab)
+            row.appendElement("td").text(muestra.cantidadAprox)
+            row.appendElement("td").text(muestra.tempM)
+            row.appendElement("td").text(muestra.lugarToma)
+            row.appendElement("td").text(muestra.descripcionM)
+            row.appendElement("td").text(muestra.emicro)
+            row.appendElement("td").text(muestra.efisico)
+            row.appendElement("td").text(muestra.observaciones)
+            tableBody.appendChild(row)
+        }
+
+        val imageUrl = "https://grupolesaa.com.mx/imagenes/logorectangulartrans.png"
+
+        val imgElement = document.createElement("img")
+        imgElement.attr("src", imageUrl)
+        imgElement.attr("width", "210")
+        imgElement.attr("alt", "Logo del Laboratorio")
+
+        val divElement = document.createElement("div")
+        divElement.appendChild(imgElement)
+        divElement.appendText("Laboratorio de Control Sanitario")
+
+        val tableBodyImg: Element = document.getElementById("content-img")
+        tableBodyImg.appendChild(divElement)
+
+
+        return document.outerHtml()
+    }
+
+    fun actualizarTablaHtml(htmlContent: String, datos: Map<String, String>): String? {
+        // Parsear el contenido HTML con Jsoup
+        val doc: JsoupDocument = Jsoup.parse(htmlContent)
+        println(htmlContent)
+
+        // Actualizar los valores en las celdas específicas
+        datos.forEach { (id, valor) ->
+            val elemento = doc.getElementById(id)
+            elemento?.text(valor)
+        }
+
+        // Convertir el documento modificado de vuelta a HTML
+        val htmlModificado = doc.outerHtml()
+
+        // Imprimir el HTML modificado (solo para verificar en consola)
+        println(htmlModificado)
+
+        return htmlModificado
+    }
+*/
+
+
+
 
 
 

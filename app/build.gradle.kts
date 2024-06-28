@@ -51,8 +51,13 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "META-INF/LICENSE.md" // Agrega esta línea para excluir LICENSE.md
             excludes += "META-INF/NOTICE.md"
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/native-image/resource-config.json"
+            excludes += "META-INF/native-image/reflect-config.json"
+
         }
     }
+
 
 
 
@@ -83,7 +88,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.itextpdf:itext7-core:7.2.3")
+    implementation ("com.itextpdf:itext7-core:7.1.15")
+    implementation("org.jsoup:jsoup:1.13.1")
+    // https://mvnrepository.com/artifact/com.itextpdf/html2pdf
+    implementation("com.itextpdf:html2pdf:5.0.4")
+
     implementation("org.postgresql:postgresql:42.6.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
@@ -96,6 +105,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-inappmessaging-display")
+    implementation("com.itextpdf:kernel:8.0.4")
+
+
 
 
 

@@ -11,8 +11,6 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
 import android.util.Log
@@ -20,12 +18,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -38,18 +34,20 @@ import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Servicio
 import com.google.gson.Gson
-import java.sql.DriverManager
-import java.text.SimpleDateFormat
-import java.util.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.sql.DriverManager
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
     //private lateinit var handler: Handler
     private lateinit var runnable: Runnable
 
@@ -291,15 +289,12 @@ class MainActivity : AppCompatActivity() {
         binding.btnStart.setOnClickListener {
 
             sepudo = createMuestra()
-            if (sepudo == true){
+            if (sepudo == true) {
                 tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
                 clearTextFields()
                 Log.i("Ray", "Boton Pulsado")
             }
             checkStoragePermissionAndSavePdf()
-
-
-
 
 
         }
@@ -309,7 +304,6 @@ class MainActivity : AppCompatActivity() {
         muestraProvider.listademuestras
 
         initRecyclerView()
-
 
 
     }
@@ -362,7 +356,7 @@ class MainActivity : AppCompatActivity() {
         intent.putParcelableArrayListExtra("muestraList", ArrayList(muestraMutableList))
         intent.putExtra("plandemuestreo", pdmSeleccionado)
         intent.putExtra("clientePdm", clientePdm)
-        intent.putExtra("folio",folio)
+        intent.putExtra("folio", folio)
 
 
 
@@ -406,11 +400,12 @@ class MainActivity : AppCompatActivity() {
         var idServicioEntero: Int = 0
         var tvCantidad = binding.tvCantidadRestante
         val spinner1 = binding.idSpinner1
+        var a = true
 
         if (txtnombrem.text.toString().trim().isEmpty() || txtcantidad.text.toString().trim()
                 .isEmpty() || txtTemp.text.toString().trim().isEmpty() || txtLugar.text.toString()
                 .trim().isEmpty() || txtDescripcion.text.toString().trim().isEmpty()
-        ) {
+        )        {
             Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
             sepudo = false
         } else {
@@ -442,8 +437,6 @@ class MainActivity : AppCompatActivity() {
 
                     // Formatea la fecha al nuevo formato sin barras
                     val fechaSinBarras = formatoSalida.format(fecha)
-
-
 
 
                     //val fechaSinBarras = tvfecham.text.toString().replace("/", "")
@@ -611,6 +604,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun checkStoragePermissionAndSavePdf() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
@@ -618,8 +612,12 @@ class MainActivity : AppCompatActivity() {
                 intent.data = Uri.parse("package:" + applicationContext.packageName)
                 startActivityForResult(intent, storagePermissionRequestCode)
             } else {
-                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
-                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                val muestraData = MuestraData(
+                    binding.tvFolio.text.toString(),
+                    pdmSeleccionado,
+                    muestraMutableList
+                )
+                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
             }
         } else {
             if (ContextCompat.checkSelfPermission(
@@ -633,8 +631,12 @@ class MainActivity : AppCompatActivity() {
                     storagePermissionRequestCode
                 )
             } else {
-                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
-                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                val muestraData = MuestraData(
+                    binding.tvFolio.text.toString(),
+                    pdmSeleccionado,
+                    muestraMutableList
+                )
+                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
             }
         }
     }
@@ -644,8 +646,9 @@ class MainActivity : AppCompatActivity() {
         val jsonString = gson.toJson(muestraData)
 
         // Obtener la ruta de la carpeta Documents
-        val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-            .toString()
+        val documentsDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                .toString()
 
 
         // Crear el archivo en la carpeta Documents

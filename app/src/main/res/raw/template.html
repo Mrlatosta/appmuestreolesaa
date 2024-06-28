@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es-ESP">
+
+<head>
+    <title>PDF Example</title>
+    <style>
+        #tablaMuestras {
+            width: 100%;
+            border-collapse: collapse;
+
+        }
+
+        #tablaMuestras th,
+        td {
+            min-width: 50px;
+            height: auto;
+            border: 1px solid black;
+            padding: 2px;
+            text-align: justify;
+            font-size: 0.6rem;
+            word-wrap: break-word;
+        }
+
+        #tablaMuestras th {
+            background-color: #f2f2f2;
+        }
+
+        #tablaheader {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #tablaheader th,
+        td {
+            color: black;
+            padding: 5px;
+        }
+
+        #eader {
+            background-color: azure;
+            font-weight: bold;
+            width: 80px;
+            text-align: center;
+            padding: 0px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <div style="display: inline-block;">
+        <div
+            style="display: inline-block; vertical-align: top; width: 730px; text-align: center; color: white; padding: 5px;">
+
+            <div style="background-color: #002668; padding: 1px;">
+                <h3 style="font-size: 0.8rem; margin-bottom: 0px;">F-ADM-LAB-83. SOLICITUD DE SERVICIO DE ANALISIS DE AGUAS Y ALIMENTOS</h3>
+                <p style="margin-top: 0px; font-size: 0.6rem;">Servicios que generan valor</p>
+
+            </div>
+
+            <div>
+                <table id="tablaheader" style="margin-top: 5px;">
+                    <tr>
+                        <td style="text-align: center; background-color: #002668; color: white;" colspan="2">DATOS DE
+                            SOLICITUD</td>
+                        <td style="background-color: #002668;"></td>
+                        <td style="text-align: center; background-color: #002668; color: white;" colspan="3">DATOS DE
+                            QUIEN SOLICITA EL ANÁLISIS</td>
+                    </tr>
+                    <tr>
+                        <td id="eader">AÑO</td>
+                        <td id="año"></td>
+                        <td id="eader">NOMBRE</td>
+                        <td id="nombre" colspan="3"></td>
+                    </tr>
+                    <tr>
+                        <td id="eader">MES</td>
+                        <td id="mes"></td>
+                        <td id="eader">DIRECCION</td>
+                        <td id="direccion" colspan="3"></td>
+                    </tr>
+                    <tr>
+                        <td id="eader">DIA</td>
+                        <td id="dia"></td>
+                        <td id="eader">ATENCIÓN A:</td>
+                        <td id="atencion"></td>
+                        <td id="eader">Telefono</td>
+                        <td id="telefono"></td>
+                    </tr>
+                    <tr>
+                        <td id="eader">FOLIO</td>
+                        <td id="folio" style="color: red; font-weight: bold;"></td>
+                        <td id="eader">PUESTO</td>
+                        <td id="puesto"></td>
+                        <td id="eader">Correo</td>
+                        <td id="correo"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="content-img" style="display: inline-block; vertical-align: bottom; margin-left: 10px;margin-bottom: 10px;">
+            <img src="file:///android_res/raw/logorectangulartrans.png" width="210" alt="">
+        </div>
+    </div>
+
+
+    <div>
+        <h1>Listado de Muestras</h1>
+        <table id="tablaMuestras">
+            <thead>
+                <tr>
+                    <th>NO.</th>
+                    <th>Fecha Muestreo</th>
+                    <th>Registro Muestra</th>
+                    <th>Nombre Muestra</th>
+                    <th>ID Lab</th>
+                    <th>Cantidad Aprox</th>
+                    <th>Temperatura</th>
+                    <th>Lugar Toma</th>
+                    <th>Descripción Toma</th>
+                    <th>E Micro</th>
+                    <th>E Físico</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <!-- Los elementos se agregarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>
