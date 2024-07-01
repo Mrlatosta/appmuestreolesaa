@@ -40,17 +40,22 @@ import com.example.aplicacionlesaa.utils.NetworkUtils
 import com.example.aplicacionlesaa.worker.SendDataWorker
 import com.example.aplicacionlesaa.worker.SendDatosFaltantesWorker
 import com.google.gson.Gson
+import com.itextpdf.io.image.ImageDataFactory
+import com.itextpdf.io.source.ByteArrayOutputStream
 import com.itextpdf.kernel.colors.DeviceRgb
-import com.itextpdf.kernel.colors.WebColors
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
+import com.itextpdf.layout.borders.Border
 import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.properties.HorizontalAlignment
 import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.properties.UnitValue
+import com.itextpdf.layout.properties.VerticalAlignment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -503,68 +508,119 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val pdfWriter = PdfWriter(file)
             val pdfDocument = PdfDocument(pdfWriter)
             val document = Document(pdfDocument, PageSize.A4.rotate())
+            val inputStream = applicationContext.resources.openRawResource(R.raw.logorectangulartrans)
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            var nextByte = inputStream.read()
+            while (nextByte != -1) {
+                byteArrayOutputStream.write(nextByte)
+                nextByte = inputStream.read()
+            }
+            val imageData = byteArrayOutputStream.toByteArray()
+
+            val image = Image(ImageDataFactory.create(imageData))
+            image.scaleToFit(150f, 100f)
+            //document.add(image)
 
             // Colores
-            val headerColor = WebColors.getRGBColor("#002060")
-            val textColor = WebColors.getRGBColor("#FFFFFF")
+            // Crear colores para la tabla
+            // Crear colores para la tabla
+            // Crear colores para la tabla
+            val headerColor = DeviceRgb(0, 0, 102)
+            val subHeaderColor = DeviceRgb(153, 204, 255)
+            val whiteColor = DeviceRgb(255, 255, 255)
+            val fontSize = 8f // Tamaño de fuente más pequeño
 
-            // Crear la tabla con 4 columnas
-            val tableEncabezado = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
-            tableEncabezado.setWidth(UnitValue.createPercentValue(100f))
+            // Crear tabla principal (2 columnas)
+            val mainTable = Table(UnitValue.createPercentArray(floatArrayOf(3f, 1f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
 
-            // Encabezados
-            val header1 = Cell(1, 2).add(Paragraph("DATOS DE SOLICITUD"))
-                .setBackgroundColor(headerColor).setFontColor(textColor)
+            // Tabla de encabezado (3 columnas)
+            val tableEncabezado = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
+
+            // Encabezado principal
+            val mainHeaderCell = Cell(1, 2)
+                .add(Paragraph("F-LAB 83. SOLICITUD DE SERVICIO DE ANÁLISIS DE AGUAS Y ALIMENTOS").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor).setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            tableEncabezado.addCell(mainHeaderCell)
+
+            // Sub-encabezado
+            val subHeaderCell = Cell(1, 2)
+                .add(Paragraph("Servicios que generan valor").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
                 .setTextAlignment(TextAlignment.CENTER)
-            val header2 = Cell(1, 2).add(Paragraph("DATOS DE QUIEN SOLICITA EL ANÁLISIS"))
-                .setBackgroundColor(headerColor).setFontColor(textColor)
-                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            tableEncabezado.addCell(subHeaderCell)
 
-            tableEncabezado.addHeaderCell(header1)
-            tableEncabezado.addHeaderCell(header2)
+            // Crear subtabla para "DATOS DE SOLICITUD" (2 columnas)
+            val datosSolicitudTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f)))
 
-            // Añadir celdas de datos
-            tableEncabezado.addCell(Cell().add(Paragraph("AÑO")))
-            tableEncabezado.addCell(Cell().add(Paragraph(LocalDate.now().year.toString())))
-            tableEncabezado.addCell(Cell().add(Paragraph("NOMBRE")))
-            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.nombre_empresa.toString())))  // Replace with actual data
+            datosSolicitudTable.addCell(Cell().add(Paragraph("AÑO:").setFontSize(fontSize)).setFontColor(whiteColor).setBackgroundColor(headerColor))
+            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().year.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
 
-            tableEncabezado.addCell(Cell().add(Paragraph("MES")))
-            tableEncabezado.addCell(Cell().add(Paragraph(LocalDate.now().monthValue.toString())))
-            tableEncabezado.addCell(Cell().add(Paragraph("DIRECCIÓN")))
-            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.direccion.toString())))  // Replace with actual data
+            datosSolicitudTable.addCell(Cell().add(Paragraph("MES:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().monthValue.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
 
-            tableEncabezado.addCell(Cell().add(Paragraph("DÍA")))
-            tableEncabezado.addCell(Cell().add(Paragraph(LocalDate.now().dayOfMonth.toString())))
-            tableEncabezado.addCell(Cell().add(Paragraph("ATENCIÓN A:")))
-            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.atencion.toString())))  // Replace with actual data
+            datosSolicitudTable.addCell(Cell().add(Paragraph("DÍA:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().dayOfMonth.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
 
-            tableEncabezado.addCell(Cell().add(Paragraph("FOLIO")))
-            tableEncabezado.addCell(Cell().add(Paragraph(binding.tvFolio.text.toString())))  // Replace with binding.tvFolio.text
-            tableEncabezado.addCell(Cell().add(Paragraph("PUESTO")))
-            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.puesto.toString())))  // Replace with actual data
+            datosSolicitudTable.addCell(Cell().add(Paragraph("FOLIO:").setFontSize(fontSize).setFontColor(whiteColor)).setBackgroundColor(headerColor))
+            datosSolicitudTable.addCell(Cell().add(Paragraph(binding.tvFolio.text.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
 
-            tableEncabezado.addCell(Cell(1, 2).add(Paragraph("")))  // Empty cells for alignment
-            tableEncabezado.addCell(Cell().add(Paragraph("Teléfono")))
-            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.telefono.toString())))  // Replace with actual data
-            tableEncabezado.addCell(Cell().add(Paragraph("Correo")))
-            tableEncabezado.addCell(Cell().add(Paragraph(clientePdm?.correo.toString())))  // Replace with actual data
+            // Crear subtabla para "DATOS DE QUIEN SOLICITA LOS ANÁLISIS" (4 columnas)
+            val datosSolicitanteTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
 
-            tableEncabezado.setFontSize(9f)
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.nombre_empresa).setFontSize(fontSize)))
 
-            document.add(tableEncabezado)
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("DIRECCIÓN:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.direccion).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("ATENCIÓN A:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.atencion).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("TELÉFONO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.telefono).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.puesto).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("CORREO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.correo).setFontSize(fontSize)))
+
+            // Agregar sub-tablas a la tabla de encabezado en la misma fila
+            tableEncabezado.addCell(Cell(1, 1).add(Paragraph("DATOS DE SOLICITUD").setFontColor(whiteColor)).setBackgroundColor(headerColor).setFontSize(fontSize))
+            tableEncabezado.addCell(Cell(1, 2).add(Paragraph("DATOS DE QUIEN SOLICITA LOS ANÁLISIS").setFontColor(whiteColor)).setBackgroundColor(headerColor).setFontSize(fontSize))
+
+            tableEncabezado.addCell(Cell().add(datosSolicitudTable)).setBorder(Border.NO_BORDER)
+            tableEncabezado.addCell(Cell(1, 2).add(datosSolicitanteTable)).setBorder(Border.NO_BORDER)
+
+            // Agregar la tabla de encabezado y el logo a la tabla principal
+            mainTable.addCell(Cell().add(tableEncabezado).setBorder(Border.NO_BORDER)).setBorder(Border.NO_BORDER)
+            mainTable.addCell(Cell().add(image).setVerticalAlignment(VerticalAlignment.MIDDLE).setHorizontalAlignment(HorizontalAlignment.RIGHT).setBorder(Border.NO_BORDER)).setBorder(Border.NO_BORDER)
+
+            // Agregar la tabla principal al documento
+            document.add(mainTable)
 
 //            val logoPath = "res/raw/logorectangulartrans.png" // Ruta a tu imagen
 //            val img = Image(ImageDataFactory.create(logoPath))
 //            document.add(img)
-            document.add(Paragraph("-------------------------------------------------------------"))
-            document.add(Paragraph("Muestras Realizadas"))
+//            document.add(Paragraph("Muestras Realizadas"))
 
             // Crear la tabla
-            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f))
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(15f)
             table.setWidth(UnitValue.createPercentValue(100f))
 
             // Agregar encabezados de celda
+            val tabeadercell = Cell(1, 12)
+                .add(Paragraph("Muestras Realizadas").setFontColor(whiteColor).setFontSize(15f))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            table.addHeaderCell(tabeadercell)
+
             addTableHeader(table)
 
             // Agregar filas de datos
@@ -586,6 +642,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
         } catch (e: Exception) {
             Toast.makeText(this, "Error saving PDF: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("Error pdf:", e.toString())
         }
 
     }
@@ -602,7 +659,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         headers.forEach {
             val headerCell = Cell().add(Paragraph(it))
                 .setTextAlignment(TextAlignment.CENTER)
-                .setBackgroundColor(DeviceRgb(30,19,51)).setFontColor(DeviceRgb(255,255,255))
+                .setBackgroundColor(DeviceRgb(0, 0, 102)).setFontColor(DeviceRgb(255,255,255))
             table.addHeaderCell(headerCell)
         }
     }
