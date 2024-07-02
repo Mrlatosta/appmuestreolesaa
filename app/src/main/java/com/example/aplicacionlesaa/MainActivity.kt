@@ -1,13 +1,13 @@
 package com.example.aplicacionlesaa
 
 
+import DragManageAdapter
 import RetrofitClient
 import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -26,6 +26,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.databinding.ActivityMainBinding
@@ -33,15 +34,15 @@ import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Servicio
+import com.example.aplicacionlesaa.utils.OnItemMovedListener
 import com.google.gson.Gson
 import java.io.File
-import java.sql.DriverManager
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity() {
     private var folio: String? = null
     private var lugares: ArrayList<String> = ArrayList()
     private var adapterEdicion: muestraAdapter? = null
+    private var fechaSinBarras: String = ""
 
     var contador = 0
 
@@ -562,7 +564,7 @@ class MainActivity : AppCompatActivity() {
                     val fecha = formatoEntrada.parse(tvfecham.text.toString())
 
                     // Formatea la fecha al nuevo formato sin barras
-                    val fechaSinBarras = formatoSalida.format(fecha)
+                     fechaSinBarras = formatoSalida.format(fecha)
 
 
                     //val fechaSinBarras = tvfecham.text.toString().replace("/", "")
@@ -627,12 +629,23 @@ class MainActivity : AppCompatActivity() {
             muestraList = muestraMutableList,
             onClickListener = { muestra -> onItemSelected(muestra) },
             onclickDelete = { position -> onDeletedItem(position) },
-            onclickEdit = { position -> onEditItem(position) })
+            onclickEdit = { position -> onEditItem(position) },
+            this)
 
         binding.recyclerMuestras.layoutManager = LinearLayoutManager(this)
         binding.recyclerMuestras.adapter = adapter
+        val callback = DragManageAdapter(adapter)
+        val touchHelper = ItemTouchHelper(callback)
+        touchHelper.attachToRecyclerView(binding.recyclerMuestras)
+
 
     }
+    override fun onItemMoved() {
+        // Implementa la lógica para guardar los datos cuando un item se mueva
+        checkStoragePermissionAndSavePdf()
+        Log.i("Ray", "Se ha movido un item")
+    }
+
 
     private fun onItemSelected(muestra: Muestra) { //pendiente
         if (modoEdicion == true){
@@ -686,6 +699,7 @@ class MainActivity : AppCompatActivity() {
                         muestraMutableList[i].numeroMuestra = (i + 1).toString()
                         muestraMutableList[i].registroMuestra =
                             tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
+                        muestraMutableList[i].idLab = fechaSinBarras+tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
 
                     }
                     adapter.notifyItemRangeChanged(position, muestraMutableList.size)
@@ -773,43 +787,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         //.removeCallbacks(runnable) // Detener la actualización de la hora cuando se destruye la actividad
-    }
-
-
-    private fun obtenerServicios() {
-        AsyncTask.execute {
-            val ids = mutableListOf<String>()
-            val connection = DriverManager.getConnection(
-                "jdbc:postgresql://db-grupolesaa-rds.c1qss02m236z.us-east-1.rds.amazonaws.com:5432/dbgrupolesaa",
-                "postgres",
-                "Lara1234"
-            )
-            val query = """
-            SELECT servicios.id
-            FROM servicios
-            JOIN estudios ON estudios.clave_interna = servicios.estudio_clave_interna
-            WHERE servicios.folio_id = ?
-        """.trimIndent()
-            val preparedStatement = connection.prepareStatement(query)
-            preparedStatement.setString(1, "FCLHTL-LAB-062-COT-001")
-
-            val resultSet = preparedStatement.executeQuery()
-            while (resultSet.next()) {
-                val id = resultSet.getString("id")
-                ids.add(id)
-            }
-            resultSet.close()
-            preparedStatement.close()
-            connection.close()
-
-            // Actualizar el spinner en el hilo principal
-            runOnUiThread {
-                val spinner: Spinner = findViewById(R.id.idSpinner1)
-                val arrayAdapter =
-                    ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, ids)
-                spinner.adapter = arrayAdapter
-            }
-        }
     }
 
     private fun checkStoragePermissionAndSavePdf() {
