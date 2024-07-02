@@ -370,6 +370,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             binding.tvTitulo.text = "Registro de Muestras"
                             binding.btnStart.text = "Agregar"
                             indexMuestraAEditar = -1
+                            binding.idSpinner1.isEnabled = true
+
                         }
 
                     } catch (e: Exception) {
@@ -377,6 +379,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         modoEdicion = false
                         binding.tvTitulo.text = "Registro de Muestras"
                         binding.btnStart.text = "Agregar"
+                        binding.idSpinner1.isEnabled = true
                         clearTextFields()
                         Toast.makeText(
                             this,
@@ -651,6 +654,30 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         if (modoEdicion == true){
             Toast.makeText(this, "No se puede copiar una muestra en modo edicion", Toast.LENGTH_SHORT).show()
         }else{
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Confirmación")
+            builder.setMessage("¿Estás seguro de que deseas copiar la muestra ${muestra.nombreMuestra}?")
+            builder.setPositiveButton("Sí") { dialog, which ->
+                try {
+                    clearTextFields()
+                    binding.txtnombre.setText(muestra.nombreMuestra)
+                    binding.txtTemp.setText(muestra.tempM)
+                    binding.txtLugar.setText(muestra.lugarToma)
+                    binding.txtdescripcion.setText(muestra.descripcionM)
+                } catch (e: Exception) {
+                    Log.e("Error".toString(), "Hubo un error ${e}")
+                }
+
+            }
+
+            builder.setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            builder.show()
+
+
+
             Toast.makeText(this, muestra.nombreMuestra, Toast.LENGTH_SHORT).show()
             Log.i("Ray", muestra.nombreMuestra)
         }
@@ -748,9 +775,12 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         if (servicio.id == servicioSeleccionado) {
                             val spinner1 = binding.idSpinner1
                             spinner1.setSelection(serviciosList.indexOf(servicio))
+                            spinner1.isEnabled = false
                             break
                         }
                     }
+
+
 
                     Toast.makeText(this, "Editando la muestra ${muestraMutableList[position].nombreMuestra}", Toast.LENGTH_SHORT).show()
                     binding.tvTitulo.text = "Editando Muestra ${muestraMutableList[position].registroMuestra}"

@@ -635,6 +635,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             // Crear subtabla para "DATOS DE SOLICITUD" (2 columnas)
             val datosSolicitudTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f)))
+            datosSolicitudTable.setWidth(UnitValue.createPercentValue(100f))
+            datosSolicitudTable.setHeight(UnitValue.createPercentValue(100f))
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("AÑO:").setFontSize(fontSize)).setFontColor(whiteColor).setBackgroundColor(headerColor))
             datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().year.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
@@ -718,10 +720,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 .setBorder(Border.NO_BORDER)
             table.addHeaderCell(cellobsv)
 
-
-
-
-
             addTableHeader(table)
 
             // Agregar filas de datos
@@ -730,9 +728,229 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             }
 
             // Configurar el tamaño de fuente para las celdas
-            table.setFontSize(8f)
-
+            table.setFontSize(7f)
             document.add(table)
+            val paragrafoNomenclaturas = Paragraph("Ac = Acanthamoeba spp." +
+                    "AgT = Plata Total " +
+                    "Al = Aluminio " +
+                    "Alk = Alcalinidad " +
+                    "Ao = Absorcion de Oxigenos " +
+                    "As = Arsenico " +
+                    "AyG = Aceites y Grasas " +
+                    "Ba = Bario " +
+                    "Bc = Bacilius cereu " +
+                    "Br = Borato " +
+                    "Cd = Cadmio " +
+                    "Ce = Conductividad Electrica " +
+                    "Cf = Coliformes fecales " +
+                    "Cl = Cloro libre " +
+                    "Cn = Cianuros " +
+                    "CnT = Cianuros Totales " +
+                    "Cot = Carbono Orgánico Total " +
+                    "Cp = Clostridium Perfringens " +
+                    "Cr = Cromo" +
+                    "Crl = Cloro Residual Libre" +
+                    "Crnas = Cloraminas " +
+                    "CrT = Cromo Total " +
+                    "Ct = Coliformes Totales " +
+                    "Cu = Cobre " +
+                    "Cv = Color Verdadero " +
+                    "Cya = Ácido Cianúrico " +
+                    "Cyc = Cyclospora " +
+                    "DQO = Demanda Quimica de Oxigeno " +
+                    "DurT = Dureza Total " +
+                    "E. FAECALIS = Enterococcus Feacalis " +
+                    "E.COLI = Escherichia coli " +
+                    "Fe = Hierro " +
+                    "Fs = Fluoruros " +
+                    "GL = Giardia lamblia " +
+                    "Hg = Mercurio " +
+                    "HH = Huevos de Helminto " +
+                    "Irl = Yodo Residual Libre" +
+                    "Lm = Listeria monocytogenes " +
+                    "LP = Legionella spp. "+
+                    "Lv = Levaduras " +
+                    "Ma = Mesofílicos aerobios " +
+                    "Mg = Magnesio " +
+                    "MH = Mohos " +
+                    "Ng = Naegleria spp " +
+                    "Ni = Niquel " +
+                    "N-NH3 = Nitrógenos Amoniacal " +
+                    "N-NO2¯ = Nitrógeno de Nitritos " +
+                    "N-NO3¯ = Nitrógenos de Nitratos " +
+                    "Nt = Nitrogeno Total " +
+                    "Pa = Pseudomonas Aeruginosa. " +
+                    "Pb = Plomo " +
+                    "Pt = Fosforo Total " +
+                    "Sa = Staphylococcus aureus " +
+                    "SAAM = Sustancias Activas al Azul de Metileno " +
+                    "Sb = Antimonio " +
+                    "SDT = Solidos Disueltos Totales " +
+                    "Se = Selenio " +
+                    "SO4̿ = Sulfatos " +
+                    "Ss = Salmonella spp " +
+                    "SST = Solidos Suspendidos Totales " +
+                    "ST = Solidos Totales " +
+                    "Sv = Solidos Volatiles" +
+                    "Ta = Toxicidad Aguda " +
+                    "Tur = Turbidez " +
+                    "TUR = Turbidez " +
+                    "Vch = Vibrio cholerae " +
+                    "pH = Potencial de Hidrógeno " +
+                    "PH = Potencial de Hidrógeno " +
+                    "Zn = Zinc " +
+                    "TEMP = Temperatura").setFontColor(DeviceRgb(1,1,1)).setFontSize(5f)
+
+            document.add(paragrafoNomenclaturas)
+
+            // Crear tabla para la sección de firmas
+            val firmaTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            firmaTable.setWidth(UnitValue.createPercentValue(100f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
+
+// Encabezado
+            val headerAutorizaCell = Cell(1, 3)
+                .add(Paragraph("QUIÉN AUTORIZA ANÁLISIS DE LAS MUESTRAS").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            val headerFirmaCell1 = Cell()
+                .add(Paragraph("FIRMA").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+//                .setBorder(Border.NO_BORDER)
+
+            val headerTomaCell = Cell(1, 3)
+                .add(Paragraph("QUIÉN TOMA LAS MUESTRAS").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            val headerFirmaCell2 = Cell()
+                .add(Paragraph("FIRMA").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+
+            firmaTable.addCell(headerAutorizaCell)
+            firmaTable.addCell(headerFirmaCell1)
+//
+
+// Datos de quien autoriza
+            val autorizaNombreCell = Cell()
+                .add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val autorizaNombreValueCell = Cell(1,2)
+                .add(Paragraph("")).setFontSize(fontSize)
+            val autorizaPuestoCell = Cell()
+                .add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val autorizaPuestoValueCell = Cell(1,2)
+                .add(Paragraph("")).setFontSize(fontSize)
+
+            firmaTable.addCell(autorizaNombreCell)
+            firmaTable.addCell(autorizaNombreValueCell)
+            firmaTable.addCell(Cell(2, 2))
+            firmaTable.addCell(autorizaPuestoCell)
+            firmaTable.addCell(autorizaPuestoValueCell)
+
+// Datos de quien toma las muestras
+            val tomaNombreCell = Cell()
+                .add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val tomaNombreValueCell = Cell(1, 2)
+                .add(Paragraph("").setFontSize(fontSize))
+
+            val tomaPuestoCell = Cell()
+                .add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val tomaPuestoValueCell = Cell(1, 2)
+                .add(Paragraph("Ing. de campo").setFontSize(fontSize))
+
+            firmaTable.addCell(headerTomaCell)
+            firmaTable.addCell(headerFirmaCell2)
+            firmaTable.addCell(tomaNombreCell)
+            firmaTable.addCell(tomaNombreValueCell)
+            firmaTable.addCell(Cell(2, 2))
+            firmaTable.addCell(tomaPuestoCell)
+            firmaTable.addCell(tomaPuestoValueCell)
+
+
+// Agregar tabla de firmas al documento
+
+            val puntoCriticoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            puntoCriticoTable.setWidth(UnitValue.createPercentValue(80f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
+
+            val puntoCriticoHeader = Cell(1, 4)
+                .add(Paragraph("PUNTO CRITICO PRE - ANALISIS").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+
+
+
+            puntoCriticoTable.addCell(puntoCriticoHeader)
+
+            val subtablaSalida = Table(UnitValue.createPercentArray(floatArrayOf(1f,1f, 1f, 1f, 1f,1f)))
+            subtablaSalida.setWidth(UnitValue.createPercentValue(100f))
+            val subtablaSalidaFecha = Cell()
+                .add(Paragraph("Fecha:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val subtablaSalidaTemp = Cell()
+                .add(Paragraph("Temp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+
+            val subtablaSalidaResp = Cell()
+                .add(Paragraph("Resp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+
+            subtablaSalida.addCell(subtablaSalidaFecha)
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaSalida.addCell(subtablaSalidaTemp)
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaSalida.addCell(subtablaSalidaResp)
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaSalida.addCell(Cell(1, 3).add(Paragraph("").setFontSize(fontSize)))
+
+            val subtablaEntrada = Table(UnitValue.createPercentArray(floatArrayOf(1f,1f, 1f, 1f, 1f,1f)))
+            subtablaEntrada.setWidth(UnitValue.createPercentValue(100f))
+            val subtablaEntradaFecha = Cell()
+                .add(Paragraph("Fecha:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val subtablaEntradaTemp = Cell()
+                .add(Paragraph("Temp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+
+            val subtablaEntradaResp = Cell()
+                .add(Paragraph("Resp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+
+            subtablaEntrada.addCell(subtablaEntradaFecha)
+            subtablaEntrada.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaEntrada.addCell(subtablaEntradaTemp)
+            subtablaEntrada.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaEntrada.addCell(subtablaEntradaResp)
+            subtablaEntrada.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaEntrada.addCell(Cell(1, 3).add(Paragraph("").setFontSize(fontSize)))
+
+            val datosPuntoCriticaCell = Cell(2, 2)
+                .add(Paragraph("DATOS DE SALIDA:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor).setTextAlignment(TextAlignment.CENTER)
+            val datosrecepcionPuntoCritico = Cell(2, 2)
+                .add(Paragraph("DATOS DE RECEPCION:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor).setTextAlignment(TextAlignment.CENTER)
+
+            puntoCriticoTable.addCell(datosPuntoCriticaCell)
+            puntoCriticoTable.addCell(Cell(2,2).add(subtablaSalida).setBorder(Border.NO_BORDER))
+            puntoCriticoTable.addCell(datosrecepcionPuntoCritico)
+            puntoCriticoTable.addCell(Cell(2,2).add(subtablaEntrada).setBorder(Border.NO_BORDER))
+
+            val tablaPrincipal = Table(2)
+            tablaPrincipal.setWidth(UnitValue.createPercentValue(100f))
+
+            // Agregar las tablas a la tabla principal
+            tablaPrincipal.addCell(Cell().add(firmaTable).setBorder(Border.NO_BORDER))
+            tablaPrincipal.addCell(Cell().add(puntoCriticoTable).setBorder(Border.NO_BORDER))
+
+
+            // Agregar tablas al documento
+            document.add(tablaPrincipal)
+
+
+//            tableEncabezado.addCell(Cell().add(datosSolicitudTable)).setBorder(Border.NO_BORDER)
+
+
+
             document.close()
 
             Toast.makeText(this, "PDF saved at $pdfPath/Muestras-Folio-${binding.tvFolio.text}.pdf", Toast.LENGTH_LONG).show()
