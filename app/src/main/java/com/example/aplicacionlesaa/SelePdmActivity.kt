@@ -1,8 +1,8 @@
 package com.example.aplicacionlesaa
 
+import RetrofitClient
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -14,12 +14,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.adapter.servicioAdapter
 import com.example.aplicacionlesaa.databinding.ActivitySelePdmBinding
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.FolioMuestreo
+import com.example.aplicacionlesaa.model.Lugares
 import com.example.aplicacionlesaa.model.Plandemuestreo
 import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.model.UltimoFolio
@@ -44,6 +44,9 @@ class SelePdmActivity : AppCompatActivity() {
     private var clientePdm: ClientePdm? = null
     private var ultimoFolio: UltimoFolio? = null
     private var siguienteFolio: UltimoFolio? = null
+    private var lugares: MutableList<Lugares>? = null
+    private val descripcionesList: MutableList<Descripcion> = mutableListOf()
+    var nombresLugares: MutableList<String> = mutableListOf()
 
 
     class servicioProvider {
@@ -73,6 +76,8 @@ class SelePdmActivity : AppCompatActivity() {
         initRecyclerView()
 
 
+
+
         val spinnerSele = binding.spinnerSelePdm
         val apiService = RetrofitClient.instance
         //Obtener ultimo folio
@@ -91,6 +96,36 @@ class SelePdmActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<UltimoFolio>, t: Throwable) {
                 Toast.makeText(this@SelePdmActivity, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        //Obtener descripciones
+        apiService.getDescriptions().enqueue(object : Callback<List<Descripcion>> {
+            override fun onResponse(
+                call: Call<List<Descripcion>>,
+                response: Response<List<Descripcion>>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.let { descripciones ->
+
+                        descripcionesList.addAll(descripciones)
+                        println("La lista de descripciones es: " + descripcionesList)
+//                        val descris =
+//                            descripciones.map { it.descripcion.toString() } // Convertir IDs a Strings
+//                        // Configurar Autocompleteview
+//                        val adapter = ArrayAdapter(
+//                            this@SelePdmActivity,
+//                            android.R.layout.simple_spinner_dropdown_item,
+//                            descris
+//                        )
+                    }
+                } else {
+                    Log.e("MainActivity", "Error en Autocomplete: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Descripcion>>, t: Throwable) {
+                Log.e("MainActivity", "Failure en autocomplete: ${t.message}")
             }
         })
 
@@ -151,12 +186,39 @@ class SelePdmActivity : AppCompatActivity() {
                         clientePdm = response.body()
                         withContext(Dispatchers.Main) {
                             clientePdm?.let { updateUI(it) }
+                            Log.d("SelePdmActivity", "Cliente encontrado: $clientePdm")
+                            val call: Call<List<Lugares>> = apiService.getClienteLugarById(clientePdm?.folio.toString())
+
+                            call.enqueue(object : Callback<List<Lugares>> {
+                                override fun onResponse(call: Call<List<Lugares>>, response: Response<List<Lugares>>) {
+                                    if (response.isSuccessful) {
+                                        val lugaresList: List<Lugares>? = response.body()
+                                        nombresLugares.clear()
+
+                                        lugaresList?.forEach { lugar ->
+                                            nombresLugares.add(lugar.nombre_lugar)
+                                        }
+                                        Log.d("ApiService", "Lugares: $lugaresList")
+
+                                        // Llamar a la función para iniciar la otra actividad y pasar la lista de nombres
+                                    } else {
+                                        Log.e("ApiService", "Error en la respuesta: ${response.code()}")
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<List<Lugares>>, t: Throwable) {
+                                    Log.e("ApiService", "Error al realizar la llamada: ${t.message}", t)
+                                    // Manejar el error de la llamada aquí
+                                }
+                            })
 
                         }
                     } else {
                         Log.e("SelePdmActivity", "Error: ${response.code()}")
                     }
                 }
+
+
 
                 apiService.getPlanServicesByName(spinnerSele.selectedItem.toString())
                     .enqueue(object : Callback<List<Servicio>> {
@@ -199,6 +261,8 @@ class SelePdmActivity : AppCompatActivity() {
                 Toast.makeText(this@SelePdmActivity, "Error al buscar, probablemente no hayas seleccionado ningun pdm", Toast.LENGTH_SHORT).show()
             }
 
+
+
         }
 
         spinnerSele.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -225,6 +289,10 @@ class SelePdmActivity : AppCompatActivity() {
                 // Manejar la situación en la que no se ha seleccionado nada en el Spinner (opcional)
             }
         }
+
+
+
+
 
         val btnSiguiente = binding.btnSiguiente
 
@@ -280,6 +348,8 @@ class SelePdmActivity : AppCompatActivity() {
             folio_pdm = pdmSelecionado
         )
 
+
+
         Log.d("SelePdmActivity", "Datos del folio: $folMuestreo")
         sendDataToApi(folMuestreo, object : SendDataCallback {
             override fun onSuccess() {
@@ -288,6 +358,10 @@ class SelePdmActivity : AppCompatActivity() {
                 intent.putParcelableArrayListExtra("listaServicios", ArrayList(servicioMutableList))
                 intent.putExtra("clientePdm", clientePdm)
                 intent.putExtra("folio", binding.tvFolioSiguiente.text.toString())
+                Log.e("Aui esto","La lista de lugares es: $nombresLugares")
+                intent.putStringArrayListExtra("lugares", ArrayList(nombresLugares))
+                intent.putParcelableArrayListExtra("descripciones", ArrayList(descripcionesList))
+                Log.i("MainActivity", "Las descripciones son: $descripcionesList.")
 
 
                 startActivity(intent)

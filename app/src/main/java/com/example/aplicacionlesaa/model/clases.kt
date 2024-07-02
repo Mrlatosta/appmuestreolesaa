@@ -55,7 +55,31 @@ data class Servicio(
 data class Descripcion(
     val id: Int,
     val descripcion: String
-)
+) : Parcelable{
+    constructor(parcel: Parcel) : this(
+        parcel.readInt(),
+        parcel.readString() ?: ""
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
+        parcel.writeString(descripcion)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Descripcion> {
+        override fun createFromParcel(parcel: Parcel): Descripcion {
+            return Descripcion(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Descripcion?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
 
 data class Pdm(
     val nombre_pdm: String,
@@ -164,5 +188,16 @@ data class DatosFinalesFolioMuestreo(
     val nombre_tomador_muestra: String,
     val puesto_tomador_muestra: String,
 )
+
+data class Lugares(
+    val nombre_lugar: String,
+)
+
+data class Lugar(
+    val cliente_folio: String,
+    val nombre_lugar: String,
+    val folio_pdm: String
+)
+
 
 

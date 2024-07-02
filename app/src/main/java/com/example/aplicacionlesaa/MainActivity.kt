@@ -34,9 +34,6 @@ import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Servicio
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 import java.sql.DriverManager
 import java.text.SimpleDateFormat
@@ -60,10 +57,11 @@ class MainActivity : AppCompatActivity() {
     private var indexMuestraAEditar: Int = -1
 
     private val serviciosList: MutableList<Servicio> = mutableListOf()
-    private val descripcionesList: MutableList<Descripcion> = mutableListOf()
+    private var descripcionesList: MutableList<Descripcion> = mutableListOf()
     private var clientePdm: ClientePdm? = null
     private var pdmSeleccionado: String = ""
     private var folio: String? = null
+    private var lugares: ArrayList<String> = ArrayList()
     private var adapterEdicion: muestraAdapter? = null
 
     var contador = 0
@@ -82,6 +80,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+
+
+
+
+
         val serviciosRecibidos = intent.getParcelableArrayListExtra<Servicio>("listaServicios")
         if (serviciosRecibidos != null) {
             serviciosList.addAll(serviciosRecibidos)
@@ -93,6 +96,45 @@ class MainActivity : AppCompatActivity() {
 
         binding.tvCliente.text = clientePdm?.nombre_empresa
 
+        lugares = intent.getStringArrayListExtra("lugares") ?: ArrayList()
+        println("La lista de lugares es: $lugares")
+        for(lugar in lugares){
+            println("El lugar es: $lugar")
+        }
+
+
+
+        val adapterLugares =
+            ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, lugares)
+
+        binding.txtLugar.setAdapter(adapterLugares)
+
+
+        var descripcionesLista = intent.getParcelableArrayListExtra<Descripcion>("descripciones")
+        if (descripcionesLista != null) {
+            descripcionesList.addAll(descripcionesLista)
+            println("La lista de descripciones es: $descripcionesList")
+        }
+
+        val descris =
+            descripcionesList.map { it.descripcion.toString() } // Convertir IDs a Strings
+        // Configurar Autocompleteview
+        val adapterDesci = ArrayAdapter(
+            this@MainActivity,
+            android.R.layout.simple_spinner_dropdown_item,
+            descris
+        )
+
+        binding.txtdescripcion.setAdapter(adapterDesci)
+
+        binding.txtLugar.setOnClickListener(View.OnClickListener {
+            binding.txtLugar.showDropDown()
+        })
+
+        binding.txtdescripcion.setOnClickListener(View.OnClickListener {
+            binding.txtdescripcion.showDropDown()
+        })
+
         //Inicio Api
         val apiService = RetrofitClient.instance
         val spinner: Spinner = binding.idSpinner1
@@ -102,38 +144,6 @@ class MainActivity : AppCompatActivity() {
         pdmSeleccionado = intent.getStringExtra("plandemuestreo") ?: "Error"
         println("El plan de muestreo es: " + pdmSeleccionado)
         binding.tvPDM.text = pdmSeleccionado
-
-        apiService.getDescriptions().enqueue(object : Callback<List<Descripcion>> {
-            override fun onResponse(
-                call: Call<List<Descripcion>>,
-                response: Response<List<Descripcion>>
-            ) {
-                if (response.isSuccessful) {
-                    response.body()?.let { descripciones ->
-
-                        descripcionesList.addAll(descripciones)
-                        println("La lista de descripciones es: " + descripcionesList)
-                        val descris =
-                            descripciones.map { it.descripcion.toString() } // Convertir IDs a Strings
-                        // Configurar Autocompleteview
-                        val adapter = ArrayAdapter(
-                            this@MainActivity,
-                            android.R.layout.simple_spinner_dropdown_item,
-                            descris
-                        )
-                        txtDescripciones.setAdapter(adapter)
-                    }
-                } else {
-                    Log.e("MainActivity", "Error en Autocomplete: ${response.code()}")
-                }
-            }
-
-            override fun onFailure(call: Call<List<Descripcion>>, t: Throwable) {
-                Log.e("MainActivity", "Failure en autocomplete: ${t.message}")
-            }
-        })
-
-
 
         println("La lista de servicios es: " + serviciosList)
 
@@ -400,7 +410,7 @@ class MainActivity : AppCompatActivity() {
 
 
             }else{
-                Toast.makeText(this, "Modo edicion ya es false", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
                 sepudo = createMuestra()
                 if (sepudo == true) {
                     tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
@@ -472,6 +482,7 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("plandemuestreo", pdmSeleccionado)
         intent.putExtra("clientePdm", clientePdm)
         intent.putExtra("folio", folio)
+        intent.putStringArrayListExtra("lugares", lugares)
 
 
 

@@ -20,11 +20,10 @@
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="176dp"
-        android:text="Bienvenido"
+        android:layout_marginTop="256dp"
+        android:text="Bienvenido a la App de Muestreo"
         android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.527"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,11 +32,33 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="568dp"
-        android:layout_marginTop="144dp"
+        android:layout_marginTop="80dp"
         android:backgroundTint="#69F0AE"
         android:text="Crear Folio"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+    <Button
+        android:id="@+id/btnReenvio"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="568dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#00AEED"
+        android:text="Reenviar Folio"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnContiFolio" />
+
+    <Button
+        android:id="@+id/btnContiFolio"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="568dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#64FFDA"
+        android:text="Continuar Folio"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCrearFolio" />
 
     <ImageView
         android:id="@+id/imageView"

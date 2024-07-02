@@ -206,7 +206,7 @@
         app:layout_constraintStart_toEndOf="@+id/textView10"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/txtLugar"
         android:layout_width="150dp"
         android:layout_height="48dp"

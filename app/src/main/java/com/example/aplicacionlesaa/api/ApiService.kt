@@ -4,6 +4,8 @@ import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
 import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.FolioMuestreo
+import com.example.aplicacionlesaa.model.Lugar
+import com.example.aplicacionlesaa.model.Lugares
 import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Plandemuestreo
@@ -35,6 +37,11 @@ interface ApiService {
     @GET("planinfo/{id}")
     fun getPlanInfoByPdmName(@Path("id") id: String): Call<Pdm>
 
+    @GET("clientelugar/{id}")
+    fun getClienteLugarById(@Path("id") id: String): Call<List<Lugares>>
+
+
+
     @POST("crearfoliomuestreo")
     fun createFolioMuestreo(@Body folioMuestreo: FolioMuestreo): Call<Void>
 
@@ -45,6 +52,9 @@ interface ApiService {
 
     @POST("crearmuestra")
     fun createMuestreo(@Body muestra: Muestra_pdm): Call<Void>
+
+    @POST("createclientelugar")
+    fun createLugarCliente(@Body lugar: Lugar): Call<Void>
 
     @PUT("restarservicio/{id}")
     fun restarServicio(@Path("id") id: Int, @Body data: RestarServicioRequest): Call<Void>

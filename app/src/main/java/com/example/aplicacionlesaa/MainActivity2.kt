@@ -34,6 +34,7 @@ import com.example.aplicacionlesaa.databinding.ActivityMain2Binding
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
 import com.example.aplicacionlesaa.model.FolioMuestreo
+import com.example.aplicacionlesaa.model.Lugar
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.utils.NetworkUtils
@@ -74,6 +75,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     private var pdmSeleccionado: String = ""
     val apiService = RetrofitClient.instance
     private var folio: String? = null
+    private var lugares: ArrayList<String> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,6 +116,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
         clientePdm = intent.getParcelableExtra("clientePdm")
         pdmSeleccionado = intent.getStringExtra("plandemuestreo") ?: "Error"
+        lugares = intent.getStringArrayListExtra("lugares") ?: arrayListOf()
+
         folio = intent.getStringExtra("folio")
         binding.tvCliente.text = clientePdm?.nombre_empresa
         binding.tvPDM.text = pdmSeleccionado
@@ -181,8 +185,81 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     if (NetworkUtils.isInternetAvailable(this)) {
                         Log.i("Internet", "Si hay internet")
 
+                        var lugarMutableList = mutableListOf<Lugar>()
+                        for (muestra in muestraMutableList) {
+                            if (muestra.lugarToma !in lugares ){
+                                val lugar = Lugar(
+                                    cliente_folio = clientePdm?.folio.toString(),
+                                    nombre_lugar = muestra.lugarToma,
+                                    folio_pdm = binding.tvPDM.text.toString())
+                                lugarMutableList.add(lugar)
+                            }
+
+                        }
+
+                        for (lugar in lugarMutableList) {
+                            Log.e("LugarAkirau:", lugar.nombre_lugar + lugar.cliente_folio+ lugar.folio_pdm)
+                            val callCreateLugar = RetrofitClient.instance.createLugarCliente(lugar)
+                            callCreateLugar.enqueue(object : Callback<Void> {
+                                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                    if (response.isSuccessful) {
+                                        Toast.makeText(applicationContext, "Lugar enviado con exito", Toast.LENGTH_SHORT).show()
+
+                                    } else {
+                                        Log.e("Error:", response.code().toString())
+                                        Log.e("Error:", response.message())
+                                        Toast.makeText(applicationContext, "Error al enviar Lugar", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<Void>, t: Throwable) {
+                                    Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            })
+                        }
+
                         Toast.makeText(this, "Si hay internet, enviando muestras", Toast.LENGTH_SHORT).show()
-                        sendMuestrasToApi(muestraListaNueva)
+                        val tamaño = muestraListaNueva.size
+
+                        // Crear una lista de Data para cada muestra en muestraMutableList
+                        val dataList = mutableListOf<Data>()
+                        //Envio de lista de muestra
+                        muestraListaNueva.forEachIndexed { index, muestra ->
+                            val data = Data.Builder()
+                                .putInt("muestra_count",tamaño)
+                                .putString("registro_muestra_$index", muestra.registro_muestra)
+                                .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                                .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                                .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                                .putString("id_lab_$index", muestra.id_lab)
+                                .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                                .putString("temperatura_$index", muestra.temperatura)
+                                .putString("lugar_toma_$index", muestra.lugar_toma)
+                                .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                                .putString("e_micro_$index", muestra.e_micro)
+                                .putString("e_fisico_$index", muestra.e_fisico)
+                                .putString("observaciones_$index", muestra.observaciones)
+                                .putString("folio_pdm_$index", muestra.folio_pdm)
+                                .putInt("servicio_id_$index", muestra.servicio_id)
+                                .build()
+
+                            dataList.add(data)
+                        }
+
+                        // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                        dataList.forEach { data ->
+                            val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                                .setInputData(data)
+                                .setConstraints(
+                                    Constraints.Builder()
+                                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                                        .build()
+                                )
+                                .build()
+
+                            Log.i("Si hay internet", "Entre al worker")
+                            WorkManager.getInstance(this).enqueue(workRequest)
+                        }
                         enqueueSendEmailTask(this,
                             "ray.contacto06@gmail.com",
                             "$pdfPath/$nombreArchivoPdf"
@@ -284,7 +361,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 
                     checkStoragePermissionAndSavePdf()
-
 
                 } catch (e: Exception) {
                     Log.i("Error:", e.toString())
@@ -410,6 +486,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+
+
+
     }
 
 
@@ -501,6 +580,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 
     private fun savePdf(emailAddress: String) {
+
         val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
         val file = File(pdfPath, "Muestras-Folio-${binding.tvFolio.text}.pdf")
 
@@ -609,17 +689,38 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 //            document.add(Paragraph("Muestras Realizadas"))
 
             // Crear la tabla
-            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(15f)
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
             table.setWidth(UnitValue.createPercentValue(100f))
 
             // Agregar encabezados de celda
-            val tabeadercell = Cell(1, 12)
-                .add(Paragraph("Muestras Realizadas").setFontColor(whiteColor).setFontSize(15f))
+            val tabeadercell = Cell(1, 9)
+                .add(Paragraph("Datos de las muestras colectadas").setFontColor(whiteColor).setFontSize(10f))
                 .setBackgroundColor(headerColor)
                 .setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .setBorder(Border.NO_BORDER)
             table.addHeaderCell(tabeadercell)
+
+            val estutablcell = Cell(1, 2)
+                .add(Paragraph("Estudios a realizar").setFontColor(whiteColor).setFontSize(10f))
+                .setBackgroundColor(DeviceRgb(46,105,140))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            table.addHeaderCell(estutablcell)
+
+
+            val cellobsv = Cell(1, 1)
+                .add(Paragraph("").setFontColor(whiteColor).setFontSize(15f))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            table.addHeaderCell(cellobsv)
+
+
+
+
 
             addTableHeader(table)
 
@@ -640,6 +741,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             // SendEmailWorker(emailAddress, file).execute()
             // SendEmailTask(emailAddress, file).execute()
 
+
+
         } catch (e: Exception) {
             Toast.makeText(this, "Error saving PDF: ${e.message}", Toast.LENGTH_LONG).show()
             Log.e("Error pdf:", e.toString())
@@ -657,9 +760,18 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         )
 
         headers.forEach {
-            val headerCell = Cell().add(Paragraph(it))
-                .setTextAlignment(TextAlignment.CENTER)
-                .setBackgroundColor(DeviceRgb(0, 0, 102)).setFontColor(DeviceRgb(255,255,255))
+            val headerCell : Cell
+            if (it.contains("Estudios")){
+                 headerCell = Cell().add(Paragraph(it))
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBackgroundColor(DeviceRgb(46,105,140)).setFontColor(DeviceRgb(255,255,255))
+
+            }else{
+                 headerCell = Cell().add(Paragraph(it))
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBackgroundColor(DeviceRgb(0, 0, 102)).setFontColor(DeviceRgb(255,255,255))
+            }
+
             table.addHeaderCell(headerCell)
         }
     }
