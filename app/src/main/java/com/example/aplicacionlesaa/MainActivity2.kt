@@ -730,78 +730,31 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             // Configurar el tamaño de fuente para las celdas
             table.setFontSize(7f)
             document.add(table)
-            val paragrafoNomenclaturas = Paragraph("Ac = Acanthamoeba spp." +
-                    "AgT = Plata Total " +
-                    "Al = Aluminio " +
-                    "Alk = Alcalinidad " +
-                    "Ao = Absorcion de Oxigenos " +
-                    "As = Arsenico " +
-                    "AyG = Aceites y Grasas " +
-                    "Ba = Bario " +
-                    "Bc = Bacilius cereu " +
-                    "Br = Borato " +
-                    "Cd = Cadmio " +
-                    "Ce = Conductividad Electrica " +
-                    "Cf = Coliformes fecales " +
-                    "Cl = Cloro libre " +
-                    "Cn = Cianuros " +
-                    "CnT = Cianuros Totales " +
-                    "Cot = Carbono Orgánico Total " +
-                    "Cp = Clostridium Perfringens " +
-                    "Cr = Cromo" +
-                    "Crl = Cloro Residual Libre" +
-                    "Crnas = Cloraminas " +
-                    "CrT = Cromo Total " +
-                    "Ct = Coliformes Totales " +
-                    "Cu = Cobre " +
-                    "Cv = Color Verdadero " +
-                    "Cya = Ácido Cianúrico " +
-                    "Cyc = Cyclospora " +
-                    "DQO = Demanda Quimica de Oxigeno " +
-                    "DurT = Dureza Total " +
-                    "E. FAECALIS = Enterococcus Feacalis " +
-                    "E.COLI = Escherichia coli " +
-                    "Fe = Hierro " +
-                    "Fs = Fluoruros " +
-                    "GL = Giardia lamblia " +
-                    "Hg = Mercurio " +
-                    "HH = Huevos de Helminto " +
-                    "Irl = Yodo Residual Libre" +
-                    "Lm = Listeria monocytogenes " +
-                    "LP = Legionella spp. "+
-                    "Lv = Levaduras " +
-                    "Ma = Mesofílicos aerobios " +
-                    "Mg = Magnesio " +
-                    "MH = Mohos " +
-                    "Ng = Naegleria spp " +
-                    "Ni = Niquel " +
-                    "N-NH3 = Nitrógenos Amoniacal " +
-                    "N-NO2¯ = Nitrógeno de Nitritos " +
-                    "N-NO3¯ = Nitrógenos de Nitratos " +
-                    "Nt = Nitrogeno Total " +
-                    "Pa = Pseudomonas Aeruginosa. " +
-                    "Pb = Plomo " +
-                    "Pt = Fosforo Total " +
-                    "Sa = Staphylococcus aureus " +
-                    "SAAM = Sustancias Activas al Azul de Metileno " +
-                    "Sb = Antimonio " +
-                    "SDT = Solidos Disueltos Totales " +
-                    "Se = Selenio " +
-                    "SO4̿ = Sulfatos " +
-                    "Ss = Salmonella spp " +
-                    "SST = Solidos Suspendidos Totales " +
-                    "ST = Solidos Totales " +
-                    "Sv = Solidos Volatiles" +
-                    "Ta = Toxicidad Aguda " +
-                    "Tur = Turbidez " +
-                    "TUR = Turbidez " +
-                    "Vch = Vibrio cholerae " +
-                    "pH = Potencial de Hidrógeno " +
-                    "PH = Potencial de Hidrógeno " +
-                    "Zn = Zinc " +
-                    "TEMP = Temperatura").setFontColor(DeviceRgb(1,1,1)).setFontSize(5f)
+            val paragrafoNomenclaturas = Paragraph("MA=Mesofilicos Aerobios - CT=Coliformes Totales - MH=Mohos - LV=Levaduras - CF=Coliformes Fecales - EC=Escherichia Coli - SA=Staphylococcus Aureus - SS=Salmonella spp - LM=Listeria Monocytogenes Vc=Vibrio Cholerae spp. - VP=Vibrio Parahemolitico spp. - PS=Pseudomona - CP = Clostridium Perfringens = BC=Bacillus Cereus - LP=Legionella spp. -ACA= Acanthamoeba spp. - NAE=Naegleria spp. - EFC=Enterococcus Fecales. - GL=Giardia Lamblia. - CLL=Cloro libre. - CCT= Cloro total.-PH=Potencial de Hidrógeno.-Crnas=Cloraminas,DUR=Dureza.- Alk=Alcalinidad. - SDT=Sólidos Disueltos Totales. - CE-Conductividad Electrica. - TUR=Turbidez CyA").setFontColor(DeviceRgb(1,1,1)).setFontSize(5f)
 
             document.add(paragrafoNomenclaturas)
+
+            var signatureViewUno = binding.signatureViewUno
+            val signatureBitmap = signatureViewUno.getSignatureBitmap()
+            val stream = ByteArrayOutputStream()
+            signatureBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val byteArray = stream.toByteArray()
+
+            // Crear la imagen de iTextPDF a partir del array de bytes
+            val imagedata = ImageDataFactory.create(byteArray)
+            val signatureImageUno = Image(imagedata).scaleToFit(100f, 100f)
+
+            var signatureViewDos = binding.signatureViewDos
+            val signatureBitmapDos = signatureViewDos.getSignatureBitmap()
+            val streamDos = ByteArrayOutputStream()
+            signatureBitmapDos.compress(Bitmap.CompressFormat.PNG, 100, streamDos)
+            val byteArrayDos = streamDos.toByteArray()
+
+            // Crear la imagen de iTextPDF a partir del array de bytes
+            val imagedataDos = ImageDataFactory.create(byteArrayDos)
+            val signatureImageDos = Image(imagedataDos).scaleToFit(100f, 100f)
+
+
 
             // Crear tabla para la sección de firmas
             val firmaTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
@@ -841,15 +794,15 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val autorizaNombreCell = Cell()
                 .add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
             val autorizaNombreValueCell = Cell(1,2)
-                .add(Paragraph("")).setFontSize(fontSize)
+                .add(Paragraph(binding.txtNombreAutoAnalisis.text.toString())).setFontSize(fontSize)
             val autorizaPuestoCell = Cell()
                 .add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
             val autorizaPuestoValueCell = Cell(1,2)
-                .add(Paragraph("")).setFontSize(fontSize)
+                .add(Paragraph(binding.txtPuestoAutoAnalisis.text.toString())).setFontSize(fontSize)
 
             firmaTable.addCell(autorizaNombreCell)
             firmaTable.addCell(autorizaNombreValueCell)
-            firmaTable.addCell(Cell(2, 2))
+            firmaTable.addCell(Cell(2, 2).add(signatureImageUno))
             firmaTable.addCell(autorizaPuestoCell)
             firmaTable.addCell(autorizaPuestoValueCell)
 
@@ -857,7 +810,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val tomaNombreCell = Cell()
                 .add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
             val tomaNombreValueCell = Cell(1, 2)
-                .add(Paragraph("").setFontSize(fontSize))
+                .add(Paragraph(binding.txtNombreMuestreador.text.toString()).setFontSize(fontSize))
 
             val tomaPuestoCell = Cell()
                 .add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
@@ -868,7 +821,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             firmaTable.addCell(headerFirmaCell2)
             firmaTable.addCell(tomaNombreCell)
             firmaTable.addCell(tomaNombreValueCell)
-            firmaTable.addCell(Cell(2, 2))
+            firmaTable.addCell(Cell(2, 2).add(signatureImageDos))
             firmaTable.addCell(tomaPuestoCell)
             firmaTable.addCell(tomaPuestoValueCell)
 
@@ -947,8 +900,19 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             document.add(tablaPrincipal)
 
 
-//            tableEncabezado.addCell(Cell().add(datosSolicitudTable)).setBorder(Border.NO_BORDER)
+            val tableFooter = Table(UnitValue.createPercentArray(floatArrayOf(1f, 0.5f, 1.5f, 0.5f,1.5f)))
+            tableFooter.setWidth(UnitValue.createPercentValue(100f)).setHorizontalAlignment(HorizontalAlignment.CENTER).setBackgroundColor(headerColor).setBorder(Border.NO_BORDER)
 
+            val fontSizeFooter = 6f
+            tableFooter.addCell(Cell().add(Paragraph("recepcionlab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("998 310 8622").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell(2,2).add(Paragraph("DOCUMENTO CONTROLADO\n Documento propiedad de Centro Integral en Servicios de Laboratorio de Aguas y Alimentos S.A de C.V.\n No puede reproducirse en forma parcial o total, si nla previa autorizacion del Laboratorio").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("F-ADM-LAB-83/REV0.5/FEBRERO 2024").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("operacioneslab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("998 310 8623").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("A.FRANCISCO I. MADERO MZ 107 LT 12 Int: LOCAL 4 REGION 94. CP 7717. Benito Juarez, Q.roo").setFontColor(whiteColor).setFontSize(5f).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
+
+            document.add(tableFooter)
 
 
             document.close()
