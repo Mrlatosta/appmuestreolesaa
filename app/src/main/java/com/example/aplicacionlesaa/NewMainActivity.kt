@@ -46,6 +46,12 @@ class NewMainActivity : AppCompatActivity() {
             insets
         }
 
+        val btnReenvio = binding.btnReenvio
+        btnReenvio.setOnClickListener {
+            val intent = Intent(this, ResendMuActivity::class.java)
+            startActivity(intent)
+        }
+
         val btnCrear = binding.btnCrearFolio
         btnCrear.setOnClickListener {
             val intent = Intent(this, SelePdmActivity::class.java)

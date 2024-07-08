@@ -105,7 +105,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-inappmessaging-display")
-    implementation("com.itextpdf:kernel:8.0.4")
+    implementation ("com.itextpdf:kernel:7.2.3")
+    implementation ("com.itextpdf:layout:7.2.3")
+    implementation ("com.itextpdf:io:7.2.3")
 
 
 

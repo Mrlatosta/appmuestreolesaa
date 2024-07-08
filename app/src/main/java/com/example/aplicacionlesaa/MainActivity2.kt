@@ -37,6 +37,7 @@ import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Lugar
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Muestra_pdm
+import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.utils.NetworkUtils
 import com.example.aplicacionlesaa.worker.SendDataWorker
 import com.example.aplicacionlesaa.worker.SendDatosFaltantesWorker
@@ -44,6 +45,9 @@ import com.google.gson.Gson
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.io.source.ByteArrayOutputStream
 import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.events.Event
+import com.itextpdf.kernel.events.IEventHandler
+import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
@@ -74,6 +78,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     private var clientePdm: ClientePdm? = null
     private var pdmSeleccionado: String = ""
     val apiService = RetrofitClient.instance
+    private val serviciosList: MutableList<Servicio> = mutableListOf()
     private var folio: String? = null
     private var lugares: ArrayList<String> = ArrayList()
 
@@ -124,7 +129,10 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         binding.tvFolio.text = folio
 
 
-
+        val serviciosRecibidos = intent.getParcelableArrayListExtra<Servicio>("listaServicios")
+        if (serviciosRecibidos != null) {
+            serviciosList.addAll(serviciosRecibidos)
+        }
 
         val folio_cliente = clientePdm?.folio
         val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
@@ -521,7 +529,13 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 intent.data = Uri.parse("package:" + applicationContext.packageName)
                 startActivityForResult(intent, storagePermissionRequestCode)
             } else {
-                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                val muestraData = MuestraData(
+                    binding.tvFolio.text.toString(),
+                    pdmSeleccionado,
+                    clientePdm,
+                    serviciosList,
+                    muestraMutableList
+                )
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 savePdf("ray.contacto06@gmail.com")
             }
@@ -537,7 +551,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     storagePermissionRequestCode
                 )
             } else {
-                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                val muestraData = MuestraData(binding.tvFolio.text.toString(),
+                    pdmSeleccionado,
+                    clientePdm,
+                    serviciosList,
+                    muestraMutableList)
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                                 savePdf("ray.contacto06@gmail.com")
             }
@@ -553,7 +571,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == storagePermissionRequestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                val muestraData = MuestraData(binding.tvFolio.text.toString(),
+                    pdmSeleccionado,
+                    clientePdm,
+                    serviciosList,
+                    muestraMutableList)
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 savePdf("ray.contacto06@gmail.com")
 
@@ -569,7 +591,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
                     savePdf("ray.contacto06@gmail.com")
-                    val muestraData = MuestraData(binding.tvFolio.text.toString(), pdmSeleccionado, muestraMutableList)
+                    val muestraData = MuestraData(binding.tvFolio.text.toString(),
+                        pdmSeleccionado,
+                        clientePdm,
+                        serviciosList,
+                        muestraMutableList)
                     saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -577,6 +603,39 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             }
         }
     }
+
+
+    class FooterEventHandler(private val document: Document) : IEventHandler {
+
+        override fun handleEvent(event: Event) {
+            val pdfEvent = event as PdfDocumentEvent
+            val pdfDoc = pdfEvent.document
+            val page = pdfEvent.page
+
+            val x = 34f
+            val y = 20f
+            val width = UnitValue.createPercentValue(105f)
+            val height = 100f
+
+            var paragraph: Paragraph
+            if (pdfDoc.getPageNumber(page) == pdfDoc.numberOfPages) {
+                 paragraph = Paragraph("Pagina: ${pdfDoc.getPageNumber(page)} de ${pdfDoc.numberOfPages} - Fin del documento")
+            }else{
+                 paragraph = Paragraph("Pagina: ${pdfDoc.getPageNumber(page)} de ${pdfDoc.numberOfPages}                                                                                                                                                                          -Continua Abajo")
+                paragraph.setFixedPosition(pdfDoc.getPageNumber(page), 25f, y, width)
+            }
+            document.add(paragraph)
+
+
+            // Añadir el footer al documento
+
+
+
+        }
+    }
+
+
+
 
 
     private fun savePdf(emailAddress: String) {
@@ -588,6 +647,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val pdfWriter = PdfWriter(file)
             val pdfDocument = PdfDocument(pdfWriter)
             val document = Document(pdfDocument, PageSize.A4.rotate())
+
+            val footerHandler = FooterEventHandler(document)
+            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, footerHandler)
+
+
             val inputStream = applicationContext.resources.openRawResource(R.raw.logorectangulartrans)
             val byteArrayOutputStream = ByteArrayOutputStream()
             var nextByte = inputStream.read()
@@ -595,7 +659,10 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 byteArrayOutputStream.write(nextByte)
                 nextByte = inputStream.read()
             }
+
             val imageData = byteArrayOutputStream.toByteArray()
+            //--handler
+
 
             val image = Image(ImageDataFactory.create(imageData))
             image.scaleToFit(150f, 100f)
@@ -934,9 +1001,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
     private fun addTableHeader(table: Table) {
         val headers = arrayOf(
-            "Número de Muestra", "Fecha de Muestra",
+            "# Muestra", "Fecha de Muestra",
             "Registro de Muestra", "Nombre de Muestra", "ID de Lab",
-            "Cantidad Aproximada", "Temperatura", "Lugar de Toma",
+            "Cantidad   Aprox.", "TEMP.°[C]", "Lugar de Toma",
             "Descripción", "Estudios Microbiológicos", "Estudios Fisicoquímicos",
             "Observaciones"
         )

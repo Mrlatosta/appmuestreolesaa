@@ -7,12 +7,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SEND_EMAIL" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- Para Android 11 y superior -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Para Android 11 y superior -->
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-
 
     <application
         android:allowBackup="true"
@@ -25,13 +23,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AplicacionLesaa"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ResendMuActivity"
+            android:exported="false" />
         <activity
             android:name=".NewMainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AplicacionLesaa">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,7 +47,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
-        android:exported="false" />
+            android:exported="false" />
     </application>
 
 </manifest>

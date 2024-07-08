@@ -179,6 +179,8 @@ data class Muestra_pdm(
 data class MuestraData(
     val folio: String,
     val planMuestreo: String,
+    val clientePdm: ClientePdm?,
+    val serviciosPdm: List<Servicio>,
     val muestras: List<Muestra>
 )
 

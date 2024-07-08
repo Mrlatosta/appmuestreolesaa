@@ -422,7 +422,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     clearTextFields()
                     Log.i("Ray", "Boton Pulsado")
                 }
-                checkStoragePermissionAndSavePdf()
+                checkStoragePermissionAndSaveJson()
             }
 
 
@@ -487,6 +487,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         intent.putExtra("plandemuestreo", pdmSeleccionado)
         intent.putExtra("clientePdm", clientePdm)
         intent.putExtra("folio", folio)
+        intent.putParcelableArrayListExtra("listaServicios", ArrayList(serviciosList))
         intent.putStringArrayListExtra("lugares", lugares)
 
 
@@ -531,12 +532,14 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         var idServicioEntero: Int = 0
         var tvCantidad = binding.tvCantidadRestante
         val spinner1 = binding.idSpinner1
-        var a = true
 
-        if (txtnombrem.text.toString().trim().isEmpty() || txtcantidad.text.toString().trim()
-                .isEmpty() || txtTemp.text.toString().trim().isEmpty() || txtLugar.text.toString()
-                .trim().isEmpty() || txtDescripcion.text.toString().trim().isEmpty()
-        )        {
+//        if (txtnombrem.text.toString().trim().isEmpty() || txtcantidad.text.toString().trim()
+//                .isEmpty() || txtTemp.text.toString().trim().isEmpty() || txtLugar.text.toString()
+//                .trim().isEmpty() || txtDescripcion.text.toString().trim().isEmpty()
+//        )
+        var f=false
+        if (f==true)
+        {
             Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
             sepudo = false
         } else {
@@ -645,7 +648,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
     override fun onItemMoved() {
         // Implementa la lógica para guardar los datos cuando un item se mueva
-        checkStoragePermissionAndSavePdf()
+        checkStoragePermissionAndSaveJson()
         Log.i("Ray", "Se ha movido un item")
     }
 
@@ -738,7 +741,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
                     Log.e("Prueba".toString(), "El contador es:$contador")
 
-                    checkStoragePermissionAndSavePdf()
+                    checkStoragePermissionAndSaveJson()
 
 
                 } catch (e: Exception) {
@@ -819,7 +822,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         //.removeCallbacks(runnable) // Detener la actualización de la hora cuando se destruye la actividad
     }
 
-    private fun checkStoragePermissionAndSavePdf() {
+    private fun checkStoragePermissionAndSaveJson() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
@@ -829,6 +832,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 val muestraData = MuestraData(
                     binding.tvFolio.text.toString(),
                     pdmSeleccionado,
+                    clientePdm,
+                    serviciosList,
                     muestraMutableList
                 )
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
@@ -848,6 +853,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 val muestraData = MuestraData(
                     binding.tvFolio.text.toString(),
                     pdmSeleccionado,
+                    clientePdm,
+                    serviciosList,
                     muestraMutableList
                 )
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
