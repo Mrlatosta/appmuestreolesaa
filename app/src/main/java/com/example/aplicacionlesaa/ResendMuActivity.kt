@@ -12,9 +12,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.aplicacionlesaa.adapter.muestraAdapterActResumen
 import com.example.aplicacionlesaa.databinding.ActivityResendMuBinding
 import com.example.aplicacionlesaa.model.MuestraData
+import com.example.aplicacionlesaa.model.Muestra_pdm
+import com.example.aplicacionlesaa.utils.NetworkUtils
+import com.example.aplicacionlesaa.worker.SendDataWorker
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.InputStreamReader
@@ -56,9 +64,109 @@ class ResendMuActivity : AppCompatActivity() {
             muestraMutableList?.clear()  // Limpia la lista de muestras
             getFile.launch(intent)
 
-
-
         }
+
+        val btnReenviar = binding.btnReenviar
+        btnReenviar.setOnClickListener {
+            val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
+
+            if (NetworkUtils.isInternetAvailable(this)) {
+                Log.i("Internet", "Si hay internet")
+
+
+
+                Toast.makeText(this, "Si hay internet, enviando muestras", Toast.LENGTH_SHORT).show()
+                val tamaño = muestraListaNueva.size
+
+                // Crear una lista de Data para cada muestra en muestraMutableList
+                val dataList = mutableListOf<Data>()
+                //Envio de lista de muestra
+                muestraListaNueva.forEachIndexed { index, muestra ->
+                    val data = Data.Builder()
+                        .putInt("muestra_count",tamaño)
+                        .putString("registro_muestra_$index", muestra.registro_muestra)
+                        .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                        .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                        .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                        .putString("id_lab_$index", muestra.id_lab)
+                        .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                        .putString("temperatura_$index", muestra.temperatura)
+                        .putString("lugar_toma_$index", muestra.lugar_toma)
+                        .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                        .putString("e_micro_$index", muestra.e_micro)
+                        .putString("e_fisico_$index", muestra.e_fisico)
+                        .putString("observaciones_$index", muestra.observaciones)
+                        .putString("folio_pdm_$index", muestra.folio_pdm)
+                        .putInt("servicio_id_$index", muestra.servicio_id)
+                        .build()
+
+                    dataList.add(data)
+                }
+
+                // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                dataList.forEach { data ->
+                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                        .setInputData(data)
+                        .setConstraints(
+                            Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+                        )
+                        .build()
+
+                    Log.i("Si hay internet", "Entre al worker")
+                    WorkManager.getInstance(this).enqueue(workRequest)
+                }
+
+                /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
+                    "$pdfPath/$nombreArchivoPdf")*/
+            } else {
+                Toast.makeText(this, "No hay internet, los datos se enviarán cuando se establezca una conexión", Toast.LENGTH_SHORT).show()
+                Log.i("Internet", "No hay internet")
+                val tamaño = muestraListaNueva.size
+
+                // Crear una lista de Data para cada muestra en muestraMutableList
+                val dataList = mutableListOf<Data>()
+                muestraListaNueva.forEachIndexed { index, muestra ->
+                    val data = Data.Builder()
+                        .putInt("muestra_count",tamaño)
+                        .putString("registro_muestra_$index", muestra.registro_muestra)
+                        .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                        .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                        .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                        .putString("id_lab_$index", muestra.id_lab)
+                        .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                        .putString("temperatura_$index", muestra.temperatura)
+                        .putString("lugar_toma_$index", muestra.lugar_toma)
+                        .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                        .putString("e_micro_$index", muestra.e_micro)
+                        .putString("e_fisico_$index", muestra.e_fisico)
+                        .putString("observaciones_$index", muestra.observaciones)
+                        .putString("folio_pdm_$index", muestra.folio_pdm)
+                        .putInt("servicio_id_$index", muestra.servicio_id)
+                        .build()
+
+                    dataList.add(data)
+                }
+
+                // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                dataList.forEach { data ->
+                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                        .setInputData(data)
+                        .setConstraints(
+                            Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+                        )
+                        .build()
+
+                    Log.i("Datos", "Entre al worker")
+                    WorkManager.getInstance(this).enqueue(workRequest)
+                }
+
+            }
+        }
+
 
 
     }
@@ -133,6 +241,31 @@ class ResendMuActivity : AppCompatActivity() {
         println("Funcion desactivada")
     }
 
+    fun convertirAMuestraPdm(muestras: List<Muestra>): List<Muestra_pdm> {
+        val listaMuestrasPdm = mutableListOf<Muestra_pdm>()
+
+        for (muestra in muestras) {
+            val muestraPdm = Muestra_pdm(
+                registro_muestra = muestra.registroMuestra,
+                folio_muestreo = binding.tvFolio.text.toString(),
+                fecha_muestreo = muestra.fechaMuestra,
+                nombre_muestra = muestra.nombreMuestra,
+                id_lab = muestra.idLab,
+                cantidad_aprox = muestra.cantidadAprox,
+                temperatura = muestra.tempM,
+                lugar_toma = muestra.lugarToma,
+                descripcion_toma = muestra.descripcionM,
+                e_micro = muestra.emicro,
+                e_fisico = muestra.efisico,
+                observaciones = muestra.observaciones,
+                folio_pdm = binding.tvPdm.text.toString(),
+                servicio_id = muestra.servicioId
+            )
+            listaMuestrasPdm.add(muestraPdm)
+        }
+
+        return listaMuestrasPdm
+    }
 
 
 }

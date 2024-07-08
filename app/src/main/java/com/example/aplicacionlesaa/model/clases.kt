@@ -14,7 +14,7 @@ data class Plandemuestreo(
 data class Servicio(
     val id: Int,
     var cantidad: Int,
-    val estudios_microbiologicos: String,
+    var estudios_microbiologicos: String,
     val estudios_fisicoquimicos: String,
     val descripcion: String,
     val cantidad_de_toma: String
@@ -86,7 +86,9 @@ data class Pdm(
     val pq_atendera: String,
     val folio_id_cot: String,
     val fecha_hora_cita: String,
-    val ingeniero_campo: String
+    val ingeniero_campo: String,
+    val nombre_lugar: String,
+    val nombre_empresa: String,
 )
 
 data class ClientePdm(

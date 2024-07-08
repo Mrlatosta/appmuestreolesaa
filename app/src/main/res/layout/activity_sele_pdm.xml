@@ -34,9 +34,9 @@
     <Spinner
         android:id="@+id/spinnerSelePdm"
         android:layout_width="300dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="160dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="144dp"
         app:layout_constraintStart_toEndOf="@+id/textView31"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -175,10 +175,22 @@
         android:id="@+id/btnBuscar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="144dp"
         android:text="Buscar"
         app:layout_constraintStart_toEndOf="@+id/spinnerSelePdm"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnInfo"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="144dp"
+        android:background="#00FFFFFF"
+        android:text="ℹ️"
+        android:textSize="30dp"
+        app:layout_constraintStart_toEndOf="@+id/btnBuscar"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

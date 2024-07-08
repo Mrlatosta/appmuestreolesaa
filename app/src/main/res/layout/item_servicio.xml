@@ -51,8 +51,8 @@
         tools:text="Ph,Turbiedad" />
 
     <TextView
-        android:textAlignment="textStart"
         android:id="@+id/tvdescripcion"
+        android:textAlignment="textStart"
         android:layout_width="500dp"
         android:maxWidth="200dp"
         android:layout_height="wrap_content"

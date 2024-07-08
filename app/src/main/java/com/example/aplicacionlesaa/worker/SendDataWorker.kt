@@ -35,6 +35,7 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
                 muestraMutableList = mutableListOf()
 
                 val muestraCount = inputData.getInt("muestra_count", 0)
+                var contador = 0
 
                 for (i in 0 until muestraCount) {
                     val muestra = Muestra_pdm(
@@ -54,8 +55,10 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
                         servicio_id = inputData.getInt("servicio_id_$i", 0)
                     )
                     muestraMutableList.add(muestra)
+                    contador++
                 }
                 Log.e("MuestraMutableList", "Se intento enviar ${muestraMutableList.size} muestras")
+                Log.e("Contador:","El contador es $contador")
                 sendDataToApi(muestraMutableList)
                 Result.success()
             } catch (e: Exception) {

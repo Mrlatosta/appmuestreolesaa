@@ -14,12 +14,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.aplicacionlesaa.adapter.PdmAdapter
 import com.example.aplicacionlesaa.adapter.servicioAdapter
 import com.example.aplicacionlesaa.databinding.ActivitySelePdmBinding
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Lugares
+import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Plandemuestreo
 import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.model.UltimoFolio
@@ -38,6 +41,7 @@ class SelePdmActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySelePdmBinding
     private val planesList: MutableList<Plandemuestreo> = mutableListOf()
+    private val planesDetalladosList: MutableList<Pdm> = mutableListOf()
     private var servicioMutableList: MutableList<Servicio> =
         servicioProvider.listadeServicios.toMutableList()
     private lateinit var adapter: servicioAdapter
@@ -165,6 +169,25 @@ class SelePdmActivity : AppCompatActivity() {
             }
         })
 
+        apiService.getPlanesRecortado().enqueue(object : Callback<List<Pdm>> {
+            override fun onResponse(call: Call<List<Pdm>>, response: Response<List<Pdm>>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { planes ->
+                        planesDetalladosList.addAll(planes)
+                    }
+                } else {
+                    Log.e("SelePdmActivity", "Error en pdm: ${response.code()}")
+
+                }
+            }
+
+            override fun onFailure(call: Call<List<Pdm>>, t: Throwable) {
+                Log.e("SelePdmActivity", "Error: ${t.message}")
+            }
+        })
+
+
+
 
         val btnBuscar = binding.btnBuscar
         val txtNombre = binding.txtNombre
@@ -246,6 +269,14 @@ class SelePdmActivity : AppCompatActivity() {
                                     if (servicio.descripcion.contains("RECOLECCION DE MUESTRAS")){
                                         servicio.cantidad = 0
                                         }
+                                    else{
+                                        if (servicio.descripcion.contains("AGUA DE USO RECREATIVO",true) || servicio.descripcion.contains("AGUA DE ALBERCA",true)) {
+                                            if (servicio.estudios_microbiologicos.contains("Ng,Ac",true)){
+                                                servicio.estudios_microbiologicos = servicio.estudios_microbiologicos.replace("Ng,Ac", "Avl")
+                                                Log.e("SelePdmActivity", "Ng,Ac Encontrado, cambiando")
+                                            }
+                                        }
+                                    }
                                 }
                             } else {
                                 Log.e("MainActivity", "Error: ${response.code()}")
@@ -262,7 +293,10 @@ class SelePdmActivity : AppCompatActivity() {
             }
 
 
+        }
 
+        binding.btnInfo.setOnClickListener {
+            showPdmDialog()
         }
 
         spinnerSele.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -443,6 +477,24 @@ class SelePdmActivity : AppCompatActivity() {
             }
         })
     }
+
+    private fun showPdmDialog() {
+
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_pdm_list, null)
+        val recyclerView: RecyclerView = dialogView.findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = PdmAdapter(planesDetalladosList)
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Lista de planes de muestreo de hoy")
+            .setView(dialogView)
+            .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
+            .create()
+
+        dialog.show()
+    }
+
 
 
 

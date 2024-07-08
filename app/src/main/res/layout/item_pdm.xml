@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/nombre_pdm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre PDM"
+        android:textColor="#780909" />
+
+    <TextView
+        android:id="@+id/pq_atendera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PQ Atendera" />
+
+    <TextView
+        android:id="@+id/folio_id_cot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Folio ID Cot" />
+
+    <TextView
+        android:id="@+id/fecha_hora_cita"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fecha Hora Cita" />
+
+    <TextView
+        android:id="@+id/ingeniero_campo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingeniero Campo" />
+    <TextView
+        android:id="@+id/nombre_empresa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre_Empresa" />
+    <View
+        android:id="@+id/viewUnamed"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#062D70"
+        android:layout_marginTop="5dp"/>
+
+</LinearLayout>

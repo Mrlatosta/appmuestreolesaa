@@ -22,6 +22,9 @@ interface ApiService {
     @GET("planes")
     fun getPlanes(): Call<List<Plandemuestreo>>
 
+    @GET("planesrecortado")
+    fun getPlanesRecortado(): Call<List<Pdm>>
+
 //    @GET("posts")
 //    fun getPosts(): Call<List<Post>>
 

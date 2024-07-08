@@ -28,6 +28,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.aplicacionlesaa.adapter.ServicioAdapterInfo
 import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.databinding.ActivityMainBinding
 import com.example.aplicacionlesaa.model.ClientePdm
@@ -148,6 +150,10 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         binding.tvPDM.text = pdmSeleccionado
 
         println("La lista de servicios es: " + serviciosList)
+
+        binding.btnInfo.setOnClickListener {
+            showServicioDialog()
+        }
 
         val ids = serviciosList.map { it.id.toString() } // Convertir IDs a Strings
 
@@ -366,7 +372,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             adapterEdicion?.notifyItemChanged(indexMuestraAEditar)
                             clearTextFields()
                             Toast.makeText(this, "Muestra editada", Toast.LENGTH_SHORT).show()
-                            modoEdicion = false
+                            setEditMode(false)
                             binding.tvTitulo.text = "Registro de Muestras"
                             binding.btnStart.text = "Agregar"
                             indexMuestraAEditar = -1
@@ -376,7 +382,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
                     } catch (e: Exception) {
                         Log.e("Error".toString(), "Hubo un error ${e}")
-                        modoEdicion = false
+                        setEditMode(false)
                         binding.tvTitulo.text = "Registro de Muestras"
                         binding.btnStart.text = "Agregar"
                         binding.idSpinner1.isEnabled = true
@@ -396,7 +402,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 }
 
                 builder.setNeutralButton("Cancelar Edicion") { dialog, which ->
-                    modoEdicion = false
+                    setEditMode(false)
                     binding.tvTitulo.text = "Registro de Muestras"
                     binding.btnStart.text = "Agregar"
                     clearTextFields()
@@ -533,12 +539,12 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         var tvCantidad = binding.tvCantidadRestante
         val spinner1 = binding.idSpinner1
 
-//        if (txtnombrem.text.toString().trim().isEmpty() || txtcantidad.text.toString().trim()
-//                .isEmpty() || txtTemp.text.toString().trim().isEmpty() || txtLugar.text.toString()
-//                .trim().isEmpty() || txtDescripcion.text.toString().trim().isEmpty()
-//        )
-        var f=false
-        if (f==true)
+        if (txtnombrem.text.toString().trim().isEmpty() || txtcantidad.text.toString().trim()
+                .isEmpty() || txtTemp.text.toString().trim().isEmpty() || txtLugar.text.toString()
+                .trim().isEmpty() || txtDescripcion.text.toString().trim().isEmpty()
+        )
+//        var f=false
+//        if (f==true)
         {
             Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
             sepudo = false
@@ -640,7 +646,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         binding.recyclerMuestras.layoutManager = LinearLayoutManager(this)
         binding.recyclerMuestras.adapter = adapter
-        val callback = DragManageAdapter(adapter)
+        val callback = DragManageAdapter(adapter) {modoEdicion}
         val touchHelper = ItemTouchHelper(callback)
         touchHelper.attachToRecyclerView(binding.recyclerMuestras)
 
@@ -772,7 +778,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             builder.setMessage("¿Estás seguro de que deseas editar la muestra?")
             builder.setPositiveButton("Sí") { dialog, which ->
                 try {
-                    modoEdicion = true
+                    setEditMode(true)
                     val servicioSeleccionado = muestraMutableList[position].servicioId
                     for (servicio in serviciosList) {
                         if (servicio.id == servicioSeleccionado) {
@@ -803,7 +809,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 
                 }catch (e:Exception){
-                    modoEdicion = false
+                    setEditMode(false)
                     Log.e("Error".toString(), "Hubo un error ${e}")
                 }
             }
@@ -878,4 +884,25 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         // Escribir el archivo
         file.writeText(jsonString)
     }
+    fun setEditMode(editMode: Boolean) {
+        modoEdicion = editMode
+        // Aquí puedes hacer otras acciones necesarias cuando el modo edición cambia
+    }
+    private fun showServicioDialog() {
+
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_servicio_list, null)
+        val recyclerView: RecyclerView = dialogView.findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = ServicioAdapterInfo(serviciosList)
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Lista de Servicios")
+            .setView(dialogView)
+            .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
+            .create()
+
+        dialog.show()
+    }
+
 }
