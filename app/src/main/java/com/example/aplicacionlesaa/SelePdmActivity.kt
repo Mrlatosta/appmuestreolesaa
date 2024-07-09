@@ -269,12 +269,34 @@ class SelePdmActivity : AppCompatActivity() {
                                     if (servicio.descripcion.contains("RECOLECCION DE MUESTRAS")){
                                         servicio.cantidad = 0
                                         }
-                                    else{
-                                        if (servicio.descripcion.contains("AGUA DE USO RECREATIVO",true) || servicio.descripcion.contains("AGUA DE ALBERCA",true)) {
-                                            if (servicio.estudios_microbiologicos.contains("Ng,Ac",true)){
-                                                servicio.estudios_microbiologicos = servicio.estudios_microbiologicos.replace("Ng,Ac", "Avl")
-                                                Log.e("SelePdmActivity", "Ng,Ac Encontrado, cambiando")
+                                    else {
+                                        if (servicio.descripcion.contains(
+                                                "AGUA DE USO RECREATIVO",
+                                                true
+                                            ) || servicio.descripcion.contains(
+                                                "AGUA DE ALBERCA",
+                                                true
+                                            )
+                                        ) {
+                                            if (servicio.estudios_microbiologicos.contains(
+                                                    "Ng,Ac",
+                                                    true
+                                                )
+                                            ) {
+                                                servicio.estudios_microbiologicos =
+                                                    servicio.estudios_microbiologicos.replace(
+                                                        "Ng,Ac",
+                                                        "Avl"
+                                                    )
+                                                Log.e(
+                                                    "SelePdmActivity",
+                                                    "Ng,Ac Encontrado, cambiando"
+                                                )
                                             }
+                                        }else if(servicio.descripcion.contains("CRUDOS", true)){
+                                            servicio.estudios_microbiologicos = "ALIMENTOS CRUDOS"
+                                    }else{
+                                            servicio.estudios_microbiologicos = extractBeforeHyphen(servicio.descripcion)
                                         }
                                     }
                                 }
@@ -493,6 +515,11 @@ class SelePdmActivity : AppCompatActivity() {
             .create()
 
         dialog.show()
+    }
+    fun extractBeforeHyphen(input: String): String {
+        val regex = Regex("^(.*?)(\\s-\\s)")
+        val matchResult = regex.find(input)
+        return matchResult?.groups?.get(1)?.value ?: ""
     }
 
 

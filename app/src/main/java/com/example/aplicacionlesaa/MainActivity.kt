@@ -183,6 +183,16 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 val servicioSeleccionado = serviciosList[position]
                 println(position)
                 try {
+                    try{
+                        if (servicioSeleccionado.cantidad == 0){
+                            tvCantidad.setTextColor(resources.getColor(R.color.red))
+                        }else{
+                            tvCantidad.setTextColor(resources.getColor(R.color.green))
+                        }
+                        }catch (e:Exception) {
+                        Log.e("Error", "Error al establecer color en tvCantidad")
+                    }
+
                     try {
                         txtEmicro.text.clear()
                     } catch (e: Exception) {
@@ -564,6 +574,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 println(servicioSeleccionado.id.toString() + "= " + spinner1.selectedItem.toString())
                 if (servicioSeleccionado.id == spinner1.selectedItem.toString().toInt()) {
                     tvCantidad.text = servicioSeleccionado.cantidad.toString()
+                    if (servicioSeleccionado.cantidad == 0) {
+                        tvCantidad.setTextColor(resources.getColor(R.color.red))
+                    }else{
+                        tvCantidad.setTextColor(resources.getColor(R.color.green))
+                    }
                 }
 
 
@@ -597,7 +612,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             nombreMuestra = txtnombrem.text.toString().trim(),
                             idLab = idLab,
                             cantidadAprox = txtcantidad.text.toString().trim(),
-                            tempM = txtTemp.text.toString().trim(),
+                            tempM = txtTemp.text.toString().trim()+"°C",
                             lugarToma = txtLugar.text.toString().trim(),
                             descripcionM = txtDescripcion.text.toString().trim(),
                             emicro = txtMicro.text.toString().trim(),
@@ -720,6 +735,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 .toInt()
                         ) {
                             tvCantidad.text = servicioAsociado.cantidad.toString()
+                            if (servicioAsociado.cantidad == 0) {
+                                tvCantidad.setTextColor(resources.getColor(R.color.red))
+                            }else{
+                                tvCantidad.setTextColor(resources.getColor(R.color.green))
+                            }
                         }
 
                     }

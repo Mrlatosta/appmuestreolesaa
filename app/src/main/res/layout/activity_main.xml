@@ -29,11 +29,11 @@
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="56dp"
         android:text="Registro de Muestras"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -173,17 +173,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvMicro"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
-    <EditText
-        android:id="@+id/txtcantidadaprox"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="Cantidad Aprox"
-        android:inputType="text"
-        app:layout_constraintStart_toEndOf="@+id/txtnombre"
-        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
 
     <TextView
         android:id="@+id/textView16"
@@ -206,6 +196,57 @@
         app:layout_constraintStart_toEndOf="@+id/textView10"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <TextView
+        android:id="@+id/tvregistromuestra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="12dp"
+        android:text="fol+no"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+    <EditText
+        android:id="@+id/txtnombre"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Nombre"
+        android:inputType="text"
+        android:nextFocusDown="@id/txtcantidadaprox"
+        app:layout_constraintStart_toEndOf="@+id/tvregistromuestra"
+        app:layout_constraintTop_toBottomOf="@+id/textView12"
+        />
+
+
+    <EditText
+        android:id="@+id/txtcantidadaprox"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Cantidad Aprox"
+        android:inputType="text"
+        android:nextFocusDown="@id/txtTemp"
+        app:layout_constraintStart_toEndOf="@+id/txtnombre"
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+    <EditText
+        android:id="@+id/txtTemp"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Temp"
+        android:inputType="number"
+        android:nextFocusDown="@id/txtLugar"
+        app:layout_constraintStart_toEndOf="@+id/txtcantidadaprox"
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
     <AutoCompleteTextView
         android:id="@+id/txtLugar"
         android:layout_width="150dp"
@@ -215,6 +256,7 @@
         android:ems="10"
         android:hint="Lugar"
         android:inputType="text"
+        android:nextFocusDown="@id/txtdescripcion"
         app:layout_constraintStart_toEndOf="@+id/txtTemp"
         app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
@@ -227,31 +269,47 @@
         android:ems="10"
         android:hint="Descripcion"
         android:inputType="text"
+        android:dropDownWidth="500dp"
+        android:dropDownSelector="@color/purple_200"
+        android:nextFocusDown="@id/txtMicro"
         app:layout_constraintStart_toEndOf="@+id/txtLugar"
         app:layout_constraintTop_toBottomOf="@+id/textView16" />
-
-    <TextView
-        android:id="@+id/tvregistromuestra"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="12dp"
-        android:text="fol+no"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
     <EditText
-        android:id="@+id/txtTemp"
+        android:id="@+id/txtMicro"
         android:layout_width="150dp"
         android:layout_height="48dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
         android:ems="10"
-        android:hint="Temp"
+        android:hint="Micro"
         android:inputType="text"
-        app:layout_constraintStart_toEndOf="@+id/txtcantidadaprox"
-        app:layout_constraintTop_toBottomOf="@+id/textView14" />
+        android:nextFocusDown="@id/txtFisico"
+        app:layout_constraintStart_toEndOf="@+id/txtdescripcion"
+        app:layout_constraintTop_toBottomOf="@+id/textView17" />
+    <EditText
+        android:id="@+id/txtFisico"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:hint="Fisico"
+        android:inputType="text"
+        android:nextFocusDown="@id/txtobservaciones"
+        app:layout_constraintStart_toEndOf="@+id/txtMicro"
+        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+    <EditText
+        android:id="@+id/txtobservaciones"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:hint="Observaciones"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView20" />
+
 
     <TextView
         android:id="@+id/textview4"
@@ -373,17 +431,6 @@
         app:layout_constraintStart_toEndOf="@+id/textView13"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/txtnombre"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="Nombre"
-        android:inputType="text"
-        app:layout_constraintStart_toEndOf="@+id/tvregistromuestra"
-        app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
 
     <TextView
@@ -430,17 +477,7 @@
         app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toTopOf="parent" />-->
 
-    <EditText
-        android:id="@+id/txtMicro"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="48dp"
-        android:ems="10"
-        android:hint="Micro"
-        android:inputType="text"
-        app:layout_constraintStart_toEndOf="@+id/txtdescripcion"
-        app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
 
     <TextView
         android:id="@+id/textView17"
@@ -452,17 +489,6 @@
         app:layout_constraintStart_toEndOf="@+id/textView16"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/txtFisico"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:hint="Fisico"
-        android:inputType="text"
-        app:layout_constraintStart_toEndOf="@+id/txtMicro"
-        app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
     <TextView
         android:id="@+id/textView18"
@@ -493,18 +519,6 @@
         android:text="Observaciones"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvregistromuestra" />
-
-    <EditText
-        android:id="@+id/txtobservaciones"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:hint="Observaciones"
-        android:inputType="text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
 
     <TextView

@@ -273,6 +273,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                             "$pdfPath/$nombreArchivoPdf"
                         )
                         sendDatosFaltantesToApi()
+                        binding.textView6.text = "Resumen de muestras - Folio concluido"
                         /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf")*/
                         try{
