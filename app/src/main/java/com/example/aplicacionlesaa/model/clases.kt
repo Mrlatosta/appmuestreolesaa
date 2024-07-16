@@ -12,7 +12,7 @@ data class Plandemuestreo(
 )
 
 data class Servicio(
-    val id: Int,
+    val id: String,
     var cantidad: Int,
     var estudios_microbiologicos: String,
     val estudios_fisicoquimicos: String,
@@ -20,7 +20,7 @@ data class Servicio(
     val cantidad_de_toma: String
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readString() ?: "",
         parcel.readInt(),
         parcel.readString() ?: "",
         parcel.readString() ?: "",
@@ -29,7 +29,7 @@ data class Servicio(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
+        parcel.writeString(id)
         parcel.writeInt(cantidad)
         parcel.writeString(estudios_microbiologicos)
         parcel.writeString(estudios_fisicoquimicos)
@@ -88,8 +88,42 @@ data class Pdm(
     val fecha_hora_cita: String,
     val ingeniero_campo: String,
     val nombre_lugar: String,
-    val nombre_empresa: String,
-)
+    val nombre_empresa: String
+) : Parcelable {
+    constructor(parcel: Parcel): this(
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: ""
+
+
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(nombre_pdm)
+        parcel.writeString(pq_atendera)
+        parcel.writeString(folio_id_cot)
+        parcel.writeString(fecha_hora_cita)
+        parcel.writeString(ingeniero_campo)
+        parcel.writeString(nombre_lugar)
+        parcel.writeString(nombre_empresa)
+
+    }
+    override fun describeContents(): Int {
+        return 0
+    }
+    companion object CREATOR : Parcelable.Creator<Pdm> {
+        override fun createFromParcel(parcel: Parcel): Pdm {
+            return Pdm(parcel)
+        }
+        override fun newArray(size: Int): Array<Pdm?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
 
 data class ClientePdm(
     val giro: String,
@@ -175,7 +209,8 @@ data class Muestra_pdm(
     val e_fisico: String,
     val observaciones: String,
     val folio_pdm: String,
-    val servicio_id: Int
+    val servicio_id: String,
+    val estatus: String = "Pendiente",
 )
 
 data class MuestraData(

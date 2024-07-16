@@ -35,6 +35,7 @@ import com.example.aplicacionlesaa.databinding.ActivityMainBinding
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
 import com.example.aplicacionlesaa.model.MuestraData
+import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.utils.OnItemMovedListener
 import com.google.gson.Gson
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         muestraProvider.listademuestras.toMutableList()
     private lateinit var adapter: muestraAdapter
     private var indexMuestraAEditar: Int = -1
-
+    private lateinit var pdmDetallado: Pdm
     private val serviciosList: MutableList<Servicio> = mutableListOf()
     private var descripcionesList: MutableList<Descripcion> = mutableListOf()
     private var clientePdm: ClientePdm? = null
@@ -139,6 +140,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             binding.txtdescripcion.showDropDown()
         })
 
+        pdmDetallado = intent.getParcelableExtra("pdmDetallado")!!
+        Log.e("Thayli", "El pdmDetallado es: $pdmDetallado")
         //Inicio Api
         val apiService = RetrofitClient.instance
         val spinner: Spinner = binding.idSpinner1
@@ -503,6 +506,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         intent.putExtra("plandemuestreo", pdmSeleccionado)
         intent.putExtra("clientePdm", clientePdm)
         intent.putExtra("folio", folio)
+        intent.putExtra("pdmDetallado", pdmDetallado)
         intent.putParcelableArrayListExtra("listaServicios", ArrayList(serviciosList))
         intent.putStringArrayListExtra("lugares", lugares)
 
@@ -545,7 +549,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         val txtObserva = binding.txtobservaciones
         val txtServicioId = binding.idSpinner1
         val idServicioString = txtServicioId.selectedItem.toString()
-        var idServicioEntero: Int = 0
+        var idServicioEntero: String = String()
         var tvCantidad = binding.tvCantidadRestante
         val spinner1 = binding.idSpinner1
 
@@ -560,7 +564,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             sepudo = false
         } else {
             try {
-                idServicioEntero = idServicioString.toInt()
+                idServicioEntero = idServicioString
             } catch (e: NumberFormatException) {
                 // Manejar la situación en la que la cadena no puede ser convertida a un entero
                 // Aquí puedes mostrar un mensaje de error o tomar alguna acción alternativa
@@ -572,7 +576,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 // Restar la cantidad al servicio
                 servicioSeleccionado.cantidad--
                 println(servicioSeleccionado.id.toString() + "= " + spinner1.selectedItem.toString())
-                if (servicioSeleccionado.id == spinner1.selectedItem.toString().toInt()) {
+                if (servicioSeleccionado.id == spinner1.selectedItem.toString()) {
                     tvCantidad.text = servicioSeleccionado.cantidad.toString()
                     if (servicioSeleccionado.cantidad == 0) {
                         tvCantidad.setTextColor(resources.getColor(R.color.red))
@@ -732,7 +736,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         servicioAsociado.cantidad++
                         println(muestraEliminada.servicioId.toString() + "= " + spinner1.selectedItem.toString())
                         if (muestraEliminada.servicioId == spinner1.selectedItem.toString()
-                                .toInt()
                         ) {
                             tvCantidad.text = servicioAsociado.cantidad.toString()
                             if (servicioAsociado.cantidad == 0) {

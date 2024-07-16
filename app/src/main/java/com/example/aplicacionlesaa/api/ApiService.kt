@@ -60,7 +60,7 @@ interface ApiService {
     fun createLugarCliente(@Body lugar: Lugar): Call<Void>
 
     @PUT("restarservicio/{id}")
-    fun restarServicio(@Path("id") id: Int, @Body data: RestarServicioRequest): Call<Void>
+    fun restarServicio(@Path("id") id: String, @Body data: RestarServicioRequest): Call<Void>
 
     data class RestarServicioRequest(
         val cantidad: Int

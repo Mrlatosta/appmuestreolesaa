@@ -97,7 +97,7 @@ class ResendMuActivity : AppCompatActivity() {
                         .putString("e_fisico_$index", muestra.e_fisico)
                         .putString("observaciones_$index", muestra.observaciones)
                         .putString("folio_pdm_$index", muestra.folio_pdm)
-                        .putInt("servicio_id_$index", muestra.servicio_id)
+                        .putString("servicio_id_$index", muestra.servicio_id)
                         .build()
 
                     dataList.add(data)
@@ -143,7 +143,7 @@ class ResendMuActivity : AppCompatActivity() {
                         .putString("e_fisico_$index", muestra.e_fisico)
                         .putString("observaciones_$index", muestra.observaciones)
                         .putString("folio_pdm_$index", muestra.folio_pdm)
-                        .putInt("servicio_id_$index", muestra.servicio_id)
+                        .putString("servicio_id_$index", muestra.servicio_id)
                         .build()
 
                     dataList.add(data)

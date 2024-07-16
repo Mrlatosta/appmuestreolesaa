@@ -52,7 +52,8 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
                         e_fisico = inputData.getString("e_fisico_$i") ?: "",
                         observaciones = inputData.getString("observaciones_$i") ?: "",
                         folio_pdm = inputData.getString("folio_pdm_$i") ?: "",
-                        servicio_id = inputData.getInt("servicio_id_$i", 0)
+                        servicio_id = inputData.getString("servicio_id_$i") ?: "",
+                        estatus = "Pendiente",
                     )
                     muestraMutableList.add(muestra)
                     contador++

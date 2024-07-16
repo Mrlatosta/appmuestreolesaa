@@ -404,6 +404,9 @@ class SelePdmActivity : AppCompatActivity() {
             folio_pdm = pdmSelecionado
         )
 
+        val pdmDetallado = planesDetalladosList.find { it.nombre_pdm == pdmSelecionado }
+
+
 
 
         Log.d("SelePdmActivity", "Datos del folio: $folMuestreo")
@@ -414,6 +417,7 @@ class SelePdmActivity : AppCompatActivity() {
                 intent.putParcelableArrayListExtra("listaServicios", ArrayList(servicioMutableList))
                 intent.putExtra("clientePdm", clientePdm)
                 intent.putExtra("folio", binding.tvFolioSiguiente.text.toString())
+                intent.putExtra("pdmDetallado", pdmDetallado)
                 Log.e("Aui esto","La lista de lugares es: $nombresLugares")
                 intent.putStringArrayListExtra("lugares", ArrayList(nombresLugares))
                 intent.putParcelableArrayListExtra("descripciones", ArrayList(descripcionesList))

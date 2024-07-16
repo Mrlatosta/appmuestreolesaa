@@ -37,6 +37,7 @@ import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Lugar
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Muestra_pdm
+import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.utils.NetworkUtils
 import com.example.aplicacionlesaa.worker.SendDataWorker
@@ -80,6 +81,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     val apiService = RetrofitClient.instance
     private val serviciosList: MutableList<Servicio> = mutableListOf()
     private var folio: String? = null
+    private lateinit var pdmDetallado: Pdm
     private var lugares: ArrayList<String> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,6 +124,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         clientePdm = intent.getParcelableExtra("clientePdm")
         pdmSeleccionado = intent.getStringExtra("plandemuestreo") ?: "Error"
         lugares = intent.getStringArrayListExtra("lugares") ?: arrayListOf()
+        pdmDetallado = intent.getParcelableExtra("pdmDetallado")!!
 
         folio = intent.getStringExtra("folio")
         binding.tvCliente.text = clientePdm?.nombre_empresa
@@ -248,7 +251,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                 .putString("e_fisico_$index", muestra.e_fisico)
                                 .putString("observaciones_$index", muestra.observaciones)
                                 .putString("folio_pdm_$index", muestra.folio_pdm)
-                                .putInt("servicio_id_$index", muestra.servicio_id)
+                                .putString("servicio_id_$index", muestra.servicio_id)
                                 .build()
 
                             dataList.add(data)
@@ -306,7 +309,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                 .putString("e_fisico_$index", muestra.e_fisico)
                                 .putString("observaciones_$index", muestra.observaciones)
                                 .putString("folio_pdm_$index", muestra.folio_pdm)
-                                .putInt("servicio_id_$index", muestra.servicio_id)
+                                .putString("servicio_id_$index", muestra.servicio_id)
                                 .build()
 
                             dataList.add(data)
@@ -921,12 +924,12 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 .add(Paragraph("Resp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
 
             subtablaSalida.addCell(subtablaSalidaFecha)
-            subtablaSalida.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph(LocalDate.now().toString()).setFontSize(fontSize)))
             subtablaSalida.addCell(subtablaSalidaTemp)
-            subtablaSalida.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph(binding.txtTempSalida.text.toString()+"°C").setFontSize(fontSize)))
             subtablaSalida.addCell(subtablaSalidaResp)
-            subtablaSalida.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
-            subtablaSalida.addCell(Cell(1, 3).add(Paragraph("").setFontSize(fontSize)))
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph(pdmDetallado.ingeniero_campo).setFontSize(fontSize)))
+            subtablaSalida.addCell(Cell(1, 3).add(Paragraph().setFontSize(fontSize)))
 
             val subtablaEntrada = Table(UnitValue.createPercentArray(floatArrayOf(1f,1f, 1f, 1f, 1f,1f)))
             subtablaEntrada.setWidth(UnitValue.createPercentValue(100f))
