@@ -926,7 +926,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             subtablaSalida.addCell(subtablaSalidaFecha)
             subtablaSalida.addCell(Cell(1, 2).add(Paragraph(LocalDate.now().toString()).setFontSize(fontSize)))
             subtablaSalida.addCell(subtablaSalidaTemp)
-            subtablaSalida.addCell(Cell(1, 2).add(Paragraph(binding.txtTempSalida.text.toString()+"°C").setFontSize(fontSize)))
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
             subtablaSalida.addCell(subtablaSalidaResp)
             subtablaSalida.addCell(Cell(1, 2).add(Paragraph(pdmDetallado.ingeniero_campo).setFontSize(fontSize)))
             subtablaSalida.addCell(Cell(1, 3).add(Paragraph().setFontSize(fontSize)))

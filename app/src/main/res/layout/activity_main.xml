@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
     <View
         android:id="@+id/viewUnamed"
         android:layout_width="match_parent"
@@ -42,8 +43,9 @@
         android:layout_width="180dp"
         android:layout_height="60dp"
         android:layout_marginTop="360dp"
-        android:backgroundTint="#80D8FF"
+        android:backgroundTint="#088395"
         android:text="Agregar"
+        android:textColor="#ffffff"
         app:circularflow_angles="@string/bottom_sheet_behavior"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.52"
@@ -78,10 +80,10 @@
         android:id="@+id/tvregistroM"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="20dp"
         android:text="Registro M"
         android:textSize="15sp"
-        android:layout_marginStart="12dp"
         app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
@@ -174,7 +176,6 @@
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
 
-
     <TextView
         android:id="@+id/textView16"
         android:layout_width="wrap_content"
@@ -207,6 +208,7 @@
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
     <EditText
         android:id="@+id/txtnombre"
         android:layout_width="150dp"
@@ -218,8 +220,7 @@
         android:inputType="text"
         android:nextFocusDown="@id/txtcantidadaprox"
         app:layout_constraintStart_toEndOf="@+id/tvregistromuestra"
-        app:layout_constraintTop_toBottomOf="@+id/textView12"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
 
     <EditText
@@ -247,6 +248,7 @@
         android:nextFocusDown="@id/txtLugar"
         app:layout_constraintStart_toEndOf="@+id/txtcantidadaprox"
         app:layout_constraintTop_toBottomOf="@+id/textView14" />
+
     <AutoCompleteTextView
         android:id="@+id/txtLugar"
         android:layout_width="150dp"
@@ -266,14 +268,15 @@
         android:layout_height="48dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
+        android:dropDownWidth="500dp"
+        android:dropDownSelector="@color/purple_200"
         android:ems="10"
         android:hint="Descripcion"
         android:inputType="text"
-        android:dropDownWidth="500dp"
-        android:dropDownSelector="@color/purple_200"
         android:nextFocusDown="@id/txtMicro"
         app:layout_constraintStart_toEndOf="@+id/txtLugar"
         app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
     <EditText
         android:id="@+id/txtMicro"
         android:layout_width="150dp"
@@ -286,6 +289,7 @@
         android:nextFocusDown="@id/txtFisico"
         app:layout_constraintStart_toEndOf="@+id/txtdescripcion"
         app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
     <EditText
         android:id="@+id/txtFisico"
         android:layout_width="150dp"
@@ -298,6 +302,7 @@
         android:nextFocusDown="@id/txtobservaciones"
         app:layout_constraintStart_toEndOf="@+id/txtMicro"
         app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
     <EditText
         android:id="@+id/txtobservaciones"
         android:layout_width="150dp"
@@ -432,7 +437,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-
     <TextView
         android:id="@+id/tvfechamuestreo"
         android:layout_width="wrap_content"
@@ -476,7 +480,6 @@
         android:textSize="25sp"
         app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toTopOf="parent" />-->
-
 
 
     <TextView
@@ -571,12 +574,13 @@
 
     <Button
         android:id="@+id/btnSiguiente"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
+        android:layout_width="180dp"
+        android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="88dp"
-        android:background="#00E676"
+        android:backgroundTint="#074024"
         android:text="Siguiente"
+        android:textColor="#ffffff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerMuestras" />
 
@@ -628,6 +632,18 @@
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView24"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnMuestraExtra"
+        android:layout_width="180dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#174B6E"
+        android:text="Muestra Extra"
+        android:textColor="#ffffff"
+        app:layout_constraintStart_toEndOf="@+id/btnInfo"
+        app:layout_constraintTop_toBottomOf="@+id/tvfechamuestreo" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

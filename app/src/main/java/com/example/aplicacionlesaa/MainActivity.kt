@@ -68,6 +68,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     private var lugares: ArrayList<String> = ArrayList()
     private var adapterEdicion: muestraAdapter? = null
     private var fechaSinBarras: String = ""
+    private var existeExtra: Boolean = false
+
+
 
     var contador = 0
 
@@ -448,6 +451,38 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         }
 
+
+
+        binding.btnMuestraExtra.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Confirmación")
+            builder.setMessage("¿Estás seguro de que deseas agregar una muestra extra?")
+            builder.setPositiveButton("Sí") { dialog, which ->
+                try {
+                    val intent = Intent(this, MuestraExtraActivity::class.java)
+                    intent.putExtra("folio", folio)
+                    intent.putExtra("pdmDetallado", pdmDetallado)
+                    intent.putExtra("clientePdm", clientePdm)
+                    intent.putStringArrayListExtra("lugares", lugares)
+                    intent.putExtra("descripciones", descripcionesList as ArrayList<Descripcion>)
+                    intent.putStringArrayListExtra("lugares", lugares)
+                    startActivityForResult(intent, REQUEST_AGREGAR_MUESTRA)
+
+
+
+
+                }catch (e:Exception){
+                    Log.e("Error".toString(), "Hubo un error ${e}")
+                }
+
+                }
+            builder.setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+            builder.show()
+
+        }
+
         //val muestraUno = Muestra(1,32,"Agua de Red - NOM-000-123-345","20/05/2024 ")
 
         muestraProvider.listademuestras
@@ -455,6 +490,12 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         initRecyclerView()
 
 
+    }
+
+    companion object {
+        const val REQUEST_AGREGAR_MUESTRA = 1
+        const val EXTRA_NOMBRE_MUESTRA = "extra_nombre_muestra"
+        const val EXTRA_DESCRIPCION_MUESTRA = "extra_descripcion_muestra"
     }
 
     override fun onBackPressed() {
@@ -508,7 +549,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         intent.putExtra("folio", folio)
         intent.putExtra("pdmDetallado", pdmDetallado)
         intent.putParcelableArrayListExtra("listaServicios", ArrayList(serviciosList))
-        intent.putStringArrayListExtra("lugares", lugares)
 
 
 

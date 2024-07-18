@@ -24,6 +24,9 @@
         android:theme="@style/Theme.AplicacionLesaa"
         tools:targetApi="31">
         <activity
+            android:name=".MuestraExtraActivity"
+            android:exported="false" />
+        <activity
             android:name=".ResendMuActivity"
             android:exported="false" />
         <activity
@@ -43,13 +46,13 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity2"
-            android:windowSoftInputMode="adjustPan"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
-            android:windowSoftInputMode="adjustPan"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>

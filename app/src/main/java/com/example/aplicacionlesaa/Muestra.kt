@@ -17,8 +17,10 @@ data class Muestra(
     var efisico: String,
     var observaciones: String,
     val servicioId: String,
+    val idEstudio: String = "",
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
@@ -49,6 +51,7 @@ data class Muestra(
         parcel.writeString(efisico)
         parcel.writeString(observaciones)
         parcel.writeString(servicioId)
+        parcel.writeString(idEstudio)
     }
 
     override fun describeContents(): Int {
