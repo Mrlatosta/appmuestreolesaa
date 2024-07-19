@@ -4,6 +4,7 @@ package com.example.aplicacionlesaa
 import DragManageAdapter
 import RetrofitClient
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -493,10 +494,27 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
     companion object {
-        const val REQUEST_AGREGAR_MUESTRA = 1
-        const val EXTRA_NOMBRE_MUESTRA = "extra_nombre_muestra"
-        const val EXTRA_DESCRIPCION_MUESTRA = "extra_descripcion_muestra"
+        const val REQUEST_AGREGAR_MUESTRA = 1002
+
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_AGREGAR_MUESTRA && resultCode == Activity.RESULT_OK) {
+            val muestrasExtras: ArrayList<Muestra>? = data?.getParcelableArrayListExtra("muestrasList")
+            muestrasExtras?.let { list ->
+                for (muestra in list) {
+                    Log.e("Muestra", muestra.toString())
+                }
+                binding.tvMuestaEta.text = "Muestras Extra: " + list.size.toString()
+            } ?: run {
+                Log.e("Error", "No se recibieron muestras")
+            }
+        } else {
+            Log.e("Error", "Error al obtener la muestra")
+            }
+        }
+
 
     override fun onBackPressed() {
         // Crear un AlertDialog para la confirmación

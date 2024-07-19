@@ -645,5 +645,15 @@
         app:layout_constraintStart_toEndOf="@+id/btnInfo"
         app:layout_constraintTop_toBottomOf="@+id/tvfechamuestreo" />
 
+    <TextView
+        android:id="@+id/tvMuestaEta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="4dp"
+        android:text="Muestras Extra: 0"
+        app:layout_constraintStart_toEndOf="@+id/btnInfo"
+        app:layout_constraintTop_toBottomOf="@+id/btnMuestraExtra" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

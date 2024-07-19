@@ -2,6 +2,7 @@ package com.example.aplicacionlesaa
 
 import DragManageAdapter
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -325,6 +326,8 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
         folio = intent.getStringExtra("folio")
         folio = folio + "E"
 
+
+
         val tvRegM  =binding.tvregistromuestra
         val tvnum = binding.tvNumeroMuestra
         binding.tvFolio.text = folio
@@ -443,6 +446,14 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
             }
 
 
+
+        }
+
+        binding.btnAceptar.setOnClickListener{
+            val resultIntent = Intent()
+            resultIntent.putParcelableArrayListExtra("muestrasList", ArrayList(muestraMutableList))
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish() // Cierra la actividad
 
         }
 
