@@ -288,7 +288,6 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
     private var lugares: ArrayList<String> = ArrayList()
     var contador = 0
     private val storagePermissionRequestCode = 1001
-    var nombresLugares: MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -323,6 +322,25 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
 
         binding.txtLugar.setAdapter(adapterLugares)
 
+        try {
+
+
+            val muestrasExistentes = intent.getParcelableArrayListExtra<Muestra>("muestraList")
+            if (muestrasExistentes != null) {
+                Log.e("muestrasExistentes", muestrasExistentes.toString())
+                muestraMutableList.addAll(muestrasExistentes)
+                contador = muestraMutableList.size
+                binding.tvNumeroMuestra.text = (contador + 1).toString()
+                adapter.notifyDataSetChanged()
+            }else{
+                Toast.makeText(this, "No hay muestras", Toast.LENGTH_SHORT).show()
+                contador = 0
+            }
+
+        }catch (e: Exception){
+            Log.e("Error", "Error al obtener la lista de muestras:" + e)
+            Toast.makeText(this, "No hay muestras", Toast.LENGTH_SHORT).show()
+        }
         folio = intent.getStringExtra("folio")
         folio = folio + "E"
 
@@ -450,10 +468,25 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
         }
 
         binding.btnAceptar.setOnClickListener{
-            val resultIntent = Intent()
-            resultIntent.putParcelableArrayListExtra("muestrasList", ArrayList(muestraMutableList))
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish() // Cierra la actividad
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Confirmación")
+            builder.setMessage("¿Estás seguro de que deseas guardar las muestras extras?")
+            builder.setPositiveButton("Sí") { dialog, which ->
+                checkStoragePermissionAndSaveJson()
+                val resultIntent = Intent()
+                resultIntent.putParcelableArrayListExtra("muestrasList", ArrayList(muestraMutableList))
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish() // Cierra la actividad
+
+            }
+
+            builder.setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            builder.show()
+
+
 
         }
 

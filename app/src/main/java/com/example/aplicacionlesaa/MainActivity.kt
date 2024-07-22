@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     private var adapterEdicion: muestraAdapter? = null
     private var fechaSinBarras: String = ""
     private var existeExtra: Boolean = false
+    private var muestrasExtras: ArrayList<Muestra> = ArrayList()
 
 
 
@@ -466,10 +467,20 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     intent.putExtra("clientePdm", clientePdm)
                     intent.putStringArrayListExtra("lugares", lugares)
                     intent.putExtra("descripciones", descripcionesList as ArrayList<Descripcion>)
-                    intent.putStringArrayListExtra("lugares", lugares)
+
+                    if (muestrasExtras.isNotEmpty()) {
+                        intent.putParcelableArrayListExtra(
+                            "muestraList",
+                            ArrayList(muestrasExtras)
+                        )
+                        Log.e("muestras:", muestrasExtras.toString())
+                        Toast.makeText(this, "Ya hay muestras extras", Toast.LENGTH_SHORT).show()
+                    }else{
+                        intent.putParcelableArrayListExtra("muestraList", ArrayList())
+                        Toast.makeText(this, "No hay muestras extras", Toast.LENGTH_SHORT).show()
+                    }
+
                     startActivityForResult(intent, REQUEST_AGREGAR_MUESTRA)
-
-
 
 
                 }catch (e:Exception){
@@ -501,12 +512,15 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_AGREGAR_MUESTRA && resultCode == Activity.RESULT_OK) {
-            val muestrasExtras: ArrayList<Muestra>? = data?.getParcelableArrayListExtra("muestrasList")
+
+
+            muestrasExtras= data?.getParcelableArrayListExtra("muestrasList")!!
             muestrasExtras?.let { list ->
                 for (muestra in list) {
                     Log.e("Muestra", muestra.toString())
                 }
                 binding.tvMuestaEta.text = "Muestras Extra: " + list.size.toString()
+
             } ?: run {
                 Log.e("Error", "No se recibieron muestras")
             }
@@ -567,9 +581,10 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         intent.putExtra("folio", folio)
         intent.putExtra("pdmDetallado", pdmDetallado)
         intent.putParcelableArrayListExtra("listaServicios", ArrayList(serviciosList))
-
-
-
+        if (muestrasExtras.isNotEmpty()) {
+            intent.putParcelableArrayListExtra("muestraExtraList", ArrayList(muestrasExtras))
+            Log.e("muestras:", muestrasExtras.toString())
+        }
 
         startActivity(intent)
     }

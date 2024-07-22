@@ -83,16 +83,31 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     private var folio: String? = null
     private lateinit var pdmDetallado: Pdm
     private var lugares: ArrayList<String> = ArrayList()
+    private var muestrasExtra: MutableList<Muestra> = mutableListOf()
+    private var existenMuestrasExtra: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMain2Binding.inflate(layoutInflater)
         setContentView(binding.root)
         muestraMutableList = intent.getParcelableArrayListExtra("muestraList") ?: mutableListOf()
+        try{
+            muestrasExtra = intent.getParcelableArrayListExtra("muestraExtraList") ?: mutableListOf()
+            existenMuestrasExtra = true
+            Log.i("Muestras extra son:", muestrasExtra.toString())
 
-        val apiService = RetrofitClient.instance
+        }catch (e: Exception){
 
+                Log.i("Error:", e.toString())
+        }
 
+        if (muestrasExtra.isNotEmpty()) {
+            binding.tvMuestrasExtra.text = "Muestras extra: ${muestrasExtra.size}"
+            binding.tvMuestrasEAceptadas.text = "Muestras Extra Autorizadas: No "
+        }else{
+            binding.tvMuestrasExtra.text = "Muestras extra: 0"
+            binding.tvMuestrasEAceptadas.text = "Muestras Extra Autorizadas: - "
+        }
 
         initRecyclerView()
         enableEdgeToEdge()
