@@ -33,14 +33,15 @@ import com.example.aplicacionlesaa.api.ApiService
 import com.example.aplicacionlesaa.databinding.ActivityMain2Binding
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
-import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Lugar
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Muestra_pdm
+import com.example.aplicacionlesaa.model.Muestra_pdmExtra
 import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.utils.NetworkUtils
 import com.example.aplicacionlesaa.worker.SendDataWorker
+import com.example.aplicacionlesaa.worker.SendDataWorkerMuestrasExtra
 import com.example.aplicacionlesaa.worker.SendDatosFaltantesWorker
 import com.google.gson.Gson
 import com.itextpdf.io.image.ImageDataFactory
@@ -97,16 +98,13 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             Log.i("Muestras extra son:", muestrasExtra.toString())
 
         }catch (e: Exception){
-
                 Log.i("Error:", e.toString())
         }
 
         if (muestrasExtra.isNotEmpty()) {
             binding.tvMuestrasExtra.text = "Muestras extra: ${muestrasExtra.size}"
-            binding.tvMuestrasEAceptadas.text = "Muestras Extra Autorizadas: No "
         }else{
             binding.tvMuestrasExtra.text = "Muestras extra: 0"
-            binding.tvMuestrasEAceptadas.text = "Muestras Extra Autorizadas: - "
         }
 
         initRecyclerView()
@@ -161,52 +159,22 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Confirmación")
-            builder.setMessage("¿Estás seguro de que enviar y concluir el folio ${binding.tvFolio.text}?")
+            if (muestrasExtra.isNotEmpty()) {
+                builder.setMessage("¿Estás seguro de que enviar y concluir el folio ${binding.tvFolio.text} con muestras extra con folio ${binding.tvFolio.text}e?")
+            }else{
+                builder.setMessage("¿Estás seguro de que enviar y concluir el folio ${binding.tvFolio.text}?")
+
+            }
 
             // Configurar el botón "Sí"
             builder.setPositiveButton("Sí") { dialog, which ->
 
                 try {
-                    val nombreArchivoPdf = "Muestras-Folio-${binding.tvFolio.text}.pdf"
-                    /*try{
-                        //saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
-                        Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
-                        }catch (e: Exception){
-                            Log.i("Error guardand0:", e.toString())
-                    }*/
 
-                    val folioMuestreo = FolioMuestreo(
-                        folio = binding.tvFolio.text.toString(),
-                        fecha = LocalDate.now().toString(),
-                        folio_cliente = folio_cliente.toString(),
-                        folio_pdm = pdmSeleccionado
-                    )
+                    val nombreArchivoPdf = "Muestras-Folio-${binding.tvFolio.text}.pdf"
+
                     val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
                         .toString()
-
-                    /*var htmlContent = createHtmlWithTable(this,muestraMutableList)
-                    val datosActualizar = mapOf(
-                        "año" to "2024",
-                        "mes" to LocalDate.now().monthValue.toString(),
-                        "dia" to LocalDate.now().dayOfMonth.toString(),
-                        "folio" to binding.tvFolio.text.toString(),
-                        "nombre" to clientePdm?.nombre_empresa.toString(),
-                        "direccion" to clientePdm?.direccion.toString(),
-                        "atencion" to clientePdm?.atencion.toString(),
-                        "puesto" to clientePdm?.puesto.toString(),
-                        "telefono" to clientePdm?.telefono.toString(),
-                        "correo" to clientePdm?.correo.toString()
-                        // Añade más según sea necesario
-                    )*/
-                    /*htmlContent = actualizarTablaHtml(htmlContent!!, datosActualizar)
-
-
-                    // Crear el PDF a partir del HTML generado
-                    if (htmlContent != null) {
-                        generatePdfFromHtml(htmlContent, "$pdfPath/listado_muestras.pdf")
-                    }else{
-                        println("No se pudo generar el PDF")
-                    }*/
 
                     if (NetworkUtils.isInternetAvailable(this)) {
                         Log.i("Internet", "Si hay internet")
@@ -288,7 +256,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         }
                         enqueueSendEmailTask(this,
                             "ray.contacto06@gmail.com",
-                            "$pdfPath/$nombreArchivoPdf"
+                            "$pdfPath/$nombreArchivoPdf",
+                            false
                         )
                         sendDatosFaltantesToApi()
                         binding.textView6.text = "Resumen de muestras - Folio concluido"
@@ -297,10 +266,82 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         try{
                             val correo = binding.txtCorreo.text.toString()
                             enqueueSendEmailTask(this, correo,
-                                "$pdfPath/$nombreArchivoPdf")
+                                "$pdfPath/$nombreArchivoPdf",
+                                false)
+
+                            if (muestrasExtra.isNotEmpty()) {
+                                val nombreArchivoPdfExt = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
+
+                                enqueueSendEmailTask(this, correo,
+                                    "$pdfPath/$nombreArchivoPdfExt",
+                                    true)
+                            }
+
+
                         }catch (e: Exception){
                             Log.i("Error:", e.toString())
                         }
+
+                        if (muestrasExtra.isNotEmpty()) {
+
+                            val muestraListaNuevaExtra = convertirAMuestraPdmExtra(muestrasExtra)
+
+
+                            val tamanoExtra = muestraListaNueva.size
+
+
+                            // Crear una lista de Data para cada muestra en muestraMutableList
+                            val dataListExtra = mutableListOf<Data>()
+                            //Envio de lista de muestra
+                            muestraListaNuevaExtra.forEachIndexed { index, muestra ->
+                                val data = Data.Builder()
+                                    .putInt("muestra_count",tamanoExtra)
+                                    .putString("registro_muestra_$index", muestra.registro_muestra)
+                                    .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                                    .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                                    .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                                    .putString("id_lab_$index", muestra.id_lab)
+                                    .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                                    .putString("temperatura_$index", muestra.temperatura)
+                                    .putString("lugar_toma_$index", muestra.lugar_toma)
+                                    .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                                    .putString("e_micro_$index", muestra.e_micro)
+                                    .putString("e_fisico_$index", muestra.e_fisico)
+                                    .putString("observaciones_$index", muestra.observaciones)
+                                    .putString("folio_pdm_$index", muestra.folio_pdm)
+                                    .putInt("estudio_id_$index", muestra.estudio_id)
+                                    .putString("cliente",clientePdm?.nombre_empresa)
+                                    .putString("folio",binding.tvFolio.text.toString() + "e")
+                                    .putString("folioPDM",pdmSeleccionado)
+                                    .build()
+
+                                dataListExtra.add(data)
+                            }
+
+                            // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                            dataListExtra.forEach { data ->
+                                val workRequest = OneTimeWorkRequestBuilder<SendDataWorkerMuestrasExtra>()
+                                    .setInputData(data)
+                                    .setConstraints(
+                                        Constraints.Builder()
+                                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                                            .build()
+                                    )
+                                    .build()
+
+                                Log.i("Si hay internet", "Entre al worker")
+                                WorkManager.getInstance(this).enqueue(workRequest)
+                            }
+
+                            val nombreArchivoPdfExtra = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
+
+                            enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
+                                "$pdfPath/$nombreArchivoPdfExtra",
+                                true)
+
+                        }
+
+
                     } else {
                         Toast.makeText(this, "No hay internet, los datos se enviarán cuando se establezca una conexión", Toast.LENGTH_SHORT).show()
                         Log.i("Internet", "No hay internet")
@@ -346,12 +387,14 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         }
 
 
+
+
                         // Envío de correo con el archivo PDF
                         val file = File(pdfPath, nombreArchivoPdf)
                         /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf")*/
                         enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
-                            "$pdfPath/$nombreArchivoPdf")
+                            "$pdfPath/$nombreArchivoPdf",false)
 
                         val nombreAutoAnalisis = binding.txtNombreAutoAnalisis.text.toString()
                         val puestoAutoAnalisis = binding.txtPuestoAutoAnalisis.text.toString()
@@ -382,6 +425,66 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         // Encolar la solicitud de trabajo
                         WorkManager.getInstance(this).enqueue(sendDataWorkRequest)
 
+                        if (muestrasExtra.isNotEmpty()) {
+
+                            val muestraListaNuevaExtra = convertirAMuestraPdmExtra(muestrasExtra)
+
+
+                            val tamanoExtra = muestraListaNueva.size
+
+
+                            // Crear una lista de Data para cada muestra en muestraMutableList
+                            val dataListExtra = mutableListOf<Data>()
+                            //Envio de lista de muestra
+                            muestraListaNuevaExtra.forEachIndexed { index, muestra ->
+                                val data = Data.Builder()
+                                    .putInt("muestra_count",tamanoExtra)
+                                    .putString("registro_muestra_$index", muestra.registro_muestra)
+                                    .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                                    .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                                    .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                                    .putString("id_lab_$index", muestra.id_lab)
+                                    .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                                    .putString("temperatura_$index", muestra.temperatura)
+                                    .putString("lugar_toma_$index", muestra.lugar_toma)
+                                    .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                                    .putString("e_micro_$index", muestra.e_micro)
+                                    .putString("e_fisico_$index", muestra.e_fisico)
+                                    .putString("observaciones_$index", muestra.observaciones)
+                                    .putString("folio_pdm_$index", muestra.folio_pdm)
+                                    .putInt("estudio_id_$index", muestra.estudio_id)
+                                    .putString("cliente",clientePdm?.nombre_empresa)
+                                    .putString("folio",binding.tvFolio.text.toString() + "e")
+                                    .putString("folioPDM",pdmSeleccionado)
+                                    .build()
+
+                                dataListExtra.add(data)
+                            }
+
+                            // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                            dataListExtra.forEach { data ->
+                                val workRequest = OneTimeWorkRequestBuilder<SendDataWorkerMuestrasExtra>()
+                                    .setInputData(data)
+                                    .setConstraints(
+                                        Constraints.Builder()
+                                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                                            .build()
+                                    )
+                                    .build()
+
+                                Log.i("Si hay internet", "Entre al worker")
+                                WorkManager.getInstance(this).enqueue(workRequest)
+                            }
+
+                            val nombreArchivoPdfExtra = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
+
+                            enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
+                                "$pdfPath/$nombreArchivoPdfExtra",true)
+
+
+                        }
+
+
 
                     }
 
@@ -409,18 +512,20 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             //SendEmailTask("mrlatosta@gmail.com").execute()
         }
 
-//        val btnClear = binding.btnClear
-//        val btnSaveSignature = binding.btnInsertSignature
-//        val signatureView = binding.signatureView
-//
-//        btnClear.setOnClickListener {
-//            signatureView.clear()
-//        }
-//
-//        btnSaveSignature.setOnClickListener {
-//            val signatureBitmap = signatureView.getSignatureBitmap()
-//            saveBitmap(signatureBitmap)
-//        }
+        binding.btnVme.setOnClickListener {
+
+            if (muestrasExtra.isNotEmpty()) {
+                val intent = Intent(this, VerMuestrasExtraActivity::class.java)
+                intent.putParcelableArrayListExtra("muestraExtraList", ArrayList(muestrasExtra))
+                intent.putExtra("clientePdm", clientePdm)
+                intent.putExtra("plandemuestreo", pdmSeleccionado)
+                intent.putExtra("pdmDetallado", pdmDetallado)
+                intent.putExtra("folio",folio)
+                startActivity(intent)
+            }else{
+                Toast.makeText(this, "No hay muestras extra", Toast.LENGTH_SHORT).show()
+            }
+        }
 
 
     }
@@ -557,6 +662,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 )
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 savePdf("ray.contacto06@gmail.com")
+                if (muestrasExtra.isNotEmpty()) {
+                    savePdfExtra("ray.contacto06@gmail.com")
+                }
             }
         } else {
             if (ContextCompat.checkSelfPermission(
@@ -577,6 +685,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     muestraMutableList)
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                                 savePdf("ray.contacto06@gmail.com")
+                if (muestrasExtra.isNotEmpty()) {
+                    savePdfExtra("ray.contacto06@gmail.com")
+                }
             }
         }
     }
@@ -597,6 +708,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     muestraMutableList)
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 savePdf("ray.contacto06@gmail.com")
+                if (muestrasExtra.isNotEmpty()) {
+                    savePdfExtra("ray.contacto06@gmail.com")
+                }
 
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -610,6 +724,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
                     savePdf("ray.contacto06@gmail.com")
+                    if (muestrasExtra.isNotEmpty()) {
+                        savePdfExtra("ray.contacto06@gmail.com")
+                    }
                     val muestraData = MuestraData(binding.tvFolio.text.toString(),
                         pdmSeleccionado,
                         clientePdm,
@@ -1018,6 +1135,367 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
     }
 
+    private fun savePdfExtra(emailAddress: String) {
+
+        val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+        val file = File(pdfPath, "Muestras-Folio-${binding.tvFolio.text}E.pdf")
+
+        try {
+            val pdfWriter = PdfWriter(file)
+            val pdfDocument = PdfDocument(pdfWriter)
+            val document = Document(pdfDocument, PageSize.A4.rotate())
+
+            val footerHandler = FooterEventHandler(document)
+            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, footerHandler)
+
+
+            val inputStream = applicationContext.resources.openRawResource(R.raw.logorectangulartrans)
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            var nextByte = inputStream.read()
+            while (nextByte != -1) {
+                byteArrayOutputStream.write(nextByte)
+                nextByte = inputStream.read()
+            }
+
+            val imageData = byteArrayOutputStream.toByteArray()
+            //--handler
+
+
+            val image = Image(ImageDataFactory.create(imageData))
+            image.scaleToFit(150f, 100f)
+            //document.add(image)
+
+            // Colores
+            // Crear colores para la tabla
+            // Crear colores para la tabla
+            // Crear colores para la tabla
+            val headerColor = DeviceRgb(0, 0, 102)
+            val subHeaderColor = DeviceRgb(153, 204, 255)
+            val whiteColor = DeviceRgb(255, 255, 255)
+            val fontSize = 8f // Tamaño de fuente más pequeño
+
+            // Crear tabla principal (2 columnas)
+            val mainTable = Table(UnitValue.createPercentArray(floatArrayOf(3f, 1f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
+
+            // Tabla de encabezado (3 columnas)
+            val tableEncabezado = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
+
+            // Encabezado principal
+            val mainHeaderCell = Cell(1, 2)
+                .add(Paragraph("F-LAB 83. SOLICITUD DE SERVICIO DE ANÁLISIS DE AGUAS Y ALIMENTOS").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor).setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            tableEncabezado.addCell(mainHeaderCell)
+
+            // Sub-encabezado
+            val subHeaderCell = Cell(1, 2)
+                .add(Paragraph("Servicios que generan valor").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            tableEncabezado.addCell(subHeaderCell)
+
+            // Crear subtabla para "DATOS DE SOLICITUD" (2 columnas)
+            val datosSolicitudTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f)))
+            datosSolicitudTable.setWidth(UnitValue.createPercentValue(100f))
+            datosSolicitudTable.setHeight(UnitValue.createPercentValue(100f))
+
+            datosSolicitudTable.addCell(Cell().add(Paragraph("AÑO:").setFontSize(fontSize)).setFontColor(whiteColor).setBackgroundColor(headerColor))
+            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().year.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+
+            datosSolicitudTable.addCell(Cell().add(Paragraph("MES:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().monthValue.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+
+            datosSolicitudTable.addCell(Cell().add(Paragraph("DÍA:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().dayOfMonth.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+
+            datosSolicitudTable.addCell(Cell().add(Paragraph("FOLIO:").setFontSize(fontSize).setFontColor(whiteColor)).setBackgroundColor(headerColor))
+            datosSolicitudTable.addCell(Cell().add(Paragraph(binding.tvFolio.text.toString()+"E").setFontSize(fontSize))).setBackgroundColor(whiteColor)
+
+            // Crear subtabla para "DATOS DE QUIEN SOLICITA LOS ANÁLISIS" (4 columnas)
+            val datosSolicitanteTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.nombre_empresa).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("DIRECCIÓN:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.direccion).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("ATENCIÓN A:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.atencion).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("TELÉFONO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.telefono).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.puesto).setFontSize(fontSize)))
+
+            datosSolicitanteTable.addCell(Cell().add(Paragraph("CORREO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.correo).setFontSize(fontSize)))
+
+            // Agregar sub-tablas a la tabla de encabezado en la misma fila
+            tableEncabezado.addCell(Cell(1, 1).add(Paragraph("DATOS DE SOLICITUD").setFontColor(whiteColor)).setBackgroundColor(headerColor).setFontSize(fontSize))
+            tableEncabezado.addCell(Cell(1, 2).add(Paragraph("DATOS DE QUIEN SOLICITA LOS ANÁLISIS").setFontColor(whiteColor)).setBackgroundColor(headerColor).setFontSize(fontSize))
+
+            tableEncabezado.addCell(Cell().add(datosSolicitudTable)).setBorder(Border.NO_BORDER)
+            tableEncabezado.addCell(Cell(1, 2).add(datosSolicitanteTable)).setBorder(Border.NO_BORDER)
+
+            // Agregar la tabla de encabezado y el logo a la tabla principal
+            mainTable.addCell(Cell().add(tableEncabezado).setBorder(Border.NO_BORDER)).setBorder(Border.NO_BORDER)
+            mainTable.addCell(Cell().add(image).setVerticalAlignment(VerticalAlignment.MIDDLE).setHorizontalAlignment(HorizontalAlignment.RIGHT).setBorder(Border.NO_BORDER)).setBorder(Border.NO_BORDER)
+
+            // Agregar la tabla principal al documento
+            document.add(mainTable)
+
+//            val logoPath = "res/raw/logorectangulartrans.png" // Ruta a tu imagen
+//            val img = Image(ImageDataFactory.create(logoPath))
+//            document.add(img)
+//            document.add(Paragraph("Muestras Realizadas"))
+
+            // Crear la tabla
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
+            table.setWidth(UnitValue.createPercentValue(100f))
+
+            // Agregar encabezados de celda
+            val tabeadercell = Cell(1, 9)
+                .add(Paragraph("Datos de las muestras colectadas").setFontColor(whiteColor).setFontSize(10f))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            table.addHeaderCell(tabeadercell)
+
+            val estutablcell = Cell(1, 2)
+                .add(Paragraph("Estudios a realizar").setFontColor(whiteColor).setFontSize(10f))
+                .setBackgroundColor(DeviceRgb(46,105,140))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            table.addHeaderCell(estutablcell)
+
+
+            val cellobsv = Cell(1, 1)
+                .add(Paragraph("").setFontColor(whiteColor).setFontSize(15f))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            table.addHeaderCell(cellobsv)
+
+            addTableHeader(table)
+
+            // Agregar filas de datos
+            for (muestra in muestrasExtra) {
+                addTableRow(table, muestra)
+            }
+
+            // Configurar el tamaño de fuente para las celdas
+            table.setFontSize(7f)
+            document.add(table)
+            val paragrafoNomenclaturas = Paragraph("MA=Mesofilicos Aerobios - CT=Coliformes Totales - MH=Mohos - LV=Levaduras - CF=Coliformes Fecales - EC=Escherichia Coli - SA=Staphylococcus Aureus - SS=Salmonella spp - LM=Listeria Monocytogenes Vc=Vibrio Cholerae spp. - VP=Vibrio Parahemolitico spp. - PS=Pseudomona - CP = Clostridium Perfringens = BC=Bacillus Cereus - LP=Legionella spp. -ACA= Acanthamoeba spp. - NAE=Naegleria spp. - EFC=Enterococcus Fecales. - GL=Giardia Lamblia. - CLL=Cloro libre. - CCT= Cloro total.-PH=Potencial de Hidrógeno.-Crnas=Cloraminas,DUR=Dureza.- Alk=Alcalinidad. - SDT=Sólidos Disueltos Totales. - CE=Conductividad Electrica. - TUR=Turbidez ").setFontColor(DeviceRgb(1,1,1)).setFontSize(5f)
+
+            document.add(paragrafoNomenclaturas)
+
+            var signatureViewUno = binding.signatureViewUno
+            val signatureBitmap = signatureViewUno.getSignatureBitmap()
+            val stream = ByteArrayOutputStream()
+            signatureBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val byteArray = stream.toByteArray()
+
+            // Crear la imagen de iTextPDF a partir del array de bytes
+            val imagedata = ImageDataFactory.create(byteArray)
+            val signatureImageUno = Image(imagedata).scaleToFit(100f, 100f)
+
+            var signatureViewDos = binding.signatureViewDos
+            val signatureBitmapDos = signatureViewDos.getSignatureBitmap()
+            val streamDos = ByteArrayOutputStream()
+            signatureBitmapDos.compress(Bitmap.CompressFormat.PNG, 100, streamDos)
+            val byteArrayDos = streamDos.toByteArray()
+
+            // Crear la imagen de iTextPDF a partir del array de bytes
+            val imagedataDos = ImageDataFactory.create(byteArrayDos)
+            val signatureImageDos = Image(imagedataDos).scaleToFit(100f, 100f)
+
+
+
+            // Crear tabla para la sección de firmas
+            val firmaTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            firmaTable.setWidth(UnitValue.createPercentValue(100f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
+
+// Encabezado
+            val headerAutorizaCell = Cell(1, 3)
+                .add(Paragraph("QUIÉN AUTORIZA ANÁLISIS DE LAS MUESTRAS").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            val headerFirmaCell1 = Cell()
+                .add(Paragraph("FIRMA").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+//                .setBorder(Border.NO_BORDER)
+
+            val headerTomaCell = Cell(1, 3)
+                .add(Paragraph("QUIÉN TOMA LAS MUESTRAS").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+            val headerFirmaCell2 = Cell()
+                .add(Paragraph("FIRMA").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+
+            firmaTable.addCell(headerAutorizaCell)
+            firmaTable.addCell(headerFirmaCell1)
+//
+
+// Datos de quien autoriza
+            val autorizaNombreCell = Cell()
+                .add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val autorizaNombreValueCell = Cell(1,2)
+                .add(Paragraph(binding.txtNombreAutoAnalisis.text.toString())).setFontSize(fontSize)
+            val autorizaPuestoCell = Cell()
+                .add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val autorizaPuestoValueCell = Cell(1,2)
+                .add(Paragraph(binding.txtPuestoAutoAnalisis.text.toString())).setFontSize(fontSize)
+
+            firmaTable.addCell(autorizaNombreCell)
+            firmaTable.addCell(autorizaNombreValueCell)
+            firmaTable.addCell(Cell(2, 2).add(signatureImageUno))
+            firmaTable.addCell(autorizaPuestoCell)
+            firmaTable.addCell(autorizaPuestoValueCell)
+
+// Datos de quien toma las muestras
+            val tomaNombreCell = Cell()
+                .add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val tomaNombreValueCell = Cell(1, 2)
+                .add(Paragraph(binding.txtNombreMuestreador.text.toString()).setFontSize(fontSize))
+
+            val tomaPuestoCell = Cell()
+                .add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val tomaPuestoValueCell = Cell(1, 2)
+                .add(Paragraph("Ing. de campo").setFontSize(fontSize))
+
+            firmaTable.addCell(headerTomaCell)
+            firmaTable.addCell(headerFirmaCell2)
+            firmaTable.addCell(tomaNombreCell)
+            firmaTable.addCell(tomaNombreValueCell)
+            firmaTable.addCell(Cell(2, 2).add(signatureImageDos))
+            firmaTable.addCell(tomaPuestoCell)
+            firmaTable.addCell(tomaPuestoValueCell)
+
+
+// Agregar tabla de firmas al documento
+
+            val puntoCriticoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            puntoCriticoTable.setWidth(UnitValue.createPercentValue(80f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
+
+            val puntoCriticoHeader = Cell(1, 4)
+                .add(Paragraph("PUNTO CRITICO PRE - ANALISIS").setFontColor(whiteColor).setFontSize(fontSize))
+                .setBackgroundColor(headerColor)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setBorder(Border.NO_BORDER)
+
+
+
+            puntoCriticoTable.addCell(puntoCriticoHeader)
+
+            val subtablaSalida = Table(UnitValue.createPercentArray(floatArrayOf(1f,1f, 1f, 1f, 1f,1f)))
+            subtablaSalida.setWidth(UnitValue.createPercentValue(100f))
+            val subtablaSalidaFecha = Cell()
+                .add(Paragraph("Fecha:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val subtablaSalidaTemp = Cell()
+                .add(Paragraph("Temp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+
+            val subtablaSalidaResp = Cell()
+                .add(Paragraph("Resp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+
+            subtablaSalida.addCell(subtablaSalidaFecha)
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph(LocalDate.now().toString()).setFontSize(fontSize)))
+            subtablaSalida.addCell(subtablaSalidaTemp)
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaSalida.addCell(subtablaSalidaResp)
+            subtablaSalida.addCell(Cell(1, 2).add(Paragraph(pdmDetallado.ingeniero_campo).setFontSize(fontSize)))
+            subtablaSalida.addCell(Cell(1, 3).add(Paragraph().setFontSize(fontSize)))
+
+            val subtablaEntrada = Table(UnitValue.createPercentArray(floatArrayOf(1f,1f, 1f, 1f, 1f,1f)))
+            subtablaEntrada.setWidth(UnitValue.createPercentValue(100f))
+            val subtablaEntradaFecha = Cell()
+                .add(Paragraph("Fecha:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+            val subtablaEntradaTemp = Cell()
+                .add(Paragraph("Temp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+
+            val subtablaEntradaResp = Cell()
+                .add(Paragraph("Resp:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
+
+            subtablaEntrada.addCell(subtablaEntradaFecha)
+            subtablaEntrada.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaEntrada.addCell(subtablaEntradaTemp)
+            subtablaEntrada.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaEntrada.addCell(subtablaEntradaResp)
+            subtablaEntrada.addCell(Cell(1, 2).add(Paragraph("").setFontSize(fontSize)))
+            subtablaEntrada.addCell(Cell(1, 3).add(Paragraph("").setFontSize(fontSize)))
+
+            val datosPuntoCriticaCell = Cell(2, 2)
+                .add(Paragraph("DATOS DE SALIDA:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor).setTextAlignment(TextAlignment.CENTER)
+            val datosrecepcionPuntoCritico = Cell(2, 2)
+                .add(Paragraph("DATOS DE RECEPCION:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor).setTextAlignment(TextAlignment.CENTER)
+
+            puntoCriticoTable.addCell(datosPuntoCriticaCell)
+            puntoCriticoTable.addCell(Cell(2,2).add(subtablaSalida).setBorder(Border.NO_BORDER))
+            puntoCriticoTable.addCell(datosrecepcionPuntoCritico)
+            puntoCriticoTable.addCell(Cell(2,2).add(subtablaEntrada).setBorder(Border.NO_BORDER))
+
+            val tablaPrincipal = Table(2)
+            tablaPrincipal.setWidth(UnitValue.createPercentValue(100f))
+
+            // Agregar las tablas a la tabla principal
+            tablaPrincipal.addCell(Cell().add(firmaTable).setBorder(Border.NO_BORDER))
+            tablaPrincipal.addCell(Cell().add(puntoCriticoTable).setBorder(Border.NO_BORDER))
+
+
+            // Agregar tablas al documento
+            document.add(tablaPrincipal)
+
+
+            val tableFooter = Table(UnitValue.createPercentArray(floatArrayOf(1f, 0.5f, 1.5f, 0.5f,1.5f)))
+            tableFooter.setWidth(UnitValue.createPercentValue(100f)).setHorizontalAlignment(HorizontalAlignment.CENTER).setBackgroundColor(headerColor).setBorder(Border.NO_BORDER)
+
+            val fontSizeFooter = 6f
+            tableFooter.addCell(Cell().add(Paragraph("recepcionlab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("998 310 8622").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell(2,2).add(Paragraph("DOCUMENTO CONTROLADO\n Documento propiedad de Centro Integral en Servicios de Laboratorio de Aguas y Alimentos S.A de C.V.\n No puede reproducirse en forma parcial o total, si nla previa autorizacion del Laboratorio").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("F-ADM-LAB-83/REV0.5/FEBRERO 2024").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("operacioneslab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("998 310 8623").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("A.FRANCISCO I. MADERO MZ 107 LT 12 Int: LOCAL 4 REGION 94. CP 7717. Benito Juarez, Q.roo").setFontColor(whiteColor).setFontSize(5f).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
+
+            document.add(tableFooter)
+
+
+            document.close()
+
+            Toast.makeText(this, "PDF saved at $pdfPath/Muestras-Folio-${binding.tvFolio.text}.pdf", Toast.LENGTH_LONG).show()
+
+            // Enviar el PDF por correo electrónico
+            // SendEmailWorker(emailAddress, file).execute()
+            // SendEmailTask(emailAddress, file).execute()
+
+
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error saving PDF: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("Error pdf:", e.toString())
+        }
+
+    }
+
     private fun addTableHeader(table: Table) {
         val headers = arrayOf(
             "# Muestra", "Fecha de Muestra",
@@ -1075,17 +1553,25 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         }
     }
 
-    fun enqueueSendEmailTask(context: Context, emailAddress: String, filePath: String) {
+    fun enqueueSendEmailTask(context: Context, emailAddress: String, filePath: String,folioExtra:Boolean) {
+        Log.d("SendEmailTask", "Enviando correo electrónico... ${filePath}")
+        var mensaje = ""
+        if (folioExtra){
+            mensaje = "Hola ${clientePdm?.atencion} \n\n" +
+                    "Reciba un cordial saludo, por este medio le notificamos que ha recibido la solicitud de servicio correspondiente al muestreo del día ${LocalDate.now()} con No. de folio ${binding.tvFolio.text}E el cual está en proceso y garantizamos la terminación de este en tiempo y forma. \n"+
+                    "Sin más por el momento, quedamos a sus órdenes.\n\n"+
+                    "¡ Tenga un excelente día !"
+        }else{
+            mensaje = "Hola ${clientePdm?.atencion} \n\n" +
+                    "Reciba un cordial saludo, por este medio le notificamos que ha recibido la solicitud de servicio correspondiente al muestreo del día ${LocalDate.now()} con No. de folio ${binding.tvFolio.text} el cual está en proceso y garantizamos la terminación de este en tiempo y forma. \n"+
+                    "Sin más por el momento, quedamos a sus órdenes.\n\n"+
+                    "¡ Tenga un excelente día !"
+        }
         val data = Data.Builder()
             .putString("emailAddress", emailAddress)
             .putString("filePath", filePath)
             .putString("subject","Solicitud de servicio GRUPO LESAA")
-            .putString("messageText","Hola ${clientePdm?.atencion} \n\n" +
-                    "Reciba un cordial saludo, por este medio le notificamos que ha recibido la solicitud de servicio correspondiente al muestreo del día ${LocalDate.now()} con No. de folio ${binding.tvFolio.text} el cual está en proceso y garantizamos la terminación de este en tiempo y forma. \n"+
-
-        "Sin más por el momento, quedamos a sus órdenes.\n\n"+
-        "! Tenga un excelente día ¡"
-        )
+            .putString("messageText",mensaje)
             .build()
 
         val sendEmailWorkRequest = OneTimeWorkRequest.Builder(SendEmailWorker::class.java)
@@ -1095,30 +1581,63 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         WorkManager.getInstance(context).enqueue(sendEmailWorkRequest)
     }
 
-    fun convertirAMuestraPdm(muestras: List<Muestra>): List<Muestra_pdm> {
-        val listaMuestrasPdm = mutableListOf<Muestra_pdm>()
+    fun convertirAMuestraPdmExtra(muestras: List<Muestra>): List<Muestra_pdmExtra> {
+        if (muestras.isNotEmpty()){
+            val listaMuestrasPdmExtra = mutableListOf<Muestra_pdmExtra>()
+            for (muestra in muestras) {
+                val muestraPdm = Muestra_pdmExtra(
+                    registro_muestra = muestra.registroMuestra,
+                    folio_muestreo = binding.tvFolio.text.toString(),
+                    fecha_muestreo = muestra.fechaMuestra,
+                    nombre_muestra = muestra.nombreMuestra,
+                    id_lab = muestra.idLab,
+                    cantidad_aprox = muestra.cantidadAprox,
+                    temperatura = muestra.tempM,
+                    lugar_toma = muestra.lugarToma,
+                    descripcion_toma = muestra.descripcionM,
+                    e_micro = muestra.emicro,
+                    e_fisico = muestra.efisico,
+                    observaciones = muestra.observaciones,
+                    folio_pdm = binding.tvPDM.text.toString(),
+                    estudio_id = muestra.idEstudio.toInt()
+                )
+                listaMuestrasPdmExtra.add(muestraPdm)
+            }
+            return listaMuestrasPdmExtra
 
-        for (muestra in muestras) {
-            val muestraPdm = Muestra_pdm(
-                registro_muestra = muestra.registroMuestra,
-                folio_muestreo = binding.tvFolio.text.toString(),
-                fecha_muestreo = muestra.fechaMuestra,
-                nombre_muestra = muestra.nombreMuestra,
-                id_lab = muestra.idLab,
-                cantidad_aprox = muestra.cantidadAprox,
-                temperatura = muestra.tempM,
-                lugar_toma = muestra.lugarToma,
-                descripcion_toma = muestra.descripcionM,
-                e_micro = muestra.emicro,
-                e_fisico = muestra.efisico,
-                observaciones = muestra.observaciones,
-                folio_pdm = binding.tvPDM.text.toString(),
-                servicio_id = muestra.servicioId
-            )
-            listaMuestrasPdm.add(muestraPdm)
+        }else{
+            Log.e("Muestra","Algo paso")
         }
+        return emptyList()
+    }
 
-        return listaMuestrasPdm
+
+    fun convertirAMuestraPdm(muestras: List<Muestra>): List<Muestra_pdm> {
+
+
+            val listaMuestrasPdm = mutableListOf<Muestra_pdm>()
+
+            for (muestra in muestras) {
+                val muestraPdm = Muestra_pdm(
+                    registro_muestra = muestra.registroMuestra,
+                    folio_muestreo = binding.tvFolio.text.toString(),
+                    fecha_muestreo = muestra.fechaMuestra,
+                    nombre_muestra = muestra.nombreMuestra,
+                    id_lab = muestra.idLab,
+                    cantidad_aprox = muestra.cantidadAprox,
+                    temperatura = muestra.tempM,
+                    lugar_toma = muestra.lugarToma,
+                    descripcion_toma = muestra.descripcionM,
+                    e_micro = muestra.emicro,
+                    e_fisico = muestra.efisico,
+                    observaciones = muestra.observaciones,
+                    folio_pdm = binding.tvPDM.text.toString(),
+                    servicio_id = muestra.servicioId
+                )
+                listaMuestrasPdm.add(muestraPdm)
+            }
+            return listaMuestrasPdm
+
     }
 
     override fun onSignatureSaved(bitmap: Bitmap) {

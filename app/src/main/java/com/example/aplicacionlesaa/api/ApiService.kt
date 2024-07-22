@@ -7,6 +7,7 @@ import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Lugar
 import com.example.aplicacionlesaa.model.Lugares
 import com.example.aplicacionlesaa.model.Muestra_pdm
+import com.example.aplicacionlesaa.model.Muestra_pdmExtra
 import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Plandemuestreo
 import com.example.aplicacionlesaa.model.Servicio
@@ -55,6 +56,14 @@ interface ApiService {
 
     @POST("crearmuestra")
     fun createMuestreo(@Body muestra: Muestra_pdm): Call<Void>
+
+
+
+    @POST("createmuestraextra")
+    fun createMuestreoExtra(@Body muestra: Muestra_pdmExtra): Call<Void>
+
+    @POST("createfoliomuestreoextra")
+    fun createFolioMuestreoExtra(@Body folioMuestreo: FolioMuestreo): Call<Void>
 
     @POST("createclientelugar")
     fun createLugarCliente(@Body lugar: Lugar): Call<Void>

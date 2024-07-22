@@ -446,35 +446,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
-    <TextView
-        android:id="@+id/tvMuestrasExtra"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="56dp"
-        android:text="Muestras Extra: -"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/btnVme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="56dp"
         android:text="Ver M.E"
         app:layout_constraintStart_toEndOf="@+id/tvMuestrasExtra"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvMuestrasEAceptadas"
+        android:id="@+id/tvMuestrasExtra"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="24dp"
-        android:text="Muestras Extra Autorizadas: -"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="72dp"
+        android:text="Muestras Extra: -"
+        android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toBottomOf="@+id/tvMuestrasExtra" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
