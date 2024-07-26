@@ -57,8 +57,6 @@ interface ApiService {
     @POST("crearmuestra")
     fun createMuestreo(@Body muestra: Muestra_pdm): Call<Void>
 
-
-
     @POST("createmuestraextra")
     fun createMuestreoExtra(@Body muestra: Muestra_pdmExtra): Call<Void>
 

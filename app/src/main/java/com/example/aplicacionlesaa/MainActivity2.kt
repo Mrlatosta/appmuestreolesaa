@@ -453,7 +453,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                     .putString("observaciones_$index", muestra.observaciones)
                                     .putString("folio_pdm_$index", muestra.folio_pdm)
                                     .putInt("estudio_id_$index", muestra.estudio_id)
-                                    .putString("cliente",clientePdm?.nombre_empresa)
+                                    .putString("cliente",clientePdm?.folio)
                                     .putString("folio",binding.tvFolio.text.toString() + "e")
                                     .putString("folioPDM",pdmSeleccionado)
                                     .build()
