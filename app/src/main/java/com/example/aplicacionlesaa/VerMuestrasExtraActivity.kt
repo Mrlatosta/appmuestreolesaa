@@ -54,7 +54,7 @@ class VerMuestrasExtraActivity : AppCompatActivity() {
 
 
         binding.tvCliente.text = clientePdm?.nombre_empresa
-        binding.tvFolio.text = folio+"e"
+        binding.tvFolio.text = folio+"E"
         binding.tvPDM.text = pdmSeleccionado
 
 

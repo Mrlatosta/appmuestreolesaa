@@ -18,6 +18,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -71,6 +72,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     private var fechaSinBarras: String = ""
     private var existeExtra: Boolean = false
     private var muestrasExtras: ArrayList<Muestra> = ArrayList()
+    val subtipos = mutableListOf<String>()
+
 
 
 
@@ -150,6 +153,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         //Inicio Api
         val apiService = RetrofitClient.instance
         val spinner: Spinner = binding.idSpinner1
+        val spinnerSubtipo: Spinner = binding.idspinnerSubtipo
         val txtDescripciones = binding.txtdescripcion
         folio = intent.getStringExtra("folio")
         binding.tvFolio.text = folio
@@ -170,6 +174,15 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, ids)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
+
+        //Create an empty array of strings
+
+
+
+
+        val adapterSubtipo = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, subtipos)
+        adapterSubtipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerSubtipo.adapter = adapterSubtipo
 
 
         val tvDescripcion = binding.tvdescripcionmuestra
@@ -276,6 +289,38 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             "Error al establecer la cantidad aproximada en txtCantidadAprox"
                         )
                     }
+
+                    if (servicioSeleccionado.clasificacion == "ALIMENTOS COCIDOS"){
+                        //Eliminar si hay contenido en subtipos
+                        subtipos.clear()
+                        //Add to subtipos array the string: hola
+                        subtipos.add("Cocidos")
+                        subtipos.add("Salsas y pures cocidos")
+                        subtipos.add("Ensaladas cocidas")
+                    }else if (servicioSeleccionado.clasificacion == "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )"){
+                        subtipos.clear()
+                        subtipos.add("Crudos listos para consumo")
+                        subtipos.add("Pulpas")
+                        subtipos.add("JUGOS")
+                        subtipos.add("AGUAS PREPARADAS")
+                        subtipos.add("Carnicos no listos para el consumo")
+                        subtipos.add("Carnicos crudos listos para consumo")
+                        subtipos.add("Productos de la pesca crudos")
+                        subtipos.add("Ahumados")
+                    }else if (servicioSeleccionado.clasificacion == "POSTRES"){
+                        subtipos.clear()
+                        subtipos.add("Postres lacteos")
+                        subtipos.add("Postres a base de harina")
+                        subtipos.add("Postres no lacteos")
+                        subtipos.add("Helados")
+
+                    }else{
+                        subtipos.clear()
+                        subtipos.add("")
+                    }
+
+                    adapterSubtipo.notifyDataSetChanged()
+
                 } catch (e: Exception) {
                     Log.e("Error", "Error al mostrar los datos en los txt y tv")
                 }
@@ -370,6 +415,45 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             ).show()
 
                         } else {
+
+                            //Tomar el servicio id para ver su clasificacion en base a su index
+                            var servicioId = muestraMutableList[indexMuestraAEditar].servicioId
+                            var servicio = serviciosList.find { it.id == servicioId }
+                            if (servicio != null) {
+                                var clasificacion = servicio.clasificacion
+                                if (clasificacion == "ALIMENTOS COCIDOS"){
+                                    //Eliminar si hay contenido en subtipos
+                                    subtipos.clear()
+                                    //Add to subtipos array the string: hola
+                                    subtipos.add("Cocidos")
+                                    subtipos.add("Salsas y pures cocidos")
+                                    subtipos.add("Ensaladas cocidas")
+                                }else if (clasificacion == "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )"){
+                                    subtipos.clear()
+                                    subtipos.add("Crudos listos para consumo")
+                                    subtipos.add("Pulpas")
+                                    subtipos.add("JUGOS")
+                                    subtipos.add("AGUAS PREPARADAS")
+                                    subtipos.add("Carnicos no listos para el consumo")
+                                    subtipos.add("Carnicos crudos listos para consumo")
+                                    subtipos.add("Productos de la pesca crudos")
+                                    subtipos.add("Ahumados")
+                                }else if (clasificacion == "POSTRES"){
+                                    subtipos.clear()
+                                    subtipos.add("Postres lacteos")
+                                    subtipos.add("Postres a base de harina")
+                                    subtipos.add("Postres no lacteos")
+                                    subtipos.add("Helados")
+
+                                }else{
+                                    subtipos.clear()
+                                    subtipos.add("")
+                                }
+                                adapterSubtipo.notifyDataSetChanged()
+                            }
+
+
+
                             muestraMutableList[indexMuestraAEditar].nombreMuestra =
                                 binding.txtnombre.text.toString()
                             muestraMutableList[indexMuestraAEditar].cantidadAprox =
@@ -386,6 +470,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 binding.txtFisico.text.toString()
                             muestraMutableList[indexMuestraAEditar].observaciones =
                                 binding.txtobservaciones.text.toString()
+
+                            muestraMutableList[indexMuestraAEditar].subtipo =
+                                binding.idspinnerSubtipo.selectedItem.toString()
 
                             adapterEdicion?.notifyItemChanged(indexMuestraAEditar)
                             clearTextFields()
@@ -625,6 +712,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         var idServicioEntero: String = String()
         var tvCantidad = binding.tvCantidadRestante
         val spinner1 = binding.idSpinner1
+        val subtipo = binding.idspinnerSubtipo
 
         if (txtnombrem.text.toString().trim().isEmpty() || txtcantidad.text.toString().trim()
                 .isEmpty() || txtTemp.text.toString().trim().isEmpty() || txtLugar.text.toString()
@@ -695,7 +783,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             emicro = txtMicro.text.toString().trim(),
                             efisico = txtFisico.text.toString().trim(),
                             observaciones = txtObserva.text.toString().trim(),
-                            servicioId = idServicioEntero
+                            servicioId = idServicioEntero,
+                            subtipo = subtipo.selectedItem.toString()
                         )
                     muestraMutableList.add(muestraobjeto)
                     contador = muestraMutableList.size
@@ -786,18 +875,32 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
     private fun onDeletedItem(position: Int) {
-        if (modoEdicion == true){
-            Toast.makeText(this, "No se puede eliminar una muestra en modo edicion", Toast.LENGTH_SHORT).show()
+        if (modoEdicion == true || muestraMutableList[position].observaciones.contains( "Eliminada" )){
+            Toast.makeText(this, "No se puede eliminar una muestra en modo  o eliminada", Toast.LENGTH_SHORT).show()
         }else {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Confirmación")
+            // Crear un EditText para ingresar el motivo de la eliminación
+
+            val input = EditText(this)
+            input.hint = "Ingrese el motivo de la eliminación"
+            builder.setView(input)
+
 
             builder.setMessage("¿Estás seguro de que deseas eliminar la muestra?")
 
             builder.setPositiveButton("Sí") { dialog, which ->
                 try {
 
+                    val motivoEliminacion = input.text.toString().trim()
+                    if (motivoEliminacion.isEmpty()) {
+                        Toast.makeText(this, "Debe ingresar un motivo para la eliminación", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+
                     val muestraEliminada = muestraMutableList[position]
+                    muestraEliminada.observaciones = "Eliminada - Motivo: $motivoEliminacion"
+
                     val tvCantidad = binding.tvCantidadRestante
                     val servicioAsociado =
                         serviciosList.find { it.id == muestraEliminada.servicioId }
@@ -819,28 +922,29 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         }
 
                     }
-
-                    muestraMutableList.removeAt(position)
-                    //Notificar al listado que se ha en este caso borrado un item con una posicion
-                    adapter.notifyItemRemoved(position)
+                    //No borrarlos
+//                    muestraMutableList.removeAt(position)
+//                    //Notificar al listado que se ha en este caso borrado un item con una posicion
+//                    adapter.notifyItemRemoved(position)
                     val tvFolio = binding.tvFolio
 
 
-                    // Actualizar los números de muestra en la lista
-                    for (i in position until muestraMutableList.size) {
-                        muestraMutableList[i].numeroMuestra = (i + 1).toString()
-                        muestraMutableList[i].registroMuestra =
-                            tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
-                        muestraMutableList[i].idLab = fechaSinBarras+tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
 
-                    }
+//                    // Actualizar los números de muestra en la lista
+//                    for (i in position until muestraMutableList.size) {
+//                        muestraMutableList[i].numeroMuestra = (i + 1).toString()
+//                        muestraMutableList[i].registroMuestra =
+//                            tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
+//                        muestraMutableList[i].idLab = fechaSinBarras+tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
+//
+//                    }
                     adapter.notifyItemRangeChanged(position, muestraMutableList.size)
 
                     // Actualizar contador y TextView de número de muestra
-                    contador = muestraMutableList.size
-                    binding.tvNumeroMuestra.text = (contador + 1).toString()
-                    binding.tvregistromuestra.text =
-                        tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
+//                    contador = muestraMutableList.size
+//                    binding.tvNumeroMuestra.text = (contador + 1).toString()
+//                    binding.tvregistromuestra.text =
+//                        tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
                     Log.e("Prueba".toString(), "El contador es:$contador")
 
                     checkStoragePermissionAndSaveJson()
@@ -866,8 +970,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
     private fun onEditItem(position: Int) {
-        if (modoEdicion == true){
-            Toast.makeText(this, "No se puede elegir editar otra muestra en modo edicion", Toast.LENGTH_SHORT).show()
+        if (modoEdicion == true || muestraMutableList[position].observaciones.contains( "Eliminada" )){
+            Toast.makeText(this, "No se puede elegir editar otra muestra en modo edicion o eliminada", Toast.LENGTH_SHORT).show()
         }else{
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Confirmación")
@@ -881,6 +985,10 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             val spinner1 = binding.idSpinner1
                             spinner1.setSelection(serviciosList.indexOf(servicio))
                             spinner1.isEnabled = false
+
+                            val subtipo = binding.idspinnerSubtipo
+                            subtipo.setSelection(subtipos.indexOf(muestraMutableList[position].subtipo))
+
                             break
                         }
                     }

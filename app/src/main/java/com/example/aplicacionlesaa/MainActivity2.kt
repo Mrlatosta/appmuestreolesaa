@@ -103,6 +103,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
         if (muestrasExtra.isNotEmpty()) {
             binding.tvMuestrasExtra.text = "Muestras extra: ${muestrasExtra.size}"
+            Log.e("Muestras extra son:", muestrasExtra.toString())
         }else{
             binding.tvMuestrasExtra.text = "Muestras extra: 0"
         }
@@ -120,15 +121,35 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 
         btnInsertSignature.setOnClickListener {
-            val signatureDialog = SignatureDialogFragment()
-            signatureDialog.setSignatureDialogListener(this)
-            signatureDialog.show(supportFragmentManager, "SignatureDialogFragment")
+            //Mostrarle una ventana de informacion antes de proceder
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Información")
+            builder.setMessage("Al firmar, usted confirma que los lugares de toma de muestra o centros de consumo proporcionados son correctos. Asimismo, se le informa que podrán realizarse modificaciones en la información de las muestras en caso de errores ortográficos, y cualquier cambio derivado de esta situación le será notificado debidamente.")
+            builder.setPositiveButton("Aceptar") { dialog, which ->
+                // Acción a realizar al hacer clic en "Aceptar"
+                val signatureDialog = SignatureDialogFragment()
+                signatureDialog.setSignatureDialogListener(this)
+                signatureDialog.show(supportFragmentManager, "SignatureDialogFragment")
+            }
+            val dialog = builder.create()
+            dialog.show()
+
+
         }
 
         btnInsertSignatureDos.setOnClickListener {
-            val signatureDialogDos = SignatureDialogFragmentDos()
-            signatureDialogDos.setSignatureDialogListenerDos(this)
-            signatureDialogDos.show(supportFragmentManager, "SignatureDialogFragmentDos")
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Información")
+            builder.setMessage("Recordatorio: Verifica que los lugares de toma, las nombres y las descripciones de las muestras sean correctos. ")
+            builder.setPositiveButton("Aceptar") { dialog, which ->
+                val signatureDialogDos = SignatureDialogFragmentDos()
+                signatureDialogDos.setSignatureDialogListenerDos(this)
+                signatureDialogDos.show(supportFragmentManager, "SignatureDialogFragmentDos")
+            }
+
+            val dialog = builder.create()
+            dialog.show()
+
         }
 
 
@@ -160,9 +181,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Confirmación")
             if (muestrasExtra.isNotEmpty()) {
-                builder.setMessage("¿Estás seguro de que enviar y concluir el folio ${binding.tvFolio.text} con muestras extra con folio ${binding.tvFolio.text}e?")
+                builder.setMessage("¿Estás seguro de  enviar y concluir el folio ${binding.tvFolio.text} con muestras extra con folio ${binding.tvFolio.text}E?")
             }else{
-                builder.setMessage("¿Estás seguro de que enviar y concluir el folio ${binding.tvFolio.text}?")
+                builder.setMessage("¿Estás seguro de  enviar y concluir el folio ${binding.tvFolio.text}?")
 
             }
 
@@ -235,6 +256,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                 .putString("observaciones_$index", muestra.observaciones)
                                 .putString("folio_pdm_$index", muestra.folio_pdm)
                                 .putString("servicio_id_$index", muestra.servicio_id)
+                                .putString("subtipo_$index", muestra.subtipo)
                                 .build()
 
                             dataList.add(data)
@@ -287,7 +309,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                             val muestraListaNuevaExtra = convertirAMuestraPdmExtra(muestrasExtra)
 
 
-                            val tamanoExtra = muestraListaNueva.size
+                            val tamanoExtra = muestraListaNuevaExtra.size
 
 
                             // Crear una lista de Data para cada muestra en muestraMutableList
@@ -297,7 +319,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                 val data = Data.Builder()
                                     .putInt("muestra_count",tamanoExtra)
                                     .putString("registro_muestra_$index", muestra.registro_muestra)
-                                    .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                                    .putString("folio_muestreo_$index", muestra.folio_muestreo + "E")
                                     .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
                                     .putString("nombre_muestra_$index", muestra.nombre_muestra)
                                     .putString("id_lab_$index", muestra.id_lab)
@@ -310,12 +332,13 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                     .putString("observaciones_$index", muestra.observaciones)
                                     .putString("folio_pdm_$index", muestra.folio_pdm)
                                     .putInt("estudio_id_$index", muestra.estudio_id)
-                                    .putString("cliente",clientePdm?.nombre_empresa)
-                                    .putString("folio",binding.tvFolio.text.toString() + "e")
+                                    .putString("cliente",clientePdm?.folio)
+                                    .putString("folio",binding.tvFolio.text.toString() + "E")
                                     .putString("folioPDM",pdmSeleccionado)
                                     .build()
 
                                 dataListExtra.add(data)
+                                Log.e("Muestras extra son:", muestraListaNuevaExtra.toString())
                             }
 
                             // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
@@ -353,7 +376,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                             val data = Data.Builder()
                                 .putInt("muestra_count",tamaño)
                                 .putString("registro_muestra_$index", muestra.registro_muestra)
-                                .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                                .putString("folio_muestreo_$index", muestra.folio_muestreo )
                                 .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
                                 .putString("nombre_muestra_$index", muestra.nombre_muestra)
                                 .putString("id_lab_$index", muestra.id_lab)
@@ -366,6 +389,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                 .putString("observaciones_$index", muestra.observaciones)
                                 .putString("folio_pdm_$index", muestra.folio_pdm)
                                 .putString("servicio_id_$index", muestra.servicio_id)
+                                .putString("subtipo_$index", muestra.subtipo)
                                 .build()
 
                             dataList.add(data)
@@ -430,8 +454,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                             val muestraListaNuevaExtra = convertirAMuestraPdmExtra(muestrasExtra)
 
 
-                            val tamanoExtra = muestraListaNueva.size
-
+                            val tamanoExtra = muestraListaNuevaExtra.size
+                            Log.e("El tamanoextra es:", tamanoExtra.toString())
 
                             // Crear una lista de Data para cada muestra en muestraMutableList
                             val dataListExtra = mutableListOf<Data>()
@@ -440,7 +464,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                 val data = Data.Builder()
                                     .putInt("muestra_count",tamanoExtra)
                                     .putString("registro_muestra_$index", muestra.registro_muestra)
-                                    .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                                    .putString("folio_muestreo_$index", muestra.folio_muestreo + "E")
                                     .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
                                     .putString("nombre_muestra_$index", muestra.nombre_muestra)
                                     .putString("id_lab_$index", muestra.id_lab)
@@ -454,7 +478,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                                     .putString("folio_pdm_$index", muestra.folio_pdm)
                                     .putInt("estudio_id_$index", muestra.estudio_id)
                                     .putString("cliente",clientePdm?.folio)
-                                    .putString("folio",binding.tvFolio.text.toString() + "e")
+                                    .putString("folio",binding.tvFolio.text.toString() + "E")
                                     .putString("folioPDM",pdmSeleccionado)
                                     .build()
 
@@ -1169,7 +1193,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             // Crear colores para la tabla
             // Crear colores para la tabla
             // Crear colores para la tabla
-            val headerColor = DeviceRgb(0, 0, 102)
+            val headerColor = DeviceRgb(1, 53, 85)
             val subHeaderColor = DeviceRgb(153, 204, 255)
             val whiteColor = DeviceRgb(255, 255, 255)
             val fontSize = 8f // Tamaño de fuente más pequeño
@@ -1632,7 +1656,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     e_fisico = muestra.efisico,
                     observaciones = muestra.observaciones,
                     folio_pdm = binding.tvPDM.text.toString(),
-                    servicio_id = muestra.servicioId
+                    servicio_id = muestra.servicioId,
+                    subtipo = muestra.subtipo
                 )
                 listaMuestrasPdm.add(muestraPdm)
             }

@@ -38,8 +38,8 @@ class SendDataWorkerMuestrasExtra(appContext: Context, workerParams: WorkerParam
             val response = withContext(Dispatchers.IO) {
                 RetrofitClient.instance.createFolioMuestreoExtra(folioMuestreoExtra).execute()
             }
-
-            if (response.isSuccessful) {
+            val x = true
+            if (x) {
                 Log.d("sendDataToApiExtra", "Folio creado correctamente")
                 val muestraCount = inputData.getInt("muestra_count", 0)
                 val muestras = mutableListOf<Muestra_pdmExtra>()

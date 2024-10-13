@@ -53,6 +53,7 @@ class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Work
                         observaciones = inputData.getString("observaciones_$i") ?: "",
                         folio_pdm = inputData.getString("folio_pdm_$i") ?: "",
                         servicio_id = inputData.getString("servicio_id_$i") ?: "",
+                        subtipo = inputData.getString("subtipo_$i") ?: "",
                         estatus = "Pendiente",
                     )
                     muestraMutableList.add(muestra)

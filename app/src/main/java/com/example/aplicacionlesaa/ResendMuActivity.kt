@@ -98,6 +98,7 @@ class ResendMuActivity : AppCompatActivity() {
                         .putString("observaciones_$index", muestra.observaciones)
                         .putString("folio_pdm_$index", muestra.folio_pdm)
                         .putString("servicio_id_$index", muestra.servicio_id)
+                        .putString("subtipo_$index", muestra.subtipo)
                         .build()
 
                     dataList.add(data)
@@ -144,6 +145,7 @@ class ResendMuActivity : AppCompatActivity() {
                         .putString("observaciones_$index", muestra.observaciones)
                         .putString("folio_pdm_$index", muestra.folio_pdm)
                         .putString("servicio_id_$index", muestra.servicio_id)
+                        .putString("subtipo_$index", muestra.subtipo)
                         .build()
 
                     dataList.add(data)
@@ -259,7 +261,8 @@ class ResendMuActivity : AppCompatActivity() {
                 e_fisico = muestra.efisico,
                 observaciones = muestra.observaciones,
                 folio_pdm = binding.tvPdm.text.toString(),
-                servicio_id = muestra.servicioId
+                servicio_id = muestra.servicioId,
+                subtipo = muestra.subtipo,
             )
             listaMuestrasPdm.add(muestraPdm)
         }

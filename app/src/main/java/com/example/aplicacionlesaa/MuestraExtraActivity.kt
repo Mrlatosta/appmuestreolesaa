@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -732,43 +733,54 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
     private fun onDeletedItem(position: Int) {
-        if (modoEdicion == true){
-            Toast.makeText(this, "No se puede eliminar una muestra en modo edicion", Toast.LENGTH_SHORT).show()
+        if (modoEdicion == true || muestraMutableList[position].observaciones.contains( "Eliminada" )){
+            Toast.makeText(this, "No se puede eliminar una muestra en modo  o que haya sido eliminada", Toast.LENGTH_SHORT).show()
         }else {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Confirmación")
+            val input = EditText(this)
+            input.hint = "Ingrese el motivo de la eliminación"
+            builder.setView(input)
 
             builder.setMessage("¿Estás seguro de que deseas eliminar la muestra?")
 
             builder.setPositiveButton("Sí") { dialog, which ->
                 try {
 
+                    val motivoEliminacion = input.text.toString().trim()
+                    if (motivoEliminacion.isEmpty()) {
+                        Toast.makeText(this, "Debe ingresar un motivo para la eliminación", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+
                     val muestraEliminada = muestraMutableList[position]
+                    muestraEliminada.observaciones = "Eliminada - Motivo: $motivoEliminacion"
+
 
                     val spinner1 = binding.idSpinner1
 
 
-                    muestraMutableList.removeAt(position)
-                    //Notificar al listado que se ha en este caso borrado un item con una posicion
-                    adapter.notifyItemRemoved(position)
+//                    muestraMutableList.removeAt(position)
+//                    //Notificar al listado que se ha en este caso borrado un item con una posicion
+//                    adapter.notifyItemRemoved(position)
                     val tvFolio = binding.tvFolio
 
 
                     // Actualizar los números de muestra en la lista
-                    for (i in position until muestraMutableList.size) {
-                        muestraMutableList[i].numeroMuestra = (i + 1).toString()
-                        muestraMutableList[i].registroMuestra =
-                            tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
-                        muestraMutableList[i].idLab = fechaSinBarras+tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
-
-                    }
-                    adapter.notifyItemRangeChanged(position, muestraMutableList.size)
+//                    for (i in position until muestraMutableList.size) {
+//                        muestraMutableList[i].numeroMuestra = (i + 1).toString()
+//                        muestraMutableList[i].registroMuestra =
+//                            tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
+//                        muestraMutableList[i].idLab = fechaSinBarras+tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
+//
+//                    }
+//                    adapter.notifyItemRangeChanged(position, muestraMutableList.size)
 
                     // Actualizar contador y TextView de número de muestra
-                    contador = muestraMutableList.size
-                    binding.tvNumeroMuestra.text = (contador + 1).toString()
-                    binding.tvregistromuestra.text =
-                        tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
+//                    contador = muestraMutableList.size
+//                    binding.tvNumeroMuestra.text = (contador + 1).toString()
+//                    binding.tvregistromuestra.text =
+//                        tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
                     Log.e("Prueba".toString(), "El contador es:$contador")
 
                     checkStoragePermissionAndSaveJson()
