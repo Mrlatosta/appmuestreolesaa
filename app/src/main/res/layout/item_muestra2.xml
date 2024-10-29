@@ -15,16 +15,18 @@
         android:layout_marginBottom="30dp"
         tools:text="1"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvfecham"
-        android:layout_width="85dp"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="12dp"
-        android:textSize="15sp"
+        android:textSize="5sp"
+        android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="13/06/2024" />
@@ -34,6 +36,7 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:textSize="15sp"
+        android:textColor="@color/black"
         android:layout_marginStart="10dp"
         app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toTopOf="parent"
@@ -45,16 +48,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvregistroM"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Agua" />
 
     <TextView
         android:id="@+id/tvidLab"
-        android:layout_width="110dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:textSize="15sp"
+        android:textSize="5sp"
+        android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@+id/tvnombre"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="202406031142" />
@@ -65,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvidLab"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="200gr" />
@@ -75,6 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="10°C" />
@@ -85,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Cocina palenque" />
@@ -96,6 +104,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvlugar"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="Se tomo en restaurante" />
     <TextView
         android:id="@+id/tvMicro"
@@ -105,6 +114,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="Ct,Cf" />
     <TextView
         android:id="@+id/tvFisico"
@@ -114,6 +124,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvMicro"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="Ph,Turb" />
 
     <TextView
@@ -123,8 +134,18 @@
         android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
         app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/tvregistroM"
         tools:text="Se observo que se lavo las manos el señor" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="15dp"
+        android:background="#062D70"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvObservaciones"
+        android:textColor="@color/black"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

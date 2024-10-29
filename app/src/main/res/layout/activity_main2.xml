@@ -34,6 +34,7 @@
         android:layout_marginStart="468dp"
         android:layout_marginBottom="8dp"
         android:text="Firma"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/signatureViewDos"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtPuestoMuestreador"
@@ -58,6 +59,7 @@
         android:layout_marginStart="152dp"
         android:layout_marginTop="44dp"
         android:text="Puesto:"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/txtPuestoAutoAnalisis"
         app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
@@ -81,6 +83,7 @@
         android:layout_marginTop="24dp"
         android:text="Quién toma las muestras"
         android:textSize="20dp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textViewKienaturiza"
         app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
@@ -91,6 +94,7 @@
         android:layout_marginStart="148dp"
         android:layout_marginTop="64dp"
         android:text="Nombre:"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/txtNombreAutoAnalisis"
         app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
@@ -193,14 +197,14 @@
 
     <TextView
         android:id="@+id/tvfecham"
-        android:layout_width="60dp"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="30dp"
         android:text="Fecha M"
-        android:textColor="#000000"
-        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:textSize="5sp"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -230,13 +234,13 @@
 
     <TextView
         android:id="@+id/tvidLab"
-        android:layout_width="110dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="ID Lab"
-        android:textColor="#000000"
-        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:textSize="5sp"
         app:layout_constraintStart_toEndOf="@+id/tvnombre"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -314,9 +318,9 @@
     <View
         android:id="@+id/viewUnamed"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="5dp"
         android:layout_marginBottom="14dp"
-        android:background="#062D70"
+        android:background="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/recyclerResumen"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -356,6 +360,7 @@
         android:layout_marginStart="48dp"
         android:layout_marginTop="4dp"
         android:text="Firma"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtPuestoAutoAnalisis" />
 
@@ -388,6 +393,7 @@
         android:layout_marginEnd="192dp"
         android:layout_marginBottom="136dp"
         android:text="Correo para envio de muestras"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -399,6 +405,7 @@
         android:layout_marginTop="24dp"
         android:text="Quien autoriza los analisis"
         android:textSize="20dp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerResumen" />
 
@@ -421,6 +428,7 @@
         android:layout_marginStart="52dp"
         android:layout_marginTop="44dp"
         android:text="Puesto:"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv25" />
 

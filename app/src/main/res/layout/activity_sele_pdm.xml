@@ -27,6 +27,7 @@
         android:layout_marginStart="548dp"
         android:layout_marginTop="64dp"
         android:text="Folio No:"
+        android:textColor="@color/black"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -47,6 +48,7 @@
         android:layout_marginStart="68dp"
         android:layout_marginTop="16dp"
         android:text="-"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/txtPuesto"
         app:layout_constraintTop_toBottomOf="@+id/textView37" />
 
@@ -57,6 +59,7 @@
         android:layout_marginStart="108dp"
         android:layout_marginTop="8dp"
         android:text="-"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView33" />
 
@@ -67,6 +70,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:text="-"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/txtAtencion"
         app:layout_constraintTop_toBottomOf="@+id/textView36" />
 
@@ -77,6 +81,7 @@
         android:layout_marginStart="112dp"
         android:layout_marginTop="36dp"
         android:text="Nombre"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView32" />
 
@@ -87,6 +92,7 @@
         android:layout_marginStart="164dp"
         android:layout_marginTop="28dp"
         android:text="Atencion A:"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView34"
         app:layout_constraintTop_toBottomOf="@+id/textView32" />
 
@@ -97,6 +103,7 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="16dp"
         android:text="-"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/txtDireccion"
         app:layout_constraintTop_toBottomOf="@+id/textView35" />
 
@@ -108,6 +115,7 @@
         android:layout_marginBottom="324dp"
         android:text="Servicios a Realizar"
         android:textSize="30sp"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -118,6 +126,7 @@
         android:layout_marginStart="180dp"
         android:layout_marginTop="28dp"
         android:text="Direccion"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView33"
         app:layout_constraintTop_toBottomOf="@+id/textView32" />
 
@@ -128,6 +137,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="-"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/txtNombre"
         app:layout_constraintTop_toBottomOf="@+id/textView34" />
 
@@ -138,6 +148,7 @@
         android:layout_marginStart="124dp"
         android:layout_marginTop="28dp"
         android:text="Telefono"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView36"
         app:layout_constraintTop_toBottomOf="@+id/textView32" />
 
@@ -149,7 +160,8 @@
         android:layout_marginTop="160dp"
         android:text="Selecciona un PDM:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/textView36"
@@ -158,6 +170,7 @@
         android:layout_marginStart="48dp"
         android:layout_marginTop="28dp"
         android:text="Puesto"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView35"
         app:layout_constraintTop_toBottomOf="@+id/textView32" />
 
@@ -168,6 +181,7 @@
         android:layout_marginStart="132dp"
         android:layout_marginTop="28dp"
         android:text="Correo"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView37"
         app:layout_constraintTop_toBottomOf="@+id/textView32" />
 
@@ -200,6 +214,7 @@
         android:layout_marginStart="80dp"
         android:layout_marginTop="16dp"
         android:text="-"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/txtTelefono"
         app:layout_constraintTop_toBottomOf="@+id/textView38" />
 
@@ -211,6 +226,7 @@
         android:layout_marginTop="36dp"
         android:text="Datos Cliente"
         android:textSize="30sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView31" />
 
@@ -235,6 +251,7 @@
         android:layout_marginTop="36dp"
         android:text="Cantidad"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvIdServicio"
         app:layout_constraintTop_toBottomOf="@+id/textView39" />
 
@@ -247,6 +264,7 @@
         android:layout_marginTop="36dp"
         android:text="Estudio Microbiologicos"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvCantidad"
         app:layout_constraintTop_toBottomOf="@+id/textView39" />
 
@@ -258,6 +276,7 @@
         android:layout_marginTop="36dp"
         android:text="Cantidad Toma"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
         app:layout_constraintTop_toBottomOf="@+id/textView39" />
 
@@ -269,6 +288,7 @@
         android:layout_marginTop="36dp"
         android:text="Estudios Fisicoquimicos"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvEstudiosMicro"
         app:layout_constraintTop_toBottomOf="@+id/textView39" />
 
@@ -282,6 +302,7 @@
         android:text="Descripcion"
         android:textAlignment="textStart"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvEstudiosFisico"
         app:layout_constraintTop_toBottomOf="@+id/textView39" />
 
@@ -293,6 +314,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="36dp"
         android:text="id"
+        android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView39" />
@@ -301,6 +323,7 @@
         android:id="@+id/recyclerServicios"
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:textColor="@color/black"
         android:layout_marginBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

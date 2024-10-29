@@ -10,9 +10,9 @@
     <View
         android:id="@+id/viewUnamed"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="5dp"
         android:layout_marginBottom="14dp"
-        android:background="#062D70"
+        android:background="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/recyclerMuestras"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -30,11 +30,13 @@
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="24dp"
         android:text="Registro de Muestras"
         android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,6 +62,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="30dp"
         android:text="#"
+        android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
@@ -72,6 +75,8 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="20dp"
         android:text="Fecha M."
+        android:textStyle="bold"
+        android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
@@ -83,6 +88,8 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="20dp"
         android:text="Registro M"
+        android:textStyle="bold"
+        android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
@@ -94,18 +101,21 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:text="Nombre Muestra"
+        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/tvregistroM"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
     <TextView
         android:id="@+id/tvidLab"
-        android:layout_width="110dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="20dp"
         android:text="ID Lab"
-        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:textSize="10sp"
         app:layout_constraintStart_toEndOf="@+id/tvnombre"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
@@ -116,7 +126,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:text="C. Aprox"
+        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/tvidLab"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
@@ -127,7 +139,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:text="Temp"
+        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
@@ -138,7 +152,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:text="Lugar toma"
+        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
@@ -149,7 +165,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:text="Descripcion de la toma"
+        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textStyle="bold"
+
         app:layout_constraintStart_toEndOf="@+id/tvlugar"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
@@ -160,7 +179,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:text="E.Micro"
+        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
@@ -171,7 +192,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="E.Fisico"
+        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/tvMicro"
         app:layout_constraintTop_toBottomOf="@id/btnStart" />
 
@@ -183,6 +206,7 @@
         android:layout_marginStart="60dp"
         android:layout_marginTop="232dp"
         android:text="Descripcion de la toma:"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView15"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -193,6 +217,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="232dp"
         android:text="Nombre M."
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView10"
         app:layout_constraintTop_toTopOf="parent" />
@@ -205,6 +230,8 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="12dp"
         android:text="fol+no"
+        android:textStyle="bold"
+        android:textColor="@color/red"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -320,9 +347,9 @@
         android:id="@+id/textview4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="152dp"
-
+        android:textColor="@color/black"
         android:text="Descripcion:"
         android:textSize="25sp"
         app:layout_constraintStart_toEndOf="@+id/idSpinner1"
@@ -335,7 +362,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="152dp"
         android:text="No."
-        android:textSize="25sp"
+        android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -343,10 +370,10 @@
         android:id="@+id/tvNumeroMuestra"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="152dp"
         android:text="1"
-        android:textSize="25sp"
+        android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -357,13 +384,14 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="152dp"
         android:text="ID servicio"
+        android:textColor="@color/black"
         android:textSize="25sp"
         app:layout_constraintStart_toEndOf="@+id/tvNumeroMuestra"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
         android:id="@+id/idSpinner1"
-        android:layout_width="110dp"
+        android:layout_width="170dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="142dp"
@@ -378,6 +406,7 @@
         android:layout_marginTop="152dp"
         android:text="Desc"
         android:textSize="10sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textview4"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -400,6 +429,7 @@
         android:layout_marginStart="60dp"
         android:layout_marginTop="232dp"
         android:text="Cantidad Aprox."
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView12"
         app:layout_constraintTop_toTopOf="parent" />
@@ -411,6 +441,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="232dp"
         android:text="Registro M:"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -422,6 +453,7 @@
         android:layout_marginStart="76dp"
         android:layout_marginTop="232dp"
         android:text="Lugar de la toma"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView14"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -433,6 +465,7 @@
         android:layout_marginTop="232dp"
         android:text="TEMP.[°C]"
         android:textSize="20sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView13"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -444,6 +477,7 @@
         android:layout_marginStart="36dp"
         android:layout_marginTop="24dp"
         android:text="00/00/0000"
+        android:textColor="@color/black"
         android:textSize="25sp"
         app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toTopOf="parent" />
@@ -455,6 +489,7 @@
         android:layout_marginStart="84dp"
         android:layout_marginTop="24dp"
         android:text="Fecha M."
+        android:textColor="@color/black"
         android:textSize="25sp"
         app:layout_constraintStart_toEndOf="@+id/tvTitulo"
         app:layout_constraintTop_toTopOf="parent" />
@@ -489,6 +524,7 @@
         android:layout_marginStart="116dp"
         android:layout_marginTop="200dp"
         android:text="Estudios a realizar"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView16"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -500,6 +536,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="236dp"
         android:text="Microbiologicos"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView16"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -510,6 +547,7 @@
         android:layout_marginStart="76dp"
         android:layout_marginTop="16dp"
         android:text="Fisicoquimicos"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView18"
         app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
@@ -520,6 +558,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="32dp"
         android:text="Observaciones"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvregistromuestra" />
 
@@ -528,11 +567,12 @@
         android:id="@+id/tvFolio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="70dp"
         android:text="-"
+        android:textStyle="bold"
         android:textColor="@color/red"
-        android:textSize="20sp"
+        android:textSize="30sp"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -540,12 +580,12 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="52dp"
         android:text="Pdm:"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/tvFolio"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -564,8 +604,8 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginStart="536dp"
+        android:layout_marginTop="80dp"
         android:text="Folio:"
         android:textColor="@color/black"
         android:textSize="20sp"
@@ -613,13 +653,13 @@
         android:id="@+id/textView24"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="30dp"
         android:text="Cliente:"
         android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvCliente"
@@ -629,7 +669,7 @@
         android:layout_marginTop="100dp"
         android:text="-"
         android:textColor="@color/red"
-        android:textSize="20sp"
+        android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/textView24"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -662,6 +702,7 @@
         android:layout_marginBottom="36dp"
         android:text="Elige Subtipo"
         android:textSize="25sp"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/tvidLab"
         app:layout_constraintEnd_toStartOf="@+id/btnStart"
         app:layout_constraintHorizontal_bias="0.113"

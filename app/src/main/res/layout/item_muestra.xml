@@ -13,6 +13,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="30dp"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="1" />
@@ -24,6 +25,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="12dp"
         android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="13/06/2024" />
@@ -36,6 +38,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvfecham"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="002118-1" />
 
     <TextView
@@ -46,14 +49,16 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvregistroM"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="Agua" />
 
     <TextView
         android:id="@+id/tvidLab"
-        android:layout_width="110dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:textSize="15sp"
+        android:textSize="10sp"
+        android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@+id/tvnombre"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="202406031142" />
@@ -66,6 +71,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvidLab"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="200gr" />
 
     <TextView
@@ -76,6 +82,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="10°C" />
 
     <TextView
@@ -86,6 +93,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="Cocina palenque" />
 
     <TextView
@@ -96,6 +104,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvlugar"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="Se tomo en restaurante" />
 
     <TextView
@@ -106,6 +115,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="Ct,Cf" />
 
     <TextView
@@ -116,6 +126,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/tvMicro"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
         tools:text="Ph,Turb" />
 
     <Button
@@ -151,5 +162,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvregistroM"
         tools:text="Se observo que se lavo las manos el señor" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="15dp"
+        android:background="#062D70"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvObservaciones"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
