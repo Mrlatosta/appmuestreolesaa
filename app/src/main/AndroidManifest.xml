@@ -24,6 +24,9 @@
         android:theme="@style/Theme.AplicacionLesaa"
         tools:targetApi="31">
         <activity
+            android:name=".fisicoquimicosActivity"
+            android:exported="false" />
+        <activity
             android:name=".VerMuestrasExtraActivity"
             android:exported="false" />
         <activity

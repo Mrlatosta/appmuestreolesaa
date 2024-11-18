@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp">
+
+    <TextView
+        android:id="@+id/tvRegistroMuestra"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="30dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="000221-2" />
+
+    <TextView
+        android:id="@+id/tvnombreMuestra"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvRegistroMuestra"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="000456-1" />
+
+    <TextView
+        android:id="@+id/tvhoraAnalisis"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvnombreMuestra"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="12:57am" />
+
+    <TextView
+        android:id="@+id/tvtemp"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvhoraAnalisis"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="35°C" />
+
+    <TextView
+        android:id="@+id/tvPH"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvtemp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="6.5-8.5" />
+
+    <TextView
+        android:id="@+id/tvCLR"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvPH"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2mg/L" />
+
+    <TextView
+        android:id="@+id/tvCLT"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvCLR"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1.0-5.0" />
+
+    <TextView
+        android:id="@+id/tvCRNAS"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvCLT"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="0.0-0.5mg/l" />
+
+    <TextView
+        android:id="@+id/tvCYA"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvCRNAS"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="0mg/L" />
+
+    <TextView
+        android:id="@+id/tvTUR"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvCYA"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="5.0 UTN" />
+
+    <TextView
+        android:id="@+id/tvFe"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/tvTUR"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="0.30mg/L" />
+
+    <Button
+        android:id="@+id/btnEditarFQ"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginStart="30dp"
+        android:background="#006315"
+        android:text="✏️"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/tvFe"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
