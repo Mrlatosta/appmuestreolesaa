@@ -260,5 +260,21 @@ data class Lugar(
     val folio_pdm: String
 )
 
+data class analisisFisico(
+    val registro_muestra: String,
+    val nombre_muestra: String,
+    val hora_analisis: String,
+    val temperatura: String,
+    val ph: String,
+    val clr: String,
+    val clt: String,
+    val crnas: String,
+    val cya: String,
+    val tur: String,
+    val fe: String,
+)
+
+
+
 
 

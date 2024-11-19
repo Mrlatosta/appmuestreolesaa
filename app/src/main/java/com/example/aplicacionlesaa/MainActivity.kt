@@ -540,6 +540,13 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         }
 
+        binding.btnFisico.setOnClickListener {
+            val intent = Intent(this, fisicoquimicosActivity::class.java)
+            intent.putParcelableArrayListExtra("muestraList", ArrayList(muestraMutableList))
+            intent.putParcelableArrayListExtra("listaServicios", ArrayList(serviciosList))
+            startActivity(intent)
+        }
+
 
 
         binding.btnMuestraExtra.setOnClickListener {

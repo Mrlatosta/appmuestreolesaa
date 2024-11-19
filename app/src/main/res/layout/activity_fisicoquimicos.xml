@@ -263,7 +263,7 @@
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
-        tools:text="Registro M" />
+        android:text="Registro M" />
 
     <TextView
         android:id="@+id/tvnombreMuestra"
@@ -276,7 +276,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvRegistroMuestra"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="Lugar T." />
+        android:text="Lugar T." />
 
     <TextView
         android:id="@+id/tvhoraAnalisis"
@@ -289,7 +289,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvnombreMuestra"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="Hora A." />
+        android:text="Hora A." />
 
     <TextView
         android:id="@+id/tvtemp"
@@ -302,7 +302,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvhoraAnalisis"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="Temp" />
+        android:text="Temp" />
 
     <TextView
         android:id="@+id/tvPH"
@@ -315,7 +315,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvtemp"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="Ph" />
+        android:text="Ph" />
 
     <TextView
         android:id="@+id/tvCLR"
@@ -341,7 +341,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvCLR"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="CLT" />
+        android:text="CLT" />
 
     <TextView
         android:id="@+id/tvCRNAS"
@@ -354,7 +354,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvCLT"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="CRNAS" />
+        android:text="CRNAS" />
 
     <TextView
         android:id="@+id/tvCYA"
@@ -367,7 +367,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvCRNAS"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="CYA" />
+        android:text="CYA" />
 
     <TextView
         android:id="@+id/tvTUR"
@@ -380,7 +380,7 @@
         app:layout_constraintStart_toEndOf="@+id/tvCYA"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="TUR" />
+        android:text="TUR" />
 
     <TextView
         android:id="@+id/tvFe"
@@ -393,7 +393,20 @@
         app:layout_constraintStart_toEndOf="@+id/tvTUR"
         app:layout_constraintTop_toBottomOf="@+id/btnEditar"
 
-        tools:text="FE" />
+        android:text="FE" />
+
+    <TextView
+        android:id="@+id/tvContadorHora"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/tvHoraContadorAnalisis"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toBottomOf="@+id/txtTUR"
+        tools:text="00:00" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
