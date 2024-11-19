@@ -16,7 +16,7 @@ class analisisFisicoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 //    val fechaMuestreo = view.findViewById<TextView>(R.id.tvFechaMuestreo)
 
 
-    fun render(analisisF: analisisFisico) {
+    fun render(analisisF: analisisFisico, onclickEdit: (Int) -> Unit) {
 
         binding.tvRegistroMuestra.text = analisisF.registro_muestra
         binding.tvnombreMuestra.text = analisisF.nombre_muestra
@@ -29,6 +29,9 @@ class analisisFisicoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         binding.tvCYA.text = analisisF.cya
         binding.tvTUR.text = analisisF.tur
         binding.tvFe.text = analisisF.fe
+
+        binding.btnEditarFQ.setOnClickListener{onclickEdit(adapterPosition)}
+
 
 
     }

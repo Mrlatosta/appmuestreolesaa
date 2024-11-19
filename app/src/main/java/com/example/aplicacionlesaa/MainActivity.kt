@@ -532,6 +532,29 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
                     clearTextFields()
                     Log.i("Ray", "Boton Pulsado")
+                    val txtServicioId = binding.idSpinner1
+                    val idServicioString = txtServicioId.selectedItem.toString()
+                    var idServicioEntero = idServicioString
+
+                    val servicioSeleccionado = serviciosList.find { it.id == idServicioEntero }
+
+                    Log.e("Entrea", "Entrandoaa")
+
+
+                    if (servicioSeleccionado != null && servicioSeleccionado.cantidad > 0) {
+
+                        Log.e("Servicio", servicioSeleccionado.descripcion)
+
+                        if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
+                            servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
+                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                        }
+
+                    }
+
+
+
                 }
                 checkStoragePermissionAndSaveJson()
             }
@@ -800,6 +823,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     adapter.notifyItemInserted(muestraMutableList.size - 1)
                     Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
                     sepudo = true
+                    if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
+                        servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
+                        servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                        txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                    }
                 } else {
                     // Manejar el caso donde la conversión falló
                     Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT)

@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -126,7 +127,8 @@ class fisicoquimicosActivity : AppCompatActivity() {
         //val recyclerView = findViewById<RecyclerView>(R.id.recyclerMuestras)
         //adapter = muestraAdapter(){}
         adapter = analisisFisicoAdapter(
-            analisisfisico = analisisFisicoList
+            analisisfisico = analisisFisicoList,
+            onclickEdit = { position -> onEditItem(position) }
             )
 
         binding.recyclerFisicoquimicos.layoutManager = LinearLayoutManager(this)
@@ -134,6 +136,10 @@ class fisicoquimicosActivity : AppCompatActivity() {
 
 
 
+    }
+
+    private fun onEditItem(position: Int) {
+        Toast.makeText(this, "Editar item $position", Toast.LENGTH_SHORT).show()
     }
 
 

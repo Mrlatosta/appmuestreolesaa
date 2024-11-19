@@ -3,12 +3,12 @@ package com.example.aplicacionlesaa.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aplicacionlesaa.Muestra
 import com.example.aplicacionlesaa.R
 import com.example.aplicacionlesaa.model.analisisFisico
 
 class analisisFisicoAdapter(
-    private val analisisfisico: List<analisisFisico>
+    private val analisisfisico: List<analisisFisico>,
+    private val onclickEdit: (Int) -> Unit,
 
 ) : RecyclerView.Adapter<analisisFisicoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): analisisFisicoViewHolder {
@@ -21,9 +21,11 @@ class analisisFisicoAdapter(
     }
 
     override fun onBindViewHolder(holder: analisisFisicoViewHolder, position: Int) {
+
         //Pasa por cada uno de los items y va a llamar al fun render, devuelve la isntancia del viewholder y la posicion
         val item = analisisfisico[position]
-        holder.render(item)
+        holder.render(item,onclickEdit)
+
     }
 
 }
