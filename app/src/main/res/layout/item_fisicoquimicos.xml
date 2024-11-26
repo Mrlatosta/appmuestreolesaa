@@ -11,9 +11,10 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="30dp"
-        android:textSize="20sp"
+        android:layout_marginStart="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="000221-2" />
@@ -23,8 +24,10 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:textSize="20sp"
         android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintStart_toEndOf="@+id/tvRegistroMuestra"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="000456-1" />
@@ -34,8 +37,10 @@
         android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
         android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintStart_toEndOf="@+id/tvnombreMuestra"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="12:57am" />
@@ -45,106 +50,98 @@
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
         android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvhoraAnalisis"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="35°C" />
 
-    <TextView
+    <EditText
         android:id="@+id/tvPH"
-        android:layout_width="70dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
+        android:inputType="numberDecimal"
         android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/tvtemp"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="6.5-8.5" />
 
-    <TextView
-        android:id="@+id/tvCLR"
-        android:layout_width="70dp"
+    <EditText
+        android:id="@+id/tvCLT"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
+        android:inputType="numberDecimal"
         android:textColor="@color/black"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="501dp"
         app:layout_constraintStart_toEndOf="@+id/tvPH"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="2mg/L" />
 
-    <TextView
-        android:id="@+id/tvCLT"
-        android:layout_width="70dp"
+    <EditText
+        android:id="@+id/tvCLR"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
+        android:inputType="numberDecimal"
         android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/tvCLR"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="586dp"
+        app:layout_constraintStart_toEndOf="@+id/tvCLT"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="1.0-5.0" />
 
-    <TextView
+    <EditText
         android:id="@+id/tvCRNAS"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
+        android:inputType="numberDecimal"
         android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/tvCLT"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="671dp"
+        app:layout_constraintStart_toEndOf="@+id/tvCLR"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="0.0-0.5mg/l" />
 
-    <TextView
+    <EditText
         android:id="@+id/tvCYA"
-        android:layout_width="90dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
+        android:inputType="numberDecimal"
         android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/tvCRNAS"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="0mg/L" />
 
-    <TextView
+    <EditText
         android:id="@+id/tvTUR"
-        android:layout_width="90dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
+        android:inputType="numberDecimal"
         android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/tvCYA"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="5.0 UTN" />
 
-    <TextView
-        android:id="@+id/tvFe"
-        android:layout_width="90dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="15dp"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/tvTUR"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="0.30mg/L" />
-
     <Button
         android:id="@+id/btnEditarFQ"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
-        android:layout_marginStart="30dp"
         android:background="#006315"
-        android:text="✏️"
+        android:text="Guardar"
         android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@+id/tvFe"
+        app:layout_constraintStart_toEndOf="@+id/tvTUR"
         app:layout_constraintTop_toTopOf="parent" />
-
-
-
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -90,18 +90,24 @@ class fisicoquimicosActivity : AppCompatActivity() {
 
                     if (regex.containsMatchIn(descripcion) && regexFisico.containsMatchIn(descripcion)) {
                         //SI si encuentra, entonces crear un nuevo objeto analisisFisico y añadirle su registro muestra del que se esta trabajando, las demas en null
+                        Log.e("Muestra encontrada","Muestra encontrada: $muestra")
+                        Log.e("Hora actual","Hora actual: ${binding.tvContadorHora.text.toString()}")
+                        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                        val currentTime = timeFormat.format(Date())
+
                         val analisisFisico = analisisFisico(
                             registro_muestra = muestra.registroMuestra,
                             nombre_muestra = muestra.lugarToma,
-                            hora_analisis = "",
-                            temperatura = "",
+                            //Obtener hora actual
+                            hora_analisis = currentTime,
+                            temperatura = muestra.tempM,
                             ph = "",
-                            clr= "",
-                            clt= "",
-                            crnas= "",
-                            cya= "",
-                            tur= "",
-                            fe= "",
+                            clr= null,
+                            clt= null,
+                            crnas= null,
+                            cya=  null,
+                            tur= null,
+
                         )
                         analisisFisicoList.add(analisisFisico)
                     }

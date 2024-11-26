@@ -1,5 +1,6 @@
 package com.example.aplicacionlesaa.adapter
 
+import android.text.Editable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aplicacionlesaa.databinding.ItemFisicoquimicosBinding
@@ -22,13 +23,12 @@ class analisisFisicoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         binding.tvnombreMuestra.text = analisisF.nombre_muestra
         binding.tvhoraAnalisis.text = analisisF.hora_analisis
         binding.tvtemp.text = analisisF.temperatura
-        binding.tvPH.text = analisisF.ph
-        binding.tvCLR.text = analisisF.clr
-        binding.tvCLT.text = analisisF.clt
-        binding.tvCRNAS.text = analisisF.crnas
-        binding.tvCYA.text = analisisF.cya
-        binding.tvTUR.text = analisisF.tur
-        binding.tvFe.text = analisisF.fe
+        binding.tvPH.text = Editable.Factory.getInstance().newEditable(analisisF.ph)
+
+
+
+
+
 
         binding.btnEditarFQ.setOnClickListener{onclickEdit(adapterPosition)}
 

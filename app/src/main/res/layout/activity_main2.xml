@@ -14,6 +14,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="28dp"
         android:background="#FFFFFF"
+
         app:layout_constraintStart_toEndOf="@+id/btnInsertSignature"
         app:layout_constraintTop_toBottomOf="@+id/txtPuestoMuestreador" />
 
@@ -23,7 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
+        android:backgroundTint="#0A3A8A"
         android:text="Ver"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toEndOf="@+id/signatureViewUno"
         app:layout_constraintTop_toBottomOf="@+id/txtPuestoAutoAnalisis" />
 
@@ -339,7 +342,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="44dp"
+        android:backgroundTint="#0A3A8A"
         android:text="Ver"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toEndOf="@+id/signatureViewDos"
         app:layout_constraintTop_toBottomOf="@+id/txtPuestoMuestreador" />
 
@@ -382,7 +387,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="56dp"
         android:layout_marginBottom="72dp"
+        android:backgroundTint="#0F3E19"
         android:text="Aceptar"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
