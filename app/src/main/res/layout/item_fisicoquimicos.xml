@@ -132,16 +132,5 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="5.0 UTN" />
 
-    <Button
-        android:id="@+id/btnEditarFQ"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:background="#006315"
-        android:text="Guardar"
-        android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@+id/tvTUR"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

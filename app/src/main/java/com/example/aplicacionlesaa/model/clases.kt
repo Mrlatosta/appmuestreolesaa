@@ -265,12 +265,12 @@ data class analisisFisico(
     val nombre_muestra: String,
     val hora_analisis: String,
     val temperatura: String,
-    val ph: String,
-    val clt: Int?,
-    val clr: Int?,
-    val crnas: Int?,
-    val cya: Int?,
-    val tur: Int?,
+    var ph: String,
+    var clt: Int?,
+    var clr: Int?,
+    var crnas: Int?,
+    var cya: Int?,
+    var tur: Int?,
 )
 
 

@@ -1,5 +1,6 @@
 package com.example.aplicacionlesaa
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,65 +19,64 @@ import com.example.aplicacionlesaa.databinding.ActivityFisicoquimicosBinding
 import com.example.aplicacionlesaa.databinding.ActivityMainBinding
 import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.model.analisisFisico
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class fisicoquimicosActivity : AppCompatActivity() {
 
-
     private lateinit var binding: ActivityFisicoquimicosBinding
-    private lateinit var muestraMutableList: MutableList<Muestra>
-    private val serviciosList: MutableList<Servicio> = mutableListOf()
-    private val analisisFisicoList: MutableList<analisisFisico> = mutableListOf()
-    private lateinit var handler: Handler
-    private lateinit var runnable: Runnable
     private lateinit var adapter: analisisFisicoAdapter
-
-
-
-
-
+    private var analisisFisicoList: MutableList<analisisFisico> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-//        setContentView(R.layout.activity_fisicoquimicos)
         binding = ActivityFisicoquimicosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        // Configurar el reloj
+        initClock()
+
+        // Verificar si hay datos guardados previamente
+        val savedData = getSavedAnalisisFisicoList()
+        if (savedData.isNotEmpty()) {
+            // Si ya hay datos guardados, los usamos
+            analisisFisicoList = savedData.toMutableList()
+        } else {
+            // Si no hay datos guardados, inicializamos desde el Intent
+            initializeAnalisisFisicoList()
         }
 
+        initRecyclerView()
+
+        binding.btnGuardarFQ.setOnClickListener {
+            val datosActualizados = adapter.obtenerDatosActualizados()
+            saveAnalisisFisicoList(datosActualizados)
+            Log.e("Datos actualizados", "Datos Actualizados: $datosActualizados")
+        }
+    }
+
+    private fun initClock() {
         val tvhoram = binding.tvContadorHora
-        //Crear reloj en un textview que contenga la hora actual
-        handler = Handler(Looper.getMainLooper())
-        runnable = object : Runnable {
+        val handler = Handler(Looper.getMainLooper())
+        val runnable = object : Runnable {
             override fun run() {
                 val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-                val currentTime = timeFormat.format(Date())
-                tvhoram.text = currentTime
+                tvhoram.text = timeFormat.format(Date())
                 handler.postDelayed(this, 1000) // Actualiza cada segundo
             }
         }
-
-        // Iniciar la actualización de la hora
         handler.post(runnable)
+    }
 
-        //Pasar muestra mutable list para fisicoquimicos
-        muestraMutableList = intent.getParcelableArrayListExtra("muestraList") ?: mutableListOf()
-
-        val serviciosRecibidos = intent.getParcelableArrayListExtra<Servicio>("listaServicios")
-        if (serviciosRecibidos != null) {
-            serviciosList.addAll(serviciosRecibidos)
-        }
-
-        Log.e("Lista de servicios","serviciosList: $serviciosList")
-        Log.e("Lista de muestras","muestraMutableList: $muestraMutableList")
-
+    private fun initializeAnalisisFisicoList() {
+        val muestraMutableList = intent.getParcelableArrayListExtra<Muestra>("muestraList") ?: mutableListOf()
+        val serviciosList = intent.getParcelableArrayListExtra<Servicio>("listaServicios") ?: mutableListOf()
+        Log.i("Inicializando","Inicializando Lista")
+        Log.i("MuestrASIZE","Muestra size ${muestraMutableList.size}")
         for (muestra in muestraMutableList) {
             //Encontrar el servicio correspondiente a la muestra
             val servicio = serviciosList.find { it.id == muestra.servicioId }
@@ -108,7 +108,7 @@ class fisicoquimicosActivity : AppCompatActivity() {
                             cya=  null,
                             tur= null,
 
-                        )
+                            )
                         analisisFisicoList.add(analisisFisico)
                     }
                 }
@@ -122,31 +122,34 @@ class fisicoquimicosActivity : AppCompatActivity() {
 
 
         }
-
-        initRecyclerView()
-
-
-
-
+        Log.e("Lista inicial", "analisisFisicoList: $analisisFisicoList")
     }
-    private fun initRecyclerView() {
-        //val recyclerView = findViewById<RecyclerView>(R.id.recyclerMuestras)
-        //adapter = muestraAdapter(){}
-        adapter = analisisFisicoAdapter(
-            analisisfisico = analisisFisicoList,
-            onclickEdit = { position -> onEditItem(position) }
-            )
 
+    private fun initRecyclerView() {
+        adapter = analisisFisicoAdapter(analisisFisicoList) { position ->
+            // Aquí puedes manejar acciones de edición si es necesario
+        }
         binding.recyclerFisicoquimicos.layoutManager = LinearLayoutManager(this)
         binding.recyclerFisicoquimicos.adapter = adapter
-
-
-
     }
 
-    private fun onEditItem(position: Int) {
-        Toast.makeText(this, "Editar item $position", Toast.LENGTH_SHORT).show()
+    private fun getSavedAnalisisFisicoList(): List<analisisFisico> {
+        val sharedPreferences = getSharedPreferences("FisicoquimicosPrefs", Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString("analisisFisicoList", null)
+        return if (!json.isNullOrEmpty()) {
+            val type = object : TypeToken<List<analisisFisico>>() {}.type
+            Gson().fromJson(json, type)
+        } else {
+            emptyList()
+        }
     }
 
-
+    private fun saveAnalisisFisicoList(lista: List<analisisFisico>) {
+        val sharedPreferences = getSharedPreferences("FisicoquimicosPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val json = Gson().toJson(lista)
+        editor.putString("analisisFisicoList", json)
+        editor.apply()
+        Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
+    }
 }
