@@ -57,6 +57,14 @@ class fisicoquimicosActivity : AppCompatActivity() {
             saveAnalisisFisicoList(datosActualizados)
             Log.e("Datos actualizados", "Datos Actualizados: $datosActualizados")
         }
+
+        binding.btnBorrarFQ.setOnClickListener {
+            borrarTodasLasPreferencias()
+            analisisFisicoList.clear()
+            adapter.notifyDataSetChanged()
+        }
+
+
     }
 
     private fun initClock() {
@@ -152,4 +160,12 @@ class fisicoquimicosActivity : AppCompatActivity() {
         editor.apply()
         Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
     }
+
+    private fun borrarTodasLasPreferencias() {
+        val sharedPreferences = getSharedPreferences("fisicoquimicos_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear() // Borra todas las claves y valores
+        editor.apply() // Aplica los cambios
+    }
+
 }

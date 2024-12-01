@@ -368,7 +368,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         }
 
         // Establecer la fecha actual
-        val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val currentDate = dateFormat.format(Date())
         tvfecham.text = currentDate
 
@@ -780,7 +780,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 val numeroMuestra = tvNum.text
 
                 if (numeroMuestra != null) {
-                    val formatoEntrada = SimpleDateFormat("MM/dd/yyyy")
+                    val formatoEntrada = SimpleDateFormat("dd/MM/yyyy")
                     val formatoSalida = SimpleDateFormat("yyyyMMdd")
 
                     val fecha = formatoEntrada.parse(tvfecham.text.toString())
