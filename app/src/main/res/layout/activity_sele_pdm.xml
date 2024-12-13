@@ -191,7 +191,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginTop="144dp"
+        android:backgroundTint="#536DFE"
+        android:foregroundTint="#FFF7F7"
         android:text="Buscar"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toEndOf="@+id/spinnerSelePdm"
         app:layout_constraintTop_toTopOf="parent" />
 

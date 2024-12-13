@@ -559,15 +559,17 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 checkStoragePermissionAndSaveJson()
             }
 
-
-
         }
 
         binding.btnFisico.setOnClickListener {
             val intent = Intent(this, fisicoquimicosActivity::class.java)
             intent.putParcelableArrayListExtra("muestraList", ArrayList(muestraMutableList))
             intent.putParcelableArrayListExtra("listaServicios", ArrayList(serviciosList))
+            intent.putExtra("folioSolicitud", tvFolio.text.toString())
+            intent.putExtra("ClienteNombre", clientePdm?.nombre_empresa)
+
             startActivity(intent)
+
         }
 
 
@@ -886,7 +888,15 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 try {
                     clearTextFields()
                     binding.txtnombre.setText(muestra.nombreMuestra)
-                    binding.txtTemp.setText(muestra.tempM)
+
+                    if (muestra.tempM.contains("°C") ) {
+                        val cantidadSinUnidad = muestra.tempM.replace("[^\\d.]".toRegex(), "").trim()
+                        binding.txtTemp.setText(cantidadSinUnidad)
+                    }
+                    binding.txtcantidadaprox.setText(muestra.cantidadAprox)
+
+
+
                     binding.txtLugar.setText(muestra.lugarToma)
                     binding.txtdescripcion.setText(muestra.descripcionM)
                 } catch (e: Exception) {

@@ -12,6 +12,7 @@ import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Plandemuestreo
 import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.model.UltimoFolio
+import com.example.aplicacionlesaa.model.analisisFisico
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -75,6 +76,11 @@ interface ApiService {
 
     @PUT("completarfolio/{id}")
     fun completarFolio(@Path("id") id: String, @Body data: DatosFinalesFolioMuestreo): Call<Void>
+
+
+
+    @POST("createfisicoquimicos")
+    fun createFisicoquimicos(@Body fisico: analisisFisico): Call<Void>
 
 
 

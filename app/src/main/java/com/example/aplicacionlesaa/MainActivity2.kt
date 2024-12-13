@@ -39,11 +39,13 @@ import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.model.Muestra_pdmExtra
 import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Servicio
+import com.example.aplicacionlesaa.model.analisisFisico
 import com.example.aplicacionlesaa.utils.NetworkUtils
 import com.example.aplicacionlesaa.worker.SendDataWorker
 import com.example.aplicacionlesaa.worker.SendDataWorkerMuestrasExtra
 import com.example.aplicacionlesaa.worker.SendDatosFaltantesWorker
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.io.source.ByteArrayOutputStream
 import com.itextpdf.kernel.colors.DeviceRgb
@@ -107,6 +109,10 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         }else{
             binding.tvMuestrasExtra.text = "Muestras extra: 0"
         }
+
+        val fisicoquimicos = getSavedAnalisisFisicoList()
+
+        Log.e("Los fisicoquimicos", "Los fisimicos son $fisicoquimicos")
 
         initRecyclerView()
         enableEdgeToEdge()
@@ -742,6 +748,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         }
     }
 
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == storagePermissionRequestCode) {
@@ -761,6 +769,17 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
+
+    private fun getSavedAnalisisFisicoList(): List<analisisFisico> {
+        val sharedPreferences = getSharedPreferences("FisicoquimicosPrefs", Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString("analisisFisicoList", null)
+        return if (!json.isNullOrEmpty()) {
+            val type = object : TypeToken<List<analisisFisico>>() {}.type
+            Gson().fromJson(json, type)
+        } else {
+            emptyList()
         }
     }
 

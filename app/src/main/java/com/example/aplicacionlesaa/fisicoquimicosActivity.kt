@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -24,18 +25,24 @@ import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.appcompat.app.AlertDialog
+
 
 class fisicoquimicosActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFisicoquimicosBinding
     private lateinit var adapter: analisisFisicoAdapter
     private var analisisFisicoList: MutableList<analisisFisico> = mutableListOf()
+    private var datosGuardados = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityFisicoquimicosBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //Configurar el evento hacia atras con los botones del sistema
+
 
         // Configurar el reloj
         initClock()
@@ -51,18 +58,56 @@ class fisicoquimicosActivity : AppCompatActivity() {
         }
 
         initRecyclerView()
+        val folioSolicitud =  intent.getStringExtra("folioSolicitud") ?: ""
+        val nombreCliente = intent.getStringExtra("ClienteNombre") ?: ""
+        binding.tvFolioSolicitudFQ.text = "Folio solicitud: $folioSolicitud"
+        binding.tvNombreClienteFQ.text = "Cliente: $nombreCliente"
 
         binding.btnGuardarFQ.setOnClickListener {
-            val datosActualizados = adapter.obtenerDatosActualizados()
-            saveAnalisisFisicoList(datosActualizados)
-            Log.e("Datos actualizados", "Datos Actualizados: $datosActualizados")
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Guardar datos")
+            builder.setMessage("¿Desea guardar los datos?")
+
+            builder.setPositiveButton("Sí") { _, _ ->
+                // Guardar los datos
+                datosGuardados = true
+                val datosActualizados = adapter.obtenerDatosActualizados()
+                saveAnalisisFisicoList(datosActualizados)
+                Log.e("Datos actualizados", "Datos Actualizados: $datosActualizados")
+            }
+            builder.setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+                Toast.makeText(this, "No se guardaron los datos", Toast.LENGTH_SHORT).show()
+            }
+            builder.show()
         }
 
         binding.btnBorrarFQ.setOnClickListener {
-            borrarTodasLasPreferencias()
-            analisisFisicoList.clear()
-            adapter.notifyDataSetChanged()
+            //Preguntar si si quiere borrar todo
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Borrar datos")
+            builder.setMessage("¿Desea borrar todos los datos?")
+            builder.setPositiveButton("Sí") { _, _ ->
+                // Borrar todos los datos
+
+                borrarTodasLasPreferencias()
+                analisisFisicoList.clear()
+                adapter.notifyDataSetChanged()
+            }
+            builder.setNegativeButton("No") { dialog, _ ->
+
+                dialog.dismiss()
+
+                Toast.makeText(this, "No se borraron los datos", Toast.LENGTH_SHORT).show()
+
+            }
+
+            builder.show()
+
+
         }
+
+
 
 
     }
@@ -78,6 +123,28 @@ class fisicoquimicosActivity : AppCompatActivity() {
             }
         }
         handler.post(runnable)
+    }
+
+    override fun onBackPressed() {
+        if (datosGuardados == false) {
+            // Crear un AlertDialog para la confirmación
+            AlertDialog.Builder(this).apply {
+                setTitle("Confirmación")
+                setMessage("¿Estás seguro de que deseas salir, sin guardar los datos?")
+                setPositiveButton("Sí") { dialog, _ ->
+                    dialog.dismiss()
+                    super.onBackPressed() // Llamar al método onBackPressed original
+                }
+                setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss() // Cerrar el cuadro de diálogo y no hacer nada más
+                }
+                create()
+                show()
+            }
+            } else {
+                super.onBackPressed() // Llamar al método onBackPressed original
+            Toast.makeText(this, "Se han guardado los datos", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initializeAnalisisFisicoList() {
@@ -162,7 +229,8 @@ class fisicoquimicosActivity : AppCompatActivity() {
     }
 
     private fun borrarTodasLasPreferencias() {
-        val sharedPreferences = getSharedPreferences("fisicoquimicos_prefs", Context.MODE_PRIVATE)
+
+        val sharedPreferences = getSharedPreferences("FisicoquimicosPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.clear() // Borra todas las claves y valores
         editor.apply() // Aplica los cambios

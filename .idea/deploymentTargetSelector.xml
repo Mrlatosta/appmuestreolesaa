@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-21T14:51:51.077422900Z">
+        <DropdownSelection timestamp="2024-12-10T19:33:33.173136300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=HGR3ZD10" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Ray\.android\avd\Tab_m10_plus_API_30.avd" />
             </handle>
           </Target>
         </DropdownSelection>
