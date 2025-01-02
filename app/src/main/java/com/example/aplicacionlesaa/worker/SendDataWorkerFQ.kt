@@ -21,6 +21,7 @@ import com.example.aplicacionlesaa.utils.NetworkUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.math.BigDecimal
 
 class SendDataWorkerFQ(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams)  {
     private lateinit var fisicoQuimicosMutableList: MutableList<analisisFisico>
@@ -31,21 +32,20 @@ class SendDataWorkerFQ(appContext: Context, workerParams: WorkerParameters) : Wo
                 // Obtener la lista de Muestras desde inputData
                 fisicoQuimicosMutableList = mutableListOf()
 
-                val fisicoCount = inputData.getInt("fisico_cCount", 0)
+                val fisicoCount = inputData.getInt("fq_count", 0)
                 var contador = 0
-
-                for (i in 0 until fisicoCount) {
+                for (i in 0 until fisicoCount){
                     val analisisfisico = analisisFisico(
                         registro_muestra = inputData.getString("registro_muestra_$i") ?: "",
                         nombre_muestra = inputData.getString("nombre_muestra_$i") ?: "",
                         hora_analisis = inputData.getString("hora_analisis_$i") ?: "",
                         temperatura = inputData.getString("temperatura_$i") ?: "",
                         ph = inputData.getString("ph_$i") ?: "",
-                        clt = inputData.getInt("clt_$i", 0),
-                        clr = inputData.getInt("clr_$i", 0),
-                        crnas = inputData.getInt("crnas_$i", 0),
-                        cya = inputData.getInt("cya_$i", 0),
-                        tur = inputData.getInt("tur_$i", 0),
+                        clt = BigDecimal( inputData.getString("clt_$i") ?: "0"  ) ,
+                        clr = BigDecimal(inputData.getString("clr_$i") ?: "0" ),
+                        crnas = BigDecimal(inputData.getString("crnas_$i") ?: "0" ),
+                        cya = BigDecimal(inputData.getString("cya_$i") ?: "0" ),
+                        tur = BigDecimal(inputData.getString("tur_$i") ?: "0" )
                     )
                     fisicoQuimicosMutableList.add(analisisfisico)
                     contador++
@@ -63,6 +63,8 @@ class SendDataWorkerFQ(appContext: Context, workerParams: WorkerParameters) : Wo
             Result.retry()
         }
     }
+
+
 
     private fun sendDataToApi(fisicoquimicos: List<analisisFisico>) {
         for (fisico in fisicoquimicos) {
@@ -146,10 +148,6 @@ class SendDataWorkerFQ(appContext: Context, workerParams: WorkerParameters) : Wo
         }
 
     }
-
-
-
-
 
 
 }

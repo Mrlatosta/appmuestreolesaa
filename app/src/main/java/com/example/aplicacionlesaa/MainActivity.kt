@@ -149,6 +149,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         })
 
         pdmDetallado = intent.getParcelableExtra("pdmDetallado")!!
+
         Log.e("Thayli", "El pdmDetallado es: $pdmDetallado")
         //Inicio Api
         val apiService = RetrofitClient.instance
@@ -621,6 +622,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         initRecyclerView()
 
 
+
+
+
+
+
     }
 
     companion object {
@@ -853,6 +859,19 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
     private fun initRecyclerView() {
+        try {
+            if (intent.getStringExtra("tipomuestreo") == "continuar"){
+                muestraMutableList = intent.getParcelableArrayListExtra("muestraList") ?: mutableListOf()
+                Log.e("MuestraMutableList", "MuestraMutableList: $muestraMutableList")
+                contador = (muestraMutableList.size+1)
+                Log.e("Contador", "Contador: $contador")
+                binding.tvNumeroMuestra.text = contador.toString()
+                binding.tvregistromuestra.text = binding.tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
+
+            }
+        }catch (e:Exception){
+            Log.e("Error", "Error al obtener el tipo de muestreo")
+        }
         //val recyclerView = findViewById<RecyclerView>(R.id.recyclerMuestras)
         //adapter = muestraAdapter(){}
         adapter = muestraAdapter(
@@ -867,6 +886,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         val callback = DragManageAdapter(adapter) {modoEdicion}
         val touchHelper = ItemTouchHelper(callback)
         touchHelper.attachToRecyclerView(binding.recyclerMuestras)
+
+
 
 
     }
@@ -1089,7 +1110,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     pdmSeleccionado,
                     clientePdm,
                     serviciosList,
-                    muestraMutableList
+                    muestraMutableList,
+                    pdmDetallado
                 )
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
             }
@@ -1110,7 +1132,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     pdmSeleccionado,
                     clientePdm,
                     serviciosList,
-                    muestraMutableList
+                    muestraMutableList,
+                    pdmDetallado
                 )
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
             }

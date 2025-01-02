@@ -818,7 +818,8 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
                     pdmDetallado.nombre_pdm,
                     clientePdm,
                     serviciospdm,
-                    muestraMutableList
+                    muestraMutableList,
+                    pdmDetallado
                 )
                 saveDataToJson(this, muestraData, "Datos-folioExtra-${binding.tvFolio.text}.json")
             }
@@ -839,7 +840,8 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
                     pdmDetallado.nombre_pdm,
                     clientePdm,
                     emptyList(),
-                    muestraMutableList
+                    muestraMutableList,
+                    pdmDetallado
                 )
                 saveDataToJson(this, muestraData, "Datos-folioExtra-${binding.tvFolio.text}.json")
             }

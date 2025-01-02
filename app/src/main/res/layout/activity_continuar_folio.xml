@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ResendMuActivity">
+
+    <TextView
+        android:id="@+id/tvCliente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="-"
+        android:textSize="25sp"
+
+        app:layout_constraintStart_toEndOf="@+id/textView28"
+        app:layout_constraintTop_toBottomOf="@+id/tvFolio" />
+
+    <TextView
+        android:id="@+id/tvPdm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="12dp"
+        android:text="-"
+        android:textSize="25sp"
+
+        app:layout_constraintStart_toEndOf="@+id/textView29"
+        app:layout_constraintTop_toBottomOf="@+id/tvCliente" />
+
+    <TextView
+        android:id="@+id/textView29"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:text="Pdm:"
+        android:textSize="25sp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView28" />
+
+    <TextView
+        android:id="@+id/textView28"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:text="Cliente:"
+        android:textSize="25sp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView27" />
+
+    <TextView
+        android:id="@+id/tvFolio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="36dp"
+        android:text="-"
+        android:textSize="25sp"
+
+        app:layout_constraintStart_toEndOf="@+id/textView27"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView27"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="36dp"
+        android:text="Folio:"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:text="Continuar Folio"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnSubir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="600dp"
+        android:layout_marginTop="44dp"
+        android:text="Subir Archivo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/tvnumMuestra"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="150dp"
+        android:text="#"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir"
+        />
+
+    <TextView
+        android:id="@+id/tvfecham"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="150dp"
+        android:text="Fecha M"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvregistroM"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:text="Registro m"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@+id/tvfecham"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvnombre"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="150dp"
+        android:text="Nombre Muestra"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvregistroM"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvidLab"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="150dp"
+        android:text="ID Lab"
+        android:textColor="#ffffff"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvnombre"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvcantidadAprox"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="150dp"
+        android:text="C. Aprox"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvidLab"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvtemperatura"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="150dp"
+        android:text="Temp"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvlugar"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="150dp"
+        android:text="Lugar toma"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvdescripcion"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="150dp"
+        android:text="Descripcion de la toma"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvlugar"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvMicro"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="150dp"
+        android:text="E.micro"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+    <TextView
+        android:id="@+id/tvFisico"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="150dp"
+        android:text="E.Fisico"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tvMicro"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubir" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerReenviar"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvtemperatura" />
+
+    <Button
+        android:id="@+id/btnContinuar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="600dp"
+        android:layout_marginTop="28dp"
+        android:text="Continuar Folio"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerReenviar" />
+</androidx.constraintlayout.widget.ConstraintLayout>

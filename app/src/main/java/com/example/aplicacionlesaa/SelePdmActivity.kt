@@ -404,7 +404,7 @@ class SelePdmActivity : AppCompatActivity() {
             folio_pdm = pdmSelecionado
         )
 
-        val pdmDetallado = planesDetalladosList.find { it.nombre_pdm == pdmSelecionado }
+        val pdmDetallado:Pdm? = planesDetalladosList.find { it.nombre_pdm == pdmSelecionado }
 
 
 
@@ -412,6 +412,8 @@ class SelePdmActivity : AppCompatActivity() {
         Log.d("SelePdmActivity", "Datos del folio: $folMuestreo")
         sendDataToApi(folMuestreo, object : SendDataCallback {
             override fun onSuccess() {
+
+
                 // Acción en caso de éxito
                 intent.putExtra("plandemuestreo", spinnerSele.selectedItem.toString())
                 intent.putParcelableArrayListExtra("listaServicios", ArrayList(servicioMutableList))

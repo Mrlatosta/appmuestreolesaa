@@ -46,6 +46,12 @@ class NewMainActivity : AppCompatActivity() {
             insets
         }
 
+        val btnContinuar = binding.btnContiFolio
+        btnContinuar.setOnClickListener {
+            val intent = Intent(this, ContinuarFolioActivity::class.java)
+            startActivity(intent)
+        }
+
         val btnReenvio = binding.btnReenvio
         btnReenvio.setOnClickListener {
             val intent = Intent(this, ResendMuActivity::class.java)

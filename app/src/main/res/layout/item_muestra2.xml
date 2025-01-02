@@ -21,12 +21,12 @@
 
     <TextView
         android:id="@+id/tvfecham"
-        android:layout_width="30dp"
+        android:layout_width="85dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="12dp"
-        android:textSize="5sp"
-        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="13/06/2024" />

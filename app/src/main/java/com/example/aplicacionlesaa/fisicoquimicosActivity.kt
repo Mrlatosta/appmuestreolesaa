@@ -1,9 +1,16 @@
 package com.example.aplicacionlesaa
 
+import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.text.Editable
 import android.util.Log
 import android.widget.Toast
@@ -26,6 +33,33 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.aplicacionlesaa.MainActivity2.FooterEventHandler
+import com.example.aplicacionlesaa.model.MuestraData
+import com.example.aplicacionlesaa.worker.SendDataWorker
+import com.example.aplicacionlesaa.worker.SendDataWorkerFQ
+import com.itextpdf.io.image.ImageDataFactory
+import com.itextpdf.io.source.ByteArrayOutputStream
+import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.events.PdfDocumentEvent
+import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.Image
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.properties.TextAlignment
+import com.itextpdf.layout.properties.UnitValue
+import java.io.File
 
 
 class fisicoquimicosActivity : AppCompatActivity() {
@@ -34,6 +68,8 @@ class fisicoquimicosActivity : AppCompatActivity() {
     private lateinit var adapter: analisisFisicoAdapter
     private var analisisFisicoList: MutableList<analisisFisico> = mutableListOf()
     private var datosGuardados = false
+    private val storagePermissionRequestCode = 1001
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +99,7 @@ class fisicoquimicosActivity : AppCompatActivity() {
         binding.tvFolioSolicitudFQ.text = "Folio solicitud: $folioSolicitud"
         binding.tvNombreClienteFQ.text = "Cliente: $nombreCliente"
 
+
         binding.btnGuardarFQ.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Guardar datos")
@@ -74,6 +111,44 @@ class fisicoquimicosActivity : AppCompatActivity() {
                 val datosActualizados = adapter.obtenerDatosActualizados()
                 saveAnalisisFisicoList(datosActualizados)
                 Log.e("Datos actualizados", "Datos Actualizados: $datosActualizados")
+
+                val tamanoFq = analisisFisicoList.size
+
+
+                //Enviar datos desde el worker
+                // Enviar datos desde el worker
+                val data = Data.Builder()
+                    .putInt("fq_count", tamanoFq)
+
+                // Agregar todos los datos en un solo `Data` en lugar de enviarlos por separado
+                analisisFisicoList.forEachIndexed { index, muestra ->
+                    data.putString("registro_muestra_$index", muestra.registro_muestra)
+                    data.putString("nombre_muestra_$index", muestra.nombre_muestra)
+                    data.putString("hora_analisis_$index", muestra.hora_analisis)
+                    data.putString("temperatura_$index", muestra.temperatura)
+                    data.putString("ph_$index", muestra.ph)
+                    data.putString("clr_$index", muestra.clr.toString())
+                    data.putString("clt_$index", muestra.clt.toString())
+                    data.putString("crnas_$index", muestra.crnas.toString())
+                    data.putString("cya_$index", muestra.cya.toString())
+                    data.putString("tur_$index", muestra.tur.toString())
+                }
+
+                // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                // Crear y enviar el único trabajo de envío con toda la información
+                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorkerFQ>()
+                    .setInputData(data.build())
+                    .setConstraints(
+                        Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build()
+                    )
+                    .build()
+
+                    Log.i("Si hay internet", "Entre al worker")
+                    WorkManager.getInstance(this).enqueue(workRequest)
+
+                checkStoragePermissionAndSavePdf()
             }
             builder.setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -81,6 +156,7 @@ class fisicoquimicosActivity : AppCompatActivity() {
             }
             builder.show()
         }
+
 
         binding.btnBorrarFQ.setOnClickListener {
             //Preguntar si si quiere borrar todo
@@ -146,6 +222,112 @@ class fisicoquimicosActivity : AppCompatActivity() {
             Toast.makeText(this, "Se han guardado los datos", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun savePdf(emailAddress: String) {
+        val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+        val file = File(pdfPath, "EstudiosFq-Folio-${binding.tvFolioSolicitudFQ.text}.pdf")
+
+        try {
+            val pdfWriter = PdfWriter(file)
+            val pdfDocument = PdfDocument(pdfWriter)
+            val document = Document(pdfDocument, PageSize.A4.rotate())
+
+            // Manejar encabezados y pies de página
+            val footerHandler = FooterEventHandler(document)
+            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, footerHandler)
+
+            // Cargar el logotipo
+            val inputStream = applicationContext.resources.openRawResource(R.raw.logorectangulartrans)
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            var nextByte = inputStream.read()
+            while (nextByte != -1) {
+                byteArrayOutputStream.write(nextByte)
+                nextByte = inputStream.read()
+            }
+            val imageData = byteArrayOutputStream.toByteArray()
+            val logo = Image(ImageDataFactory.create(imageData))
+            logo.scaleToFit(150f, 100f)
+
+            // Agregar el logotipo al documento
+            val headerTable = Table(1).useAllAvailableWidth()
+            headerTable.addCell(Cell().add(logo).setBorder(Border.NO_BORDER).setTextAlignment(TextAlignment.LEFT))
+            document.add(headerTable)
+
+            // Agregar título principal
+            val title = Paragraph("F-FQ-LAB-02 - Formato de Reporte de Parámetros Fisicoquímicos de Aguas de Albercas")
+                .setFontSize(14f)
+                .setBold()
+                .setTextAlignment(TextAlignment.CENTER)
+            document.add(title)
+
+            // Información general
+            val infoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f)))
+                .useAllAvailableWidth()
+            infoTable.addCell(Cell().add(Paragraph("Nombre del Cliente:").setBold()))
+//            infoTable.addCell(Cell().add(Paragraph(binding.tvCliente.text ?: "")))
+            infoTable.addCell(Cell().add(Paragraph("Hotel bahia")))
+            infoTable.addCell(Cell().add(Paragraph("Dirección:").setBold()))
+//            infoTable.addCell(Cell().add(Paragraph(binding.tvDireccion.text ?: ""))
+            infoTable.addCell(Cell().add(Paragraph("Tulum tulum")))
+
+            infoTable.addCell(Cell().add(Paragraph("Fecha:").setBold()))
+//            infoTable.addCell(Cell().add(Paragraph(binding.tvFecha.text ?: "")))
+            infoTable.addCell(Cell().add(Paragraph("10/12/2024")))
+
+            document.add(infoTable)
+
+            // Tabla de parámetros fisicoquímicos
+            val columnWidths = floatArrayOf(2f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 2f)
+            val paramTable = Table(columnWidths).useAllAvailableWidth()
+            val headers = arrayOf(
+                "Nombre de la Muestra / Registro", "Hora de Análisis", "TEMP(°C)", "pH",
+                "CLR", "CLT", "CRNAS", "CYA", "TUR", "Fe", "Observaciones", "Comentarios"
+            )
+            headers.forEach { header -> paramTable.addHeaderCell(Cell().add(Paragraph(header).setBold())) }
+
+            // Agregar datos dinámicos a la tabla
+            for (i in 1..5) { // Ejemplo de 5 filas
+                paramTable.addCell(Cell().add(Paragraph("Muestra $i")))
+                paramTable.addCell(Cell().add(Paragraph("12:00 PM")))
+                paramTable.addCell(Cell().add(Paragraph("25.0")))
+                paramTable.addCell(Cell().add(Paragraph("7.0")))
+                paramTable.addCell(Cell().add(Paragraph("1.5")))
+                paramTable.addCell(Cell().add(Paragraph("1.8")))
+                paramTable.addCell(Cell().add(Paragraph("0.2")))
+                paramTable.addCell(Cell().add(Paragraph("0.0")))
+                paramTable.addCell(Cell().add(Paragraph("3.5")))
+                paramTable.addCell(Cell().add(Paragraph("0.1")))
+                paramTable.addCell(Cell().add(Paragraph("Sin observaciones")))
+                paramTable.addCell(Cell().add(Paragraph("Comentario ejemplo")))
+            }
+            document.add(paramTable)
+
+            // Nomenclatura
+            val nomenclature = Paragraph("Nomenclatura de Estudios Fisicoquímicos")
+                .setBold()
+                .setUnderline()
+                .setTextAlignment(TextAlignment.LEFT)
+            document.add(nomenclature)
+            val nomenclatureDetails = Paragraph(
+                """
+            PH: Potencial de Hidrógeno 
+            CLR: Cloro Libre Residual
+            CLT: Cloro Total
+            CRNAS: Cloraminas
+            CYA: Ácido Cianúrico
+            TUR: Turbidez
+            Fe: Hierro
+        """.trimIndent()
+            )
+            document.add(nomenclatureDetails)
+            Log.i("Si hay internet", "Entre al pdf")
+            document.close()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun initializeAnalisisFisicoList() {
         val muestraMutableList = intent.getParcelableArrayListExtra<Muestra>("muestraList") ?: mutableListOf()
@@ -235,5 +417,35 @@ class fisicoquimicosActivity : AppCompatActivity() {
         editor.clear() // Borra todas las claves y valores
         editor.apply() // Aplica los cambios
     }
+    private fun checkStoragePermissionAndSavePdf() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:" + applicationContext.packageName)
+                startActivityForResult(intent, storagePermissionRequestCode)
+            } else {
+
+                savePdf("ray.contacto06@gmail.com")
+
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    storagePermissionRequestCode
+                )
+            } else {
+
+                savePdf("ray.contacto06@gmail.com")
+
+            }
+        }
+    }
+
 
 }

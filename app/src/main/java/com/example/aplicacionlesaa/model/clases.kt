@@ -3,6 +3,7 @@ package com.example.aplicacionlesaa.model
 import android.os.Parcel
 import android.os.Parcelable
 import com.example.aplicacionlesaa.Muestra
+import java.math.BigDecimal
 
 
 data class Plandemuestreo(
@@ -240,7 +241,8 @@ data class MuestraData(
     val planMuestreo: String,
     val clientePdm: ClientePdm?,
     val serviciosPdm: List<Servicio>,
-    val muestras: List<Muestra>
+    val muestras: List<Muestra>,
+    val pdmDetallado: Pdm
 )
 
 data class DatosFinalesFolioMuestreo(
@@ -266,11 +268,11 @@ data class analisisFisico(
     val hora_analisis: String,
     val temperatura: String,
     var ph: String,
-    var clt: Int?,
-    var clr: Int?,
-    var crnas: Int?,
-    var cya: Int?,
-    var tur: Int?,
+    var clt: BigDecimal?,
+    var clr: BigDecimal?,
+    var crnas: BigDecimal?,
+    var cya: BigDecimal?,
+    var tur: BigDecimal?,
 )
 
 

@@ -688,7 +688,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     pdmSeleccionado,
                     clientePdm,
                     serviciosList,
-                    muestraMutableList
+                    muestraMutableList,
+                    pdmDetallado
                 )
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 savePdf("ray.contacto06@gmail.com")
@@ -712,7 +713,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     pdmSeleccionado,
                     clientePdm,
                     serviciosList,
-                    muestraMutableList)
+                    muestraMutableList,
+                    pdmDetallado)
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                                 savePdf("ray.contacto06@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
@@ -735,7 +737,10 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     pdmSeleccionado,
                     clientePdm,
                     serviciosList,
-                    muestraMutableList)
+                    muestraMutableList,
+                    pdmDetallado
+
+                )
                 saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 savePdf("ray.contacto06@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
@@ -763,7 +768,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         pdmSeleccionado,
                         clientePdm,
                         serviciosList,
-                        muestraMutableList)
+                        muestraMutableList,
+                        pdmDetallado)
                     saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -1683,7 +1689,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             return listaMuestrasPdm
 
     }
-
+//a
     override fun onSignatureSaved(bitmap: Bitmap) {
         var signatureView = binding.signatureViewUno
         signatureView.setSignatureBitmap(bitmap)
