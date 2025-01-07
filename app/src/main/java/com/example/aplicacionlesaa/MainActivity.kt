@@ -254,8 +254,17 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     try{
                         if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                             servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
+                            servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO")) {
                             txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                        }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED")){
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
+                        }else if (servicioSeleccionado.clasificacion.contains("HIELO")){
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
+                        }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO")){
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
+                        }else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL")){
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
                         }
                     }catch (e:Exception){
                         Log.e("Error", "Error al establecer el nombre en txtNombre")
@@ -548,7 +557,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
                         if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                             servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
+                            servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO") ) {
                             txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                         }
 
@@ -897,7 +907,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         Log.i("Ray", "Se ha movido un item")
     }
 
-
+    
     private fun onItemSelected(muestra: Muestra) { //pendiente
         if (modoEdicion == true){
             Toast.makeText(this, "No se puede copiar una muestra en modo edicion", Toast.LENGTH_SHORT).show()

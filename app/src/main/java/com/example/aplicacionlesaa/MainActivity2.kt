@@ -89,6 +89,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     private var muestrasExtra: MutableList<Muestra> = mutableListOf()
     private var existenMuestrasExtra: Boolean = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMain2Binding.inflate(layoutInflater)

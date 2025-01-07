@@ -23,6 +23,9 @@ import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Pdm
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.InputStreamReader
 import java.time.LocalDate
 
@@ -40,6 +43,9 @@ class ContinuarFolioActivity : AppCompatActivity() {
         }
     }
 
+    private val descripcionesList: MutableList<Descripcion> = mutableListOf()
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +59,38 @@ class ContinuarFolioActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val apiService = RetrofitClient.instance
+        apiService.getDescriptions().enqueue(object : Callback<List<Descripcion>> {
+            override fun onResponse(
+                call: Call<List<Descripcion>>,
+                response: Response<List<Descripcion>>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.let { descripciones ->
+
+                        descripcionesList.addAll(descripciones)
+                        println("La lista de descripciones es: " + descripcionesList)
+                        intent.putParcelableArrayListExtra("descripciones", ArrayList(descripcionesList))
+
+//                        val descris =
+//                            descripciones.map { it.descripcion.toString() } // Convertir IDs a Strings
+//                        // Configurar Autocompleteview
+//                        val adapter = ArrayAdapter(
+//                            this@SelePdmActivity,
+//                            android.R.layout.simple_spinner_dropdown_item,
+//                            descris
+//                        )
+                    }
+                } else {
+                    Log.e("MainActivity", "Error en Autocomplete: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Descripcion>>, t: Throwable) {
+                Log.e("MainActivity", "Failure en autocomplete: ${t.message}")
+            }
+        })
 
         val btnSubir = binding.btnSubir
         btnSubir.setOnClickListener {
