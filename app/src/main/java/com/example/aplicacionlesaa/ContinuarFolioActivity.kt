@@ -83,12 +83,12 @@ class ContinuarFolioActivity : AppCompatActivity() {
 //                        )
                     }
                 } else {
-                    Log.e("MainActivity", "Error en Autocomplete: ${response.code()}")
+                    Log.e("ContiFolActivity", "Error en Autocomplete: ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<List<Descripcion>>, t: Throwable) {
-                Log.e("MainActivity", "Failure en autocomplete: ${t.message}")
+                Log.e("ContiFolActivity", "Failure en autocomplete: ${t.message}")
             }
         })
 
