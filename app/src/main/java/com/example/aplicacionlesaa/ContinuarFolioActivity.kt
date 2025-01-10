@@ -34,6 +34,7 @@ class ContinuarFolioActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContinuarFolioBinding
     private var muestraData: MuestraData? = null
     private var muestraMutableList: MutableList<Muestra> = mutableListOf()
+    private var muestrasExtras: MutableList<Muestra> = mutableListOf()
     private lateinit var adapter: muestraAdapterActResumen
     private val getFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -90,6 +91,9 @@ class ContinuarFolioActivity : AppCompatActivity() {
             }
         })
 
+
+
+
         val btnSubir = binding.btnSubir
         btnSubir.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
@@ -97,6 +101,7 @@ class ContinuarFolioActivity : AppCompatActivity() {
             }
             muestraData = null  // Limpia muestraData antes de cargar un nuevo archivo
             muestraMutableList?.clear()  // Limpia la lista de muestras
+            muestrasExtras?.clear()
             getFile.launch(intent)
         }
 
@@ -155,6 +160,7 @@ class ContinuarFolioActivity : AppCompatActivity() {
         intent.putExtra("folio", muestraData?.folio)
         intent.putExtra("pdmDetallado", pdmDetallado)
         intent.putParcelableArrayListExtra("muestraList", ArrayList(muestraMutableList))
+        intent.putParcelableArrayListExtra("muestraExtraList", ArrayList(muestrasExtras))
         intent.putExtra("tipomuestreo","continuar")
         Log.i("ContinuarFolioActivity", "Las descripciones rayasd son: $descripcionesList.")
         intent.putParcelableArrayListExtra("descripciones", ArrayList(descripcionesList))
@@ -198,8 +204,20 @@ class ContinuarFolioActivity : AppCompatActivity() {
                     muestraMutableList?.add(muestraa)
                 }
 
+                for (muestrae in muestraData!!.muestrasExtra){
+                    muestrasExtras.add(muestrae)
+                }
+
+                muestrasExtras?.let { list ->
+                    for (muestra in list) {
+                        Log.e("Muestra", muestra.toString())
+                    }
+                    binding.tvMuestaEta.text = "Muestras Extra: " + list.size.toString()
+                }
+
 
                 Log.e("MuestraMutableList", "MuestraMutableList: $muestraMutableList")
+                Log.e("MuestraExtraList", "MuestraExtraList: $muestrasExtras")
 
                 initRecyclerView()
 

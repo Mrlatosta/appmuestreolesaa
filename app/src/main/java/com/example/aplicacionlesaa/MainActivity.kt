@@ -1032,6 +1032,17 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 binding.tvNumeroMuestra.text = contador.toString()
                 binding.tvregistromuestra.text = binding.tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
 
+
+                muestrasExtras = intent.getParcelableArrayListExtra("muestraExtraList") ?: ArrayList()
+
+
+                muestrasExtras?.let { list ->
+                    for (muestra in list) {
+                        Log.e("Muestra", muestra.toString())
+                    }
+                    binding.tvMuestaEta.text = "Muestras Extra: " + list.size.toString()
+                    }
+
             }
         }catch (e:Exception){
             Log.e("Error", "Error al obtener el tipo de muestreo")
@@ -1275,7 +1286,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     clientePdm,
                     serviciosList,
                     muestraMutableList,
-                    pdmDetallado
+                    pdmDetallado,
+                    muestrasExtras
                 )
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
             }
@@ -1297,7 +1309,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     clientePdm,
                     serviciosList,
                     muestraMutableList,
-                    pdmDetallado
+                    pdmDetallado,
+                    muestrasExtras
                 )
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
             }

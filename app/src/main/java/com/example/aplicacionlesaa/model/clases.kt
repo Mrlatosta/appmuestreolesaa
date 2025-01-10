@@ -242,7 +242,8 @@ data class MuestraData(
     val clientePdm: ClientePdm?,
     val serviciosPdm: List<Servicio>,
     val muestras: List<Muestra>,
-    val pdmDetallado: Pdm
+    val pdmDetallado: Pdm,
+    val muestrasExtra: ArrayList<Muestra>
 )
 
 data class DatosFinalesFolioMuestreo(

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ID" />
+
+    <TextView
+        android:id="@+id/cantidad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cantidad" />
+
+    <TextView
+        android:id="@+id/estudios_microbiologicos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Estudios Microbiologicos" />
+
+    <TextView
+        android:id="@+id/estudios_fisicoquimicos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Estudios Fisicoquimicos" />
+
+    <TextView
+        android:id="@+id/descripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Descripcion" />
+
+    <TextView
+        android:id="@+id/cantidad_de_toma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cantidad de Toma" />
+    <View
+        android:id="@+id/viewUnamed"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#062D70"
+        android:layout_marginTop="5dp"/>
+</LinearLayout>
