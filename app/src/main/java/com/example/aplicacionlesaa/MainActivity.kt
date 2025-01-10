@@ -551,7 +551,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 
                 if (sepudo == true) {
-                    tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
                     clearTextFields()
                     Log.i("Ray", "Boton Pulsado")
 
@@ -865,6 +864,10 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
                             txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                         }
+                        val tvRegM = binding.tvregistromuestra
+                        val tvFolio = binding.tvFolio
+                        tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
+
                     } else {
                         // Manejar el caso donde la conversión falló
                         Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT)
@@ -992,6 +995,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
                         txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                     }
+
+                    val tvRegM = binding.tvregistromuestra
+                    val tvFolio = binding.tvFolio
+                    tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
+
                 } else {
                     // Manejar el caso donde la conversión falló
                     Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT)

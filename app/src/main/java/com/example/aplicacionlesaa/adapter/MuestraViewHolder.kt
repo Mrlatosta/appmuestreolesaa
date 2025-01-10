@@ -36,11 +36,11 @@ class MuestraViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         binding.tvFisico.text = muestra.efisico
         binding.tvObservaciones.text = muestra.observaciones
 
-        itemView.setOnClickListener { onClickListener(muestra) }
+//        itemView.setOnClickListener { onClickListener(muestra) }
 
         binding.btnDelete.setOnClickListener{onclickDelete(adapterPosition)}
         binding.btnEditar.setOnClickListener{onclickEdit(adapterPosition)}
-
+        binding.btnCopiar.setOnClickListener{onClickListener(muestra)}
 
     }
 

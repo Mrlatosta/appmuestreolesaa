@@ -71,8 +71,6 @@ class ContinuarFolioActivity : AppCompatActivity() {
 
                         descripcionesList.addAll(descripciones)
                         println("La lista de descripciones es: " + descripcionesList)
-                        intent.putParcelableArrayListExtra("descripciones", ArrayList(descripcionesList))
-
 //                        val descris =
 //                            descripciones.map { it.descripcion.toString() } // Convertir IDs a Strings
 //                        // Configurar Autocompleteview
@@ -108,9 +106,6 @@ class ContinuarFolioActivity : AppCompatActivity() {
             showConfirmationDialog()
 
         }
-
-
-
 
 
     }
@@ -161,14 +156,14 @@ class ContinuarFolioActivity : AppCompatActivity() {
         intent.putExtra("pdmDetallado", pdmDetallado)
         intent.putParcelableArrayListExtra("muestraList", ArrayList(muestraMutableList))
         intent.putExtra("tipomuestreo","continuar")
+        Log.i("ContinuarFolioActivity", "Las descripciones rayasd son: $descripcionesList.")
+        intent.putParcelableArrayListExtra("descripciones", ArrayList(descripcionesList))
+
 
         val nombresLugares: MutableList<String> = mutableListOf()
-        val descripcionesList: MutableList<Descripcion> = mutableListOf()
 
         Log.e("Aui esto","La lista de lugares es: $nombresLugares")
         intent.putStringArrayListExtra("lugares", ArrayList(nombresLugares))
-        intent.putParcelableArrayListExtra("descripciones", ArrayList(descripcionesList))
-        Log.i("MainActivity", "Las descripciones son: $descripcionesList.")
         startActivity(intent)
         finish()
 
