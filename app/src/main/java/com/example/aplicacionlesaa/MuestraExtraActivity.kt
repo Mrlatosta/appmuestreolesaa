@@ -27,6 +27,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.aplicacionlesaa.adapter.EstudiosAdapterInfo
+import com.example.aplicacionlesaa.adapter.ServicioAdapterInfo
 import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.databinding.ActivityMuestraExtraBinding
 import com.example.aplicacionlesaa.model.ClientePdm
@@ -491,6 +494,10 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
 
         }
 
+        binding.btnInfo.setOnClickListener{
+            showServicioDialog()
+        }
+
 
         var descripcionesLista = intent.getParcelableArrayListExtra<Descripcion>("descripciones")
         if (descripcionesLista != null) {
@@ -560,6 +567,7 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
 
+
     override fun onBackPressed() {
         // Crear un AlertDialog para la confirmación
         AlertDialog.Builder(this).apply {
@@ -579,6 +587,25 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
             show()
         }
     }
+
+    private fun showServicioDialog() {
+
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_servicio_list, null)
+        val recyclerView: RecyclerView = dialogView.findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = EstudiosAdapterInfo(mues)
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Lista de Servicios")
+            .setView(dialogView)
+            .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
+            .create()
+
+        dialog.show()
+    }
+
+}
 
     private fun createMuestra(): Boolean {
         var sepudo = false

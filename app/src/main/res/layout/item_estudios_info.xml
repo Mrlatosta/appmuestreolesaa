@@ -12,34 +12,25 @@
         android:text="ID" />
 
     <TextView
-        android:id="@+id/cantidad"
+        android:id="@+id/clasificacion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cantidad" />
+        android:textColor="@color/black"
+        android:text="Clasificacion" />
 
     <TextView
-        android:id="@+id/estudios_microbiologicos"
+        android:id="@+id/clave_interna"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Estudios Microbiologicos" />
+        android:text="clave_interna" />
 
     <TextView
-        android:id="@+id/estudios_fisicoquimicos"
+        android:id="@+id/norma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Estudios Fisicoquimicos" />
+        android:text="norma" />
 
-    <TextView
-        android:id="@+id/descripcion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Descripcion" />
 
-    <TextView
-        android:id="@+id/cantidad_de_toma"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cantidad de Toma" />
     <View
         android:id="@+id/viewUnamed"
         android:layout_width="match_parent"
