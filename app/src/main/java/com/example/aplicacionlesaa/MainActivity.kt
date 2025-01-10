@@ -94,10 +94,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         }
 
 
-
-
-
-
         val serviciosRecibidos = intent.getParcelableArrayListExtra<Servicio>("listaServicios")
         if (serviciosRecibidos != null) {
             serviciosList.addAll(serviciosRecibidos)
@@ -999,6 +995,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     val tvRegM = binding.tvregistromuestra
                     val tvFolio = binding.tvFolio
                     tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
+
+
 
                 } else {
                     // Manejar el caso donde la conversión falló

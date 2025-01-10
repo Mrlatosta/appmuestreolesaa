@@ -19,6 +19,14 @@
         android:text="Clasificacion" />
 
     <TextView
+        android:id="@+id/cantidad_de_toma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="Cantidad toma" />
+
+
+    <TextView
         android:id="@+id/clave_interna"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

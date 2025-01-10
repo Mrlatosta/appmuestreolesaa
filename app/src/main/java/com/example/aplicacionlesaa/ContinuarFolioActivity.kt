@@ -204,6 +204,7 @@ class ContinuarFolioActivity : AppCompatActivity() {
                     muestraMutableList?.add(muestraa)
                 }
 
+                try{
                 for (muestrae in muestraData!!.muestrasExtra){
                     muestrasExtras.add(muestrae)
                 }
@@ -213,6 +214,9 @@ class ContinuarFolioActivity : AppCompatActivity() {
                         Log.e("Muestra", muestra.toString())
                     }
                     binding.tvMuestaEta.text = "Muestras Extra: " + list.size.toString()
+                }
+                    }catch (e: Exception){
+                    Log.e("MuestraData", "Error al cargar las muestras extras: ${e.message}")
                 }
 
 

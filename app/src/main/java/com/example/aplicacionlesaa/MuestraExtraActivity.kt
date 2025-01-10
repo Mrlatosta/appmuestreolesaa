@@ -34,6 +34,7 @@ import com.example.aplicacionlesaa.adapter.muestraAdapter
 import com.example.aplicacionlesaa.databinding.ActivityMuestraExtraBinding
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.Descripcion
+import com.example.aplicacionlesaa.model.Estudio
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Pdm
 import com.example.aplicacionlesaa.model.Servicio
@@ -43,6 +44,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.ArrayList
 
 
 
@@ -55,6 +57,7 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
     private var clientePdm: ClientePdm? = null
     private var folio : String? = null
     private var arregloDeNumeros: MutableList<Int> = mutableListOf()
+
     private var estudios = mapOf(
         1 to mapOf(
             "clasificacion" to "AGUA CRUDA",
@@ -285,6 +288,499 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
             "norma" to "NOM-213-SSA1-2018, Productos y servicios. Productos cárnicos procesados y los establecimientos dedicados a su proceso. Disposiciones y especificaciones sanitarias. Métodos de prueba.; NOM-242-SSA1-2009, Productos de la pesca frescos, refrigerados, congelados y procesados. Especificaciones sanitarias y métodos de prueba."
         )
     )
+    private val estudiosList = mutableListOf<Estudio>(
+        Estudio(
+            1,
+            "AGUA CRUDA",
+            "CI-EST-001",
+            "100ml",
+            "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+        ),
+        Estudio(
+            2,
+            "AGUA DE POZO",
+            "CI-EST-002",
+            "100ml",
+            "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+        ),
+        Estudio(
+            3,
+            "AGUA DE FUENTE ORNAMENTAL",
+            "CI-EST-003",
+            "100ml",
+            "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+        ),
+        Estudio(
+            4,
+            "AGUA DE RED",
+            "CI-EST-004",
+            "100ml",
+            "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+        ),
+        Estudio(
+            5,
+            "AGUA DE RIEGO",
+            "CI-EST-005",
+            "100ml",
+            "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+        ),
+        Estudio(
+            6,
+            "HIELO",
+            "CI-EST-006",
+            "100ml",
+            "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+        ),
+        Estudio(
+            7,
+            "AGUA DE OSMOSIS",
+            "CI-EST-007",
+            "100ml",
+            "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+        ),
+        Estudio(
+            8,
+            "AGUA CARBOJET",
+            "CI-EST-008",
+            "100ml",
+            "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+        ),
+        Estudio(
+            9,
+            "AGUA PURIFICADA",
+            "CI-EST-009",
+            "100ml",
+            "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+        ),
+        Estudio(
+            10,
+            "AGUA ALCALINA",
+            "CI-EST-010",
+            "100ml",
+            "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+        ),
+        Estudio(
+            11,
+            "ALIMENTOS COCIDOS",
+            "CI-EST-011",
+            "300gr",
+            "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+        ),
+        Estudio(
+            12,
+            "ALIMENTOS CRUDOS",
+            "CI-EST-012",
+            "300gr",
+            "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+        ),
+        Estudio(
+            13,
+            "SUPERFICIE VIVA",
+            "CI-EST-013",
+            "10ml",
+            "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+        ),
+        Estudio(
+            14,
+            "SUPERFICIE INERTE",
+            "CI-EST-014",
+            "10ml",
+            "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+        ),
+        Estudio(
+            15,
+            "POSTRES",
+            "CI-EST-015",
+            "300gr",
+            "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+        ),
+        Estudio(
+            16,
+            "POSTRES",
+            "CI-EST-016",
+            "300gr",
+            "NOM-247-SSA1-2008, Productos y servicios. Cereales y sus productos. Cereales, harinas de cereales, sémolas o semolinas. Alimentos a base de: cereales, semillas comestibles, de harinas, sémolas o semolinas o sus mezclas. Productos de panificación. Disposiciones y especificaciones sanitarias y nutrimentales. Métodos de prueba."
+        ),
+        Estudio(
+            17,
+            "ALIMENTO A BASE LÁCTEA",
+            "CI-EST-017",
+            "300gr",
+            "NOM-243-SSA1-2010, Productos y servicios. Leche, fórmula láctea, producto lácteo combinado y derivados lácteos. Disposiciones y especificaciones sanitarias. Métodos de prueba."
+        ),
+        Estudio(
+            18,
+            "PRODUCTOS DE LA PESCA FRESCOS,REFRIGERADOS,CONGELADOS Y PROCESADOS",
+            "CI-EST-018",
+            "300gr",
+            "NOM-242-SSA1-2009, Productos y servicios. Productos de la pesca frescos, refrigerados, congelados y procesados. Especificaciones sanitarias y métodos de prueba."
+        ),
+        Estudio(
+            19,
+            "PRODUCTOS CARNICOS PROCESADOS",
+            "CI-EST-019",
+            "300gr",
+            "NOM-213-SSA1-2002, Productos y servicios. Productos cárnicos procesados. Especificaciones sanitarias."
+        ),
+        Estudio(
+            20,
+            "AGUA DE ALBERCA (Microbiologicos)",
+            "CI-EST-020",
+            "100ml",
+            "NOM-245-SSA1-2010, Requisitos sanitarios y calidad del agua que deben cumplir las albercas. ( Estudio microbiológico)"
+        ),
+        Estudio(
+            21,
+            "AGUA DE ALBERCA (Fisicoquimicos)",
+            "CI-EST-021",
+            "100ml",
+            "NOM-245-SSA1-2010, Requisitos sanitarios y calidad del agua que deben cumplir las albercas. ( Estudio fisicoquimico)"
+        ),
+        Estudio(
+            22,
+            "AGUA DE JACUZZI (Microbiologicos)",
+            "CI-EST-022",
+            "100ml",
+            "NOM-245-SSA1-2010, Requisitos sanitarios y calidad del agua que deben cumplir las albercas. ( Estudio microbiológico)"
+        ),
+        Estudio(
+            23,
+            "AGUA DE JACUZZI (Fisicoquimicos)",
+            "CI-EST-023",
+            "100ml",
+            "NOM-245-SSA1-2010, Requisitos sanitarios y calidad del agua que deben cumplir las albercas. ( Estudio fisicoquimico)"
+        ),
+        Estudio(
+            24,
+            "AGUA RESIDUAL",
+            "CI-EST-024",
+            "100ml",
+            "NOM-001-SEMARNAT-2021, Que establece los límites permisibles de contaminantes en las descargas de aguas residuales en cuerpos receptores propiedad de la nación."
+        ),
+        Estudio(
+            25,
+            "AGUA RESIDUAL",
+            "CI-EST-025",
+            "100ml",
+            "NOM-002-ECOL-1996, Que establece los límites máximos permisibles de contaminantes en las descargas de aguas residuales a los sistemas de alcantarillado urbano o municipal."
+        ),
+        Estudio(
+            26,
+            "PTAR",
+            "CI-EST-026",
+            "NULL",
+            "NOM-001-SEMARNAT-2021, Que establece los límites permisibles de contaminantes en las descargas de aguas residuales en cuerpos receptores propiedad de la nación."
+        ),
+        Estudio(
+            27,
+            "PTAR",
+            "CI-EST-027",
+            "NULL",
+            "NOM-001-SEMARNAT-2021, Que establece los límites permisibles de contaminantes en las descargas de aguas residuales en cuerpos receptores propiedad de la nación."
+        ),
+        Estudio(
+            28,
+            "LODO",
+            "CI-EST-028",
+            "NULL",
+            "NOM-004-SEMARNAT-2002, Protección ambiental.- Lodos y biosólidos.- Especificaciones y límites máximos permisibles de contaminantes para su aprovechamiento y disposición final."
+        ),
+        Estudio(
+            29,
+            "LEGIONELLA",
+            "CI-EST-029",
+            "NULL",
+            "UNE 100030:2017 Prevención y control de la proliferación y diseminación de Legionella en instalaciones."
+        ),
+        Estudio(
+            30,
+            "Ma",
+            "CI-EST-030",
+            "NULL",
+            "UNE 100030:2017 Prevención y control de la proliferación y diseminación de Mesofilicos Aerobios en instalaciones."
+        ),
+        Estudio(
+            31,
+            "SALMONELLA",
+            "CI-EST-031",
+            "NULL",
+            "Perfil de estudio para determinación de Salmonella."
+        ),
+        Estudio(
+            32,
+            "VIBRIO CHOLERAE",
+            "CI-EST-032",
+            "NULL",
+            "Perfil de estudio para determinación de Vibrio Cholerae."
+        ),
+        Estudio(
+            33,
+            "HIERRO",
+            "CI-EST-033",
+            "NULL",
+            "Perfil de estudios para determinación de HIERRO."
+        ),
+        Estudio(
+            34,
+            "E.COLI",
+            "CI-EST-034",
+            "NULL",
+            "Perfil de estudios para determinación de E.COLI."
+        ),
+        Estudio(
+            35,
+            "STAPHYLOCOCCUS AUREUS",
+            "CI-EST-035",
+            "NULL",
+            "Perfil de estudios para determinación de STAPHYLOCOCCUS."
+        ),
+        Estudio(36, "SERVICIO DE RECOLECCION DE MUESTRAS", "CI-EST-036", "NULL", "N/A."),
+        Estudio(
+            37,
+            "AGUA TRATADA",
+            "CI-EST-037",
+            "100ml",
+            "NOM-003-ECOL-1997, Que establece los límites máximos permisibles de contaminantes para las aguas residuales tratadas que se reusen en servicios al público."
+        ),
+        Estudio(
+            38,
+            "PROTEINAS CRUDAS",
+            "CI-EST-038",
+            "300gr",
+            "NOM-213-SSA1-2018, Productos y servicios. Productos cárnicos procesados y los establecimientos dedicados a su proceso. Disposiciones y especificaciones sanitarias. Métodos de prueba.; NOM-242-SSA1-2009, Productos de la pesca frescos, refrigerados, congelados y procesados. Especificaciones sanitarias y métodos de prueba."
+        )
+    )
+//    private var estudios = mapOf(
+//        1 to mapOf(
+//            "clasificacion" to "AGUA CRUDA",
+//            "clave_interna" to "CI-EST-001",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+//        ),
+//        2 to mapOf(
+//            "clasificacion" to "AGUA DE POZO",
+//            "clave_interna" to "CI-EST-002",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+//        ),
+//        3 to mapOf(
+//            "clasificacion" to "AGUA DE FUENTE ORNAMENTAL",
+//            "clave_interna" to "CI-EST-003",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+//        ),
+//        4 to mapOf(
+//            "clasificacion" to "AGUA DE RED",
+//            "clave_interna" to "CI-EST-004",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+//        ),
+//        5 to mapOf(
+//            "clasificacion" to "AGUA DE RIEGO",
+//            "clave_interna" to "CI-EST-005",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-127-SSA1-2021, Agua para uso y consumo humano. Límites permisibles de la calidad del agua."
+//        ),
+//        6 to mapOf(
+//            "clasificacion" to "HIELO",
+//            "clave_interna" to "CI-EST-006",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+//        ),
+//        7 to mapOf(
+//            "clasificacion" to "AGUA DE OSMOSIS",
+//            "clave_interna" to "CI-EST-007",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+//        ),
+//        8 to mapOf(
+//            "clasificacion" to "AGUA CARBOJET",
+//            "clave_interna" to "CI-EST-008",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+//        ),
+//        9 to mapOf(
+//            "clasificacion" to "AGUA PURIFICADA",
+//            "clave_interna" to "CI-EST-009",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+//        ),
+//        10 to mapOf(
+//            "clasificacion" to "AGUA ALCALINA",
+//            "clave_interna" to "CI-EST-010",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-201-SSA1-2015, Productos y servicios. Agua y hielo para consumo humano, envasados y a granel. Especificaciones sanitarias."
+//        ),
+//        11 to mapOf(
+//            "clasificacion" to "ALIMENTOS COCIDOS",
+//            "clave_interna" to "CI-EST-011",
+//            "cantidad_toma" to "300gr",
+//            "norma" to "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+//        ),
+//        12 to mapOf(
+//            "clasificacion" to "ALIMENTOS CRUDOS",
+//            "clave_interna" to "CI-EST-012",
+//            "cantidad_toma" to "300gr",
+//            "norma" to "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+//        ),
+//        13 to mapOf(
+//            "clasificacion" to "SUPERFICIE VIVA",
+//            "clave_interna" to "CI-EST-013",
+//            "cantidad_toma" to "10ml",
+//            "norma" to "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+//        ),
+//        14 to mapOf(
+//            "clasificacion" to "SUPERFICIE INERTE",
+//            "clave_interna" to "CI-EST-014",
+//            "cantidad_toma" to "10ml",
+//            "norma" to "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+//        ),
+//        15 to mapOf(
+//            "clasificacion" to "POSTRES",
+//            "clave_interna" to "CI-EST-015",
+//            "cantidad_toma" to "300gr",
+//            "norma" to "NOM-093-SSA1-1994, Bienes y servicios. Prácticas de higiene y sanidad en la preparación de alimentos que se ofrecen en establecimientos fijos."
+//        ),
+//        16 to mapOf(
+//            "clasificacion" to "POSTRES",
+//            "clave_interna" to "CI-EST-016",
+//            "cantidad_toma" to "300gr",
+//            "norma" to "NOM-247-SSA1-2008, Productos y servicios. Cereales y sus productos. Cereales, harinas de cereales, sémolas o semolinas. Alimentos a base de: cereales, semillas comestibles, de harinas, sémolas o semolinas o sus mezclas. Productos de panificación. Disposiciones y especificaciones sanitarias y nutrimentales. Métodos de prueba."
+//        ),
+//        17 to mapOf(
+//            "clasificacion" to "ALIMENTO A BASE LÁCTEA",
+//            "clave_interna" to "CI-EST-017",
+//            "cantidad_toma" to "300gr",
+//            "norma" to "NOM-243-SSA1-2010, Productos y servicios. Leche, fórmula láctea, producto lácteo combinado y derivados lácteos. Disposiciones y especificaciones sanitarias. Métodos de prueba."
+//        ),
+//        18 to mapOf(
+//            "clasificacion" to "PRODUCTOS DE LA PESCA FRESCOS,REFRIGERADOS,CONGELADOS Y PROCESADOS",
+//            "clave_interna" to "CI-EST-018",
+//            "cantidad_toma" to "300gr",
+//            "norma" to "NOM-242-SSA1-2009, Productos y servicios. Productos de la pesca frescos, refrigerados, congelados y procesados. Especificaciones sanitarias y métodos de prueba."
+//        ),
+//        19 to mapOf(
+//            "clasificacion" to "PRODUCTOS CARNICOS PROCESADOS",
+//            "clave_interna" to "CI-EST-019",
+//            "cantidad_toma" to "300gr",
+//            "norma" to "NOM-213-SSA1-2002, Productos y servicios. Productos cárnicos procesados. Especificaciones sanitarias."
+//        ),
+//        20 to mapOf(
+//            "clasificacion" to "AGUA DE ALBERCA (Microbiologicos)",
+//            "clave_interna" to "CI-EST-020",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-245-SSA1-2010, Requisitos sanitarios y calidad del agua que deben cumplir las albercas. ( Estudio microbiológico)"
+//        ),
+//        21 to mapOf(
+//            "clasificacion" to "AGUA DE ALBERCA (Fisicoquimicos)",
+//            "clave_interna" to "CI-EST-021",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-245-SSA1-2010, Requisitos sanitarios y calidad del agua que deben cumplir las albercas. ( Estudio fisicoquimico)"
+//        ),
+//        22 to mapOf(
+//            "clasificacion" to "AGUA DE JACUZZI (Microbiologicos)",
+//            "clave_interna" to "CI-EST-022",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-245-SSA1-2010, Requisitos sanitarios y calidad del agua que deben cumplir las albercas. ( Estudio microbiológico)"
+//        ),
+//        23 to mapOf(
+//            "clasificacion" to "AGUA DE JACUZZI (Fisicoquimicos)",
+//            "clave_interna" to "CI-EST-023",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-245-SSA1-2010, Requisitos sanitarios y calidad del agua que deben cumplir las albercas. ( Estudio fisicoquimico)"
+//        ),
+//        24 to mapOf(
+//            "clasificacion" to "AGUA RESIDUAL",
+//            "clave_interna" to "CI-EST-024",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-001-SEMARNAT-2021, Que establece los límites permisibles de contaminantes en las descargas de aguas residuales en cuerpos receptores propiedad de la nación."
+//        ),
+//        25 to mapOf(
+//            "clasificacion" to "AGUA RESIDUAL",
+//            "clave_interna" to "CI-EST-025",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-002-ECOL-1996, Que establece los límites máximos permisibles de contaminantes en las descargas de aguas residuales a los sistemas de alcantarillado urbano o municipal."
+//        ),
+//        26 to mapOf(
+//            "clasificacion" to "PTAR",
+//            "clave_interna" to "CI-EST-026",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "NOM-001-SEMARNAT-2021, Que establece los límites permisibles de contaminantes en las descargas de aguas residuales en cuerpos receptores propiedad de la nación."
+//        ),
+//        27 to mapOf(
+//            "clasificacion" to "PTAR",
+//            "clave_interna" to "CI-EST-027",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "NOM-002-ECOL-1996, Que establece los límites máximos permisibles de contaminantes en las descargas de aguas residuales a los sistemas de alcantarillado urbano o municipal."
+//        ),
+//        28 to mapOf(
+//            "clasificacion" to "LODO",
+//            "clave_interna" to "CI-EST-028",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "NOM-004-SEMARNAT-2002, Protección ambiental.- Lodos y biosólidos.-Especificaciones y límites máximos permisibles de contaminantes para su aprovechamiento y disposición final."
+//        ),
+//        29 to mapOf(
+//            "clasificacion" to "LEGIONELLA",
+//            "clave_interna" to "CI-EST-029",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "UNE 100030:2017 Prevención y control de la proliferación y diseminación de Legionella en instalaciones."
+//        ),
+//        30 to mapOf(
+//            "clasificacion" to "Ma",
+//            "clave_interna" to "CI-EST-030",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "UNE 100030:2017 Prevención y control de la proliferación y diseminación de Mesofilicos Aerobios en instalaciones."
+//        ),
+//        31 to mapOf(
+//            "clasificacion" to "SALMONELLA",
+//            "clave_interna" to "CI-EST-031",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "Perfil de estudio para determinación de Salmonella."
+//        ),
+//        32 to mapOf(
+//            "clasificacion" to "VIBRIO CHOLERAE",
+//            "clave_interna" to "CI-EST-032",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "Perfil de estudio para determinación de Vibrio Cholerae."
+//        ),
+//        33 to mapOf(
+//            "clasificacion" to "HIERRO",
+//            "clave_interna" to "CI-EST-033",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "Perfil de estudios para determinación de HIERRO."
+//        ),
+//        34 to mapOf(
+//            "clasificacion" to "E.COLI",
+//            "clave_interna" to "CI-EST-034",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "Perfil de estudios para determinación de E.COLI."
+//        ),
+//        35 to mapOf(
+//            "clasificacion" to "STAPHYLOCOCCUS AUREUS",
+//            "clave_interna" to "CI-EST-035",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "Perfil de estudios para determinación de STAPHYLOCOCCUS."
+//        ),
+//        36 to mapOf(
+//            "clasificacion" to "SERVICIO DE RECOLECCION DE MUESTRAS",
+//            "clave_interna" to "CI-EST-036",
+//            "cantidad_toma" to "NULL",
+//            "norma" to "N/A."
+//        ),
+//        37 to mapOf(
+//            "clasificacion" to "AGUA TRATADA",
+//            "clave_interna" to "CI-EST-037",
+//            "cantidad_toma" to "100ml",
+//            "norma" to "NOM-003-ECOL-1997, Que establece los límites máximos permisibles de contaminantes para las aguas residuales tratadas que se reusen en servicios al público."
+//        ),
+//        38 to mapOf(
+//            "clasificacion" to "PROTEINAS CRUDAS",
+//            "clave_interna" to "CI-EST-038",
+//            "cantidad_toma" to "300gr",
+//            "norma" to "NOM-213-SSA1-2018, Productos y servicios. Productos cárnicos procesados y los establecimientos dedicados a su proceso. Disposiciones y especificaciones sanitarias. Métodos de prueba.; NOM-242-SSA1-2009, Productos de la pesca frescos, refrigerados, congelados y procesados. Especificaciones sanitarias y métodos de prueba."
+//        )
+//    )
+    private lateinit var adapterEdicion: muestraAdapter
     private lateinit var adapter: muestraAdapter
     private var modoEdicion = false
     private var muestraMutableList: MutableList<Muestra> = mutableListOf()
@@ -292,6 +788,7 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
     private var lugares: ArrayList<String> = ArrayList()
     var contador = 0
     private val storagePermissionRequestCode = 1001
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -431,6 +928,7 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
 //                        indexMuestraAEditar = -1
 //                    }
 
+
                 }
 
                 builder.setNegativeButton("No") { dialog, which ->
@@ -470,6 +968,11 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
 
 
         }
+
+
+
+
+
 
         binding.btnAceptar.setOnClickListener{
             val builder = AlertDialog.Builder(this)
@@ -594,10 +1097,10 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
         val dialogView = layoutInflater.inflate(R.layout.dialog_servicio_list, null)
         val recyclerView: RecyclerView = dialogView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = EstudiosAdapterInfo(mues)
+        recyclerView.adapter = EstudiosAdapterInfo(estudiosList)
 
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Lista de Servicios")
+            .setTitle("Lista de Estudios")
             .setView(dialogView)
             .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
             .create()
@@ -605,7 +1108,6 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
         dialog.show()
     }
 
-}
 
     private fun createMuestra(): Boolean {
         var sepudo = false

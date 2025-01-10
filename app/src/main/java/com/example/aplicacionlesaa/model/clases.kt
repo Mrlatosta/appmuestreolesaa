@@ -12,10 +12,11 @@ data class Plandemuestreo(
 
 )
 
-data class Estudios(
+data class Estudio(
     val id: Int,
     var clasificacion: String,
     var clave_interna: String,
+    var cantidad_toma: String,
     var norma: String
 )
 

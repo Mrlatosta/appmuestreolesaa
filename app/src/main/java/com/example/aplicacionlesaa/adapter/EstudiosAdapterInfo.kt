@@ -6,15 +6,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aplicacionlesaa.R
-import com.example.aplicacionlesaa.model.Estudios
+import com.example.aplicacionlesaa.model.Estudio
 import com.example.aplicacionlesaa.model.Servicio
 
-class EstudiosAdapterInfo(private val estudiosList: List<Estudios>): RecyclerView.Adapter<EstudiosAdapterInfo.ServicioViewHolder>() {
+class EstudiosAdapterInfo(private val estudiosList: List<Estudio>): RecyclerView.Adapter<EstudiosAdapterInfo.ServicioViewHolder>() {
 
     class ServicioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvIdServicio: TextView = itemView.findViewById(R.id.id)
         val tvClasificacion: TextView = itemView.findViewById(R.id.clasificacion)
         val tvclave_interna: TextView = itemView.findViewById(R.id.clave_interna)
+        val tvcantidad_toma: TextView = itemView.findViewById(R.id.cantidad_de_toma)
         val tvnorma: TextView = itemView.findViewById(R.id.norma)
     }
 
@@ -28,6 +29,7 @@ class EstudiosAdapterInfo(private val estudiosList: List<Estudios>): RecyclerVie
         holder.tvIdServicio.text = "ID Servicio: ${currentItem.id.toString()}"
         holder.tvClasificacion.text = "Clasificacion: ${currentItem.clasificacion}"
         holder.tvclave_interna.text = "Clave interna: ${currentItem.clave_interna}"
+        holder.tvcantidad_toma.text = "Cantidad toma: ${currentItem.cantidad_toma}"
         holder.tvnorma.text = "Norma: ${currentItem.norma}"
 
     }
