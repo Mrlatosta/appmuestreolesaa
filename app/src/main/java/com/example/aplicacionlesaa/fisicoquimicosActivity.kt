@@ -69,6 +69,7 @@ class fisicoquimicosActivity : AppCompatActivity() {
     private var analisisFisicoList: MutableList<analisisFisico> = mutableListOf()
     private var datosGuardados = false
     private val storagePermissionRequestCode = 1001
+    private var folioSolicitud: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,11 +95,10 @@ class fisicoquimicosActivity : AppCompatActivity() {
         }
 
         initRecyclerView()
-        val folioSolicitud =  intent.getStringExtra("folioSolicitud") ?: ""
+        folioSolicitud =  intent.getStringExtra("folioSolicitud") ?: ""
         val nombreCliente = intent.getStringExtra("ClienteNombre") ?: ""
         binding.tvFolioSolicitudFQ.text = "Folio solicitud: $folioSolicitud"
         binding.tvNombreClienteFQ.text = "Cliente: $nombreCliente"
-
 
         binding.btnGuardarFQ.setOnClickListener {
             val builder = AlertDialog.Builder(this)
@@ -225,7 +225,7 @@ class fisicoquimicosActivity : AppCompatActivity() {
 
     private fun savePdf(emailAddress: String) {
         val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-        val file = File(pdfPath, "EstudiosFq-Folio-${binding.tvFolioSolicitudFQ.text}.pdf")
+        val file = File(pdfPath, "EstudiosFq-Folio-${folioSolicitud}.pdf")
 
         try {
             val pdfWriter = PdfWriter(file)

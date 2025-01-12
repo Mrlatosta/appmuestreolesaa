@@ -1337,7 +1337,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
     private fun showServicioDialog() {
 
-
         val dialogView = layoutInflater.inflate(R.layout.dialog_servicio_list, null)
         val recyclerView: RecyclerView = dialogView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
