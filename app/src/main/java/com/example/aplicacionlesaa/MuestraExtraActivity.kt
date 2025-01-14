@@ -1001,6 +1001,23 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
             showServicioDialog()
         }
 
+        binding.btnCancelar.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Confirmación")
+            builder.setMessage("¿Estás seguro de que deseas salir sin guardar?")
+            builder.setPositiveButton("Ok") { dialog, which ->
+
+                finish() // Cierra la actividad
+
+            }
+
+            builder.setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            builder.show()
+        }
+
 
         var descripcionesLista = intent.getParcelableArrayListExtra<Descripcion>("descripciones")
         if (descripcionesLista != null) {
@@ -1075,17 +1092,21 @@ class MuestraExtraActivity : AppCompatActivity(), OnItemMovedListener {
         // Crear un AlertDialog para la confirmación
         AlertDialog.Builder(this).apply {
             setTitle("Confirmación")
-            setMessage("¿Estás seguro de que deseas salir?")
+            setMessage("No es posible salir hasta elegir cancelar o guardar la muestrea")
             setPositiveButton("Sí") { dialog, _ ->
                 arregloDeNumeros.clear()
                 dialog.dismiss()
-                super.onBackPressed() // Llamar al método onBackPressed original
-                finish()
+//                super.onBackPressed() // Llamar al método onBackPressed original
+//                finish()
+                val a = true
+                if (!a){
+                    super.onBackPressed()
+                }
+
+
 
             }
-            setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss() // Cerrar el cuadro de diálogo y no hacer nada más
-            }
+
             create()
             show()
         }

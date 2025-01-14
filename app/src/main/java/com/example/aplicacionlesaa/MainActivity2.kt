@@ -873,6 +873,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             // Tabla de encabezado (3 columnas)
             val tableEncabezado = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
 
+
             // Encabezado principal
             val mainHeaderCell = Cell(1, 2)
                 .add(Paragraph("F-LAB 83. SOLICITUD DE SERVICIO DE ANÁLISIS DE AGUAS Y ALIMENTOS").setFontColor(whiteColor).setFontSize(fontSize))

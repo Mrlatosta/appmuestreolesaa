@@ -1,6 +1,7 @@
 package com.example.aplicacionlesaa
 
 import android.Manifest
+import android.bluetooth.BluetoothClass.Device
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -41,11 +42,13 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.aplicacionlesaa.MainActivity2.FooterEventHandler
+import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.worker.SendDataWorker
 import com.example.aplicacionlesaa.worker.SendDataWorkerFQ
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.io.source.ByteArrayOutputStream
+import com.itextpdf.kernel.colors.ColorConstants
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.geom.PageSize
@@ -53,6 +56,7 @@ import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
@@ -60,6 +64,9 @@ import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.properties.UnitValue
 import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import kotlin.text.format
 
 
 class fisicoquimicosActivity : AppCompatActivity() {
@@ -70,6 +77,8 @@ class fisicoquimicosActivity : AppCompatActivity() {
     private var datosGuardados = false
     private val storagePermissionRequestCode = 1001
     private var folioSolicitud: String = ""
+    private var nombreCliente: String = ""
+    private var clientePdm: ClientePdm? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,9 +105,11 @@ class fisicoquimicosActivity : AppCompatActivity() {
 
         initRecyclerView()
         folioSolicitud =  intent.getStringExtra("folioSolicitud") ?: ""
-        val nombreCliente = intent.getStringExtra("ClienteNombre") ?: ""
+        nombreCliente = intent.getStringExtra("ClienteNombre") ?: ""
         binding.tvFolioSolicitudFQ.text = "Folio solicitud: $folioSolicitud"
         binding.tvNombreClienteFQ.text = "Cliente: $nombreCliente"
+        clientePdm = intent.getParcelableExtra("clientePdm")
+
 
         binding.btnGuardarFQ.setOnClickListener {
             val builder = AlertDialog.Builder(this)
@@ -228,6 +239,10 @@ class fisicoquimicosActivity : AppCompatActivity() {
         val file = File(pdfPath, "EstudiosFq-Folio-${folioSolicitud}.pdf")
 
         try {
+    //checando lo de la tablet
+            //#002060 - 0 32 96 - Azul obscuro arriba borde
+            //#002060 - 0 112 192 - Azul Cielo abajo borde
+
             val pdfWriter = PdfWriter(file)
             val pdfDocument = PdfDocument(pdfWriter)
             val document = Document(pdfDocument, PageSize.A4.rotate())
@@ -237,7 +252,7 @@ class fisicoquimicosActivity : AppCompatActivity() {
             pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, footerHandler)
 
             // Cargar el logotipo
-            val inputStream = applicationContext.resources.openRawResource(R.raw.logorectangulartrans)
+            val inputStream = applicationContext.resources.openRawResource(R.raw.logorectangulartranssinabajo)
             val byteArrayOutputStream = ByteArrayOutputStream()
             var nextByte = inputStream.read()
             while (nextByte != -1) {
@@ -246,11 +261,15 @@ class fisicoquimicosActivity : AppCompatActivity() {
             }
             val imageData = byteArrayOutputStream.toByteArray()
             val logo = Image(ImageDataFactory.create(imageData))
-            logo.scaleToFit(150f, 100f)
+            logo.scaleToFit(180f, 30f)
 
             // Agregar el logotipo al documento
-            val headerTable = Table(1).useAllAvailableWidth()
-            headerTable.addCell(Cell().add(logo).setBorder(Border.NO_BORDER).setTextAlignment(TextAlignment.LEFT))
+            val headerTable = Table(2).useAllAvailableWidth()
+            headerTable.addCell(Cell().add(logo).setBorder(Border.NO_BORDER).setTextAlignment(TextAlignment.LEFT)).setTextAlignment(TextAlignment.CENTER)
+            headerTable.addCell(Cell().add(Paragraph("Centro Integral en Servicios de Laboratorio de Aguas y Alimentos S.A de C.V")).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold()
+                .setBorderTop(SolidBorder(DeviceRgb(0, 32,96), 6f)
+            ).setBorderBottom(SolidBorder(DeviceRgb(0, 112,192), 6f)).setTextAlignment(TextAlignment.CENTER)
+            )
             document.add(headerTable)
 
             // Agregar título principal
@@ -258,47 +277,68 @@ class fisicoquimicosActivity : AppCompatActivity() {
                 .setFontSize(14f)
                 .setBold()
                 .setTextAlignment(TextAlignment.CENTER)
-            document.add(title)
+
+//            document.add(title)
+
+            val mediumTable = Table(4).useAllAvailableWidth().setBorderTop(SolidBorder(DeviceRgb(237,125,49),6f)).setBorderBottom(SolidBorder(DeviceRgb(237,125,49),6f)).setFontSize(10f)
+            mediumTable.addCell(Cell().add(Paragraph("Numero control:")).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell(1,3).add(Paragraph("F-FQ-LAB-02.- Formato de Reporte de Parámetros Fisicoquimicos de Aguas de Albercas").setBold()))
+
+            mediumTable.addCell(Cell().add(Paragraph("Revision:")).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("0:").setBold()).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("Sustituya a:")).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("Documento nuevo").setBold()).setPaddings(0f,0f,0f,0f))
+
+            mediumTable.addCell(Cell().add(Paragraph("Vigente a partir de:")).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("Agosto 2024").setBold()).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("Próxima revisión:")).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("Agosto 2025").setBold()).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("Tipo de documento:")).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell(1,3).add(Paragraph("Formato").setBold()).setPaddings(0f,0f,0f,0f))
+
+            document.add(mediumTable)
+
+            document.add(Paragraph("").setMarginTop(10f)) // 10f representa el margen superior en puntos
+
 
             // Información general
             val infoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f)))
                 .useAllAvailableWidth()
             infoTable.addCell(Cell().add(Paragraph("Nombre del Cliente:").setBold()))
-//            infoTable.addCell(Cell().add(Paragraph(binding.tvCliente.text ?: "")))
-            infoTable.addCell(Cell().add(Paragraph("Hotel bahia")))
+            infoTable.addCell(Cell().add(Paragraph(nombreCliente)))
+//            infoTable.addCell(Cell().add(Paragraph("Hotel bahia")))
             infoTable.addCell(Cell().add(Paragraph("Dirección:").setBold()))
 //            infoTable.addCell(Cell().add(Paragraph(binding.tvDireccion.text ?: ""))
-            infoTable.addCell(Cell().add(Paragraph("Tulum tulum")))
+            infoTable.addCell(Cell().add(Paragraph(clientePdm?.direccion ?: "")))
 
             infoTable.addCell(Cell().add(Paragraph("Fecha:").setBold()))
 //            infoTable.addCell(Cell().add(Paragraph(binding.tvFecha.text ?: "")))
-            infoTable.addCell(Cell().add(Paragraph("10/12/2024")))
+            val currentDate = getCurrentDateInDdMmYyyyModern()
+            infoTable.addCell(Cell().add(Paragraph(currentDate)))
 
             document.add(infoTable)
 
             // Tabla de parámetros fisicoquímicos
-            val columnWidths = floatArrayOf(2f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 2f)
+            val columnWidths = floatArrayOf(2f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)
             val paramTable = Table(columnWidths).useAllAvailableWidth()
             val headers = arrayOf(
                 "Nombre de la Muestra / Registro", "Hora de Análisis", "TEMP(°C)", "pH",
-                "CLR", "CLT", "CRNAS", "CYA", "TUR", "Fe", "Observaciones", "Comentarios"
-            )
+                "CLR", "CLT", "CRNAS", "CYA", "TUR", "Fe")
+
             headers.forEach { header -> paramTable.addHeaderCell(Cell().add(Paragraph(header).setBold())) }
 
             // Agregar datos dinámicos a la tabla
-            for (i in 1..5) { // Ejemplo de 5 filas
-                paramTable.addCell(Cell().add(Paragraph("Muestra $i")))
-                paramTable.addCell(Cell().add(Paragraph("12:00 PM")))
-                paramTable.addCell(Cell().add(Paragraph("25.0")))
-                paramTable.addCell(Cell().add(Paragraph("7.0")))
-                paramTable.addCell(Cell().add(Paragraph("1.5")))
-                paramTable.addCell(Cell().add(Paragraph("1.8")))
-                paramTable.addCell(Cell().add(Paragraph("0.2")))
-                paramTable.addCell(Cell().add(Paragraph("0.0")))
-                paramTable.addCell(Cell().add(Paragraph("3.5")))
-                paramTable.addCell(Cell().add(Paragraph("0.1")))
-                paramTable.addCell(Cell().add(Paragraph("Sin observaciones")))
-                paramTable.addCell(Cell().add(Paragraph("Comentario ejemplo")))
+            for (fisico in analisisFisicoList){ // Ejemplo de 5 filas
+                paramTable.addCell(Cell().add(Paragraph("Muestra ${fisico.registro_muestra} - ${fisico.nombre_muestra}")))
+                paramTable.addCell(Cell().add(Paragraph("${fisico.hora_analisis}")))
+                paramTable.addCell(Cell().add(Paragraph(fisico.temperatura)))
+                paramTable.addCell(Cell().add(Paragraph(fisico.ph)))
+                paramTable.addCell(Cell().add(Paragraph("${fisico.clr}")))
+                paramTable.addCell(Cell().add(Paragraph("${fisico.clt}")))
+                paramTable.addCell(Cell().add(Paragraph("${fisico.crnas}")))
+                paramTable.addCell(Cell().add(Paragraph("${fisico.cya}")))
+                paramTable.addCell(Cell().add(Paragraph("${fisico.tur}")))
+                paramTable.addCell(Cell().add(Paragraph("-")))
             }
             document.add(paramTable)
 
@@ -326,6 +366,12 @@ class fisicoquimicosActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun getCurrentDateInDdMmYyyyModern(): String {
+        val currentDate = LocalDate.now() // Gets the current date
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+        return currentDate.format(formatter)
     }
 
 
