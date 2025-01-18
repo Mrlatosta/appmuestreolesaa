@@ -302,19 +302,30 @@ class fisicoquimicosActivity : AppCompatActivity() {
 
 
             // Información general
-            val infoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f)))
+            val infoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f,1f,1f,1f,1f,1f)))
                 .useAllAvailableWidth()
-            infoTable.addCell(Cell().add(Paragraph("Nombre del Cliente:").setBold()))
-            infoTable.addCell(Cell().add(Paragraph(nombreCliente)))
+            infoTable.addCell(Cell(1,2).add(Paragraph("Nombre del Cliente:").setBold()))
+            infoTable.addCell(Cell(1,4).add(Paragraph(nombreCliente)))
 //            infoTable.addCell(Cell().add(Paragraph("Hotel bahia")))
-            infoTable.addCell(Cell().add(Paragraph("Dirección:").setBold()))
+            infoTable.addCell(Cell(1,1).add(Paragraph("Dirección:").setBold()))
 //            infoTable.addCell(Cell().add(Paragraph(binding.tvDireccion.text ?: ""))
-            infoTable.addCell(Cell().add(Paragraph(clientePdm?.direccion ?: "")))
+            infoTable.addCell(Cell(1,3).add(Paragraph(clientePdm?.direccion ?: "")))
 
-            infoTable.addCell(Cell().add(Paragraph("Fecha:").setBold()))
+            infoTable.addCell(Cell(1,1).add(Paragraph("Fecha:").setBold()))
 //            infoTable.addCell(Cell().add(Paragraph(binding.tvFecha.text ?: "")))
             val currentDate = getCurrentDateInDdMmYyyyModern()
-            infoTable.addCell(Cell().add(Paragraph(currentDate)))
+            infoTable.addCell(Cell(1,1).add(Paragraph(currentDate)))
+
+            infoTable.addCell(Cell(1,1).add(Paragraph("Atencion A:").setBold()))
+            infoTable.addCell(Cell(1,1).add(Paragraph(clientePdm?.atencion ?:"")))
+            infoTable.addCell(Cell(1,1).add(Paragraph("Puesto:").setBold()))
+            infoTable.addCell(Cell(1,1).add(Paragraph(clientePdm?.puesto ?:"")))
+            infoTable.addCell(Cell(1,1).add(Paragraph("Folio Solicitud:").setBold()))
+            infoTable.addCell(Cell(1,1).add(Paragraph(folioSolicitud)))
+
+
+
+
 
             document.add(infoTable)
 
@@ -340,26 +351,29 @@ class fisicoquimicosActivity : AppCompatActivity() {
                 paramTable.addCell(Cell().add(Paragraph("${fisico.tur}")))
                 paramTable.addCell(Cell().add(Paragraph("-")))
             }
+            paramTable.addCell(Cell(1,1).add(Paragraph("Observaciones generales:")))
+            paramTable.addCell(Cell(1,9).add(Paragraph("")))
+
+            paramTable.addCell(Cell(1,5).add(Paragraph("Nomenclatura de Estudios Fisicoquímicos:")))
+            paramTable.addCell(Cell(1,5).add(Paragraph("Nombre, Firma y Puesto:")))
+
+            val subtabla = Table(2).useAllAvailableWidth().setBorder(Border.NO_BORDER)
+            subtabla.addCell(Cell().add(Paragraph("PH: Potencial de Hidrógeno \n" +
+                    "            CLR: Cloro Libre Residual\n" +
+                    "            CLT: Cloro Total")).setBorder(Border.NO_BORDER))
+            subtabla.addCell(Cell().add(Paragraph("CRNAS: Cloraminas\n" +
+                    "            CYA: Ácido Cianúrico\n" +
+                    "            TUR: Turbidez\n" +
+                    "            Fe: Hierro")).setBorder(Border.NO_BORDER))
+
+            paramTable.addCell(Cell(3,5).add(subtabla))
+
+            paramTable.addCell(Cell(3,5).add(Paragraph("")))
+
             document.add(paramTable)
 
             // Nomenclatura
-            val nomenclature = Paragraph("Nomenclatura de Estudios Fisicoquímicos")
-                .setBold()
-                .setUnderline()
-                .setTextAlignment(TextAlignment.LEFT)
-            document.add(nomenclature)
-            val nomenclatureDetails = Paragraph(
-                """
-            PH: Potencial de Hidrógeno 
-            CLR: Cloro Libre Residual
-            CLT: Cloro Total
-            CRNAS: Cloraminas
-            CYA: Ácido Cianúrico
-            TUR: Turbidez
-            Fe: Hierro
-        """.trimIndent()
-            )
-            document.add(nomenclatureDetails)
+
             Log.i("Si hay internet", "Entre al pdf")
             document.close()
 

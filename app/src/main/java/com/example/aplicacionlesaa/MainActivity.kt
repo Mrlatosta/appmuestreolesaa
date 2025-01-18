@@ -516,6 +516,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     setEditMode(false)
                     binding.tvTitulo.text = "Registro de Muestras"
                     binding.btnStart.text = "Agregar"
+                    binding.idSpinner1.isEnabled = true
                     clearTextFields()
                     Toast.makeText(
                         this,
