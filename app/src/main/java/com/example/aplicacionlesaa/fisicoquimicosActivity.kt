@@ -372,7 +372,15 @@ class fisicoquimicosActivity : AppCompatActivity() {
 
             document.add(paramTable)
 
-            // Nomenclatura
+            //El registro de los datos en este formato se realiza con letra legible, y con lapicero de color azul, no se acepta registros c
+            document.add(Paragraph("El registro de los datos en este formato se realiza con letra legible, y con lapicero de color azul, no se acepta registros con lápiz, rayaduras y tachaduras.\n").setTextAlignment(TextAlignment.CENTER).setFontSize(0.5f))
+
+            // Nomenclaturag
+
+            document.add(Paragraph("DOCUMENTO CONTROLADO\n").setBold().setTextAlignment(TextAlignment.CENTER))
+
+            document.add(Paragraph("Documento propiedad de Centro Integral en Servicios de Laboratorio de Aguas y Alimentos S.A . de C.V. \n" +
+                    " no puede reproducirse en forma parcial o total, sin la previa autorización del Laboratorio\n").setTextAlignment(TextAlignment.CENTER))
 
             Log.i("Si hay internet", "Entre al pdf")
             document.close()
@@ -392,20 +400,23 @@ class fisicoquimicosActivity : AppCompatActivity() {
     private fun initializeAnalisisFisicoList() {
         val muestraMutableList = intent.getParcelableArrayListExtra<Muestra>("muestraList") ?: mutableListOf()
         val serviciosList = intent.getParcelableArrayListExtra<Servicio>("listaServicios") ?: mutableListOf()
-        Log.i("Inicializando","Inicializando Lista")
-        Log.i("MuestrASIZE","Muestra size ${muestraMutableList.size}")
+
+
         for (muestra in muestraMutableList) {
+
             //Encontrar el servicio correspondiente a la muestra
             val servicio = serviciosList.find { it.id == muestra.servicioId }
 
-
             try{
                 if (servicio != null) {
-                    val descripcion = servicio.descripcion
+                    val emicro = muestra.emicro
                     val regex = Regex("agua de alberca", RegexOption.IGNORE_CASE)
-                    val regexFisico = Regex("físicoquímico|fisicoquimico|físico-químico", RegexOption.IGNORE_CASE)
+                    val regexFisico = Regex("fq|FQ|fQ", RegexOption.IGNORE_CASE)
 
-                    if (regex.containsMatchIn(descripcion) && regexFisico.containsMatchIn(descripcion)) {
+                    Log.e("Emicro","Emicro: $emicro")
+                    Log.e("Servicio","Descriçiom: ${servicio.descripcion}")
+
+                    if (regex.containsMatchIn(servicio.descripcion) && regexFisico.containsMatchIn(emicro)) {
                         //SI si encuentra, entonces crear un nuevo objeto analisisFisico y añadirle su registro muestra del que se esta trabajando, las demas en null
                         Log.e("Muestra encontrada","Muestra encontrada: $muestra")
                         Log.e("Hora actual","Hora actual: ${binding.tvContadorHora.text.toString()}")

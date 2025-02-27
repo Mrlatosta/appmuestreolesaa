@@ -542,7 +542,13 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 if (servicioSeleccionado!!.clasificacion.contains("AGUA DE USO RECREACTIVO")
                     && servicioSeleccionado!!.descripcion.contains("Estudio microbiológico")) {
                     sepudo = createMuestrasMicrobiologicas()
-                }else{
+                }else if(servicioSeleccionado!!.descripcion.contains("Estudio fisicoquimico y microbiologico")
+                    || servicioSeleccionado!!.descripcion.contains("EFyM")){
+
+                    sepudo = createMuestrasFisicoquimicas()
+
+                }
+                else{
                     sepudo = createMuestra()
                 }
 
@@ -743,6 +749,391 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         txtDescripcion.text.clear()
         txtObserva.text.clear()
 
+    }
+
+    private fun createMuestrasFisicoquimicas() :Boolean{
+
+        var sepudo = false
+        val tvNum = binding.tvNumeroMuestra
+        val tvfecham = binding.tvfechamuestreo
+        //val tvhoram = binding.tvHora
+        val tvregistromuestra = binding.tvregistromuestra
+        val txtnombrem = binding.txtnombre
+        val txtcantidad = binding.txtcantidadaprox
+        val txtTemp = binding.txtTemp
+        val txtLugar = binding.txtLugar
+        val txtDescripcion = binding.txtdescripcion
+        val txtMicro = binding.txtMicro
+        val txtFisico = binding.txtFisico
+        val txtObserva = binding.txtobservaciones
+        val txtServicioId = binding.idSpinner1
+        val idServicioString = txtServicioId.selectedItem.toString()
+        var idServicioEntero: String = String()
+        var tvCantidad = binding.tvCantidadRestante
+        val spinner1 = binding.idSpinner1
+        val subtipo = binding.idspinnerSubtipo
+
+
+
+
+
+        if (txtnombrem.text.toString().trim().isEmpty() || txtcantidad.text.toString().trim()
+                .isEmpty() || txtTemp.text.toString().trim().isEmpty() || txtLugar.text.toString()
+                .trim().isEmpty() || txtDescripcion.text.toString().trim().isEmpty()
+        )
+
+        {
+            Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+            sepudo = false
+        } else {
+            try {
+                idServicioEntero = idServicioString
+            } catch (e: NumberFormatException) {
+                // Manejar la situación en la que la cadena no puede ser convertida a un entero
+                // Aquí puedes mostrar un mensaje de error o tomar alguna acción alternativa
+            }
+
+            val servicioSeleccionado = serviciosList.find { it.id == idServicioEntero }
+
+            var cantidadMuestras = 0
+            val opciones = arrayOf("Una Muestra (Solo FQ)", "Dos Muestras (Cf y Avl)", "Tres Muestras (Cf, Avl y Fq)")
+            var seleccion = 0
+
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Selecciona la cantidad de muestras a crear para este servicio")
+
+// Mostrar lista de opciones
+            builder.setSingleChoiceItems(opciones, seleccion) { _, which ->
+                seleccion = which
+            }
+
+// Botón para confirmar la selección
+            builder.setPositiveButton("Aceptar") { dialog, _ ->
+                cantidadMuestras = when (seleccion) {
+                    0 -> 1
+                    1 -> 2
+                    2 -> 3
+                    else -> 1
+                }
+
+                if (cantidadMuestras == 1){
+
+                    if (servicioSeleccionado != null && servicioSeleccionado.cantidad > 0) {
+                        // Restar la cantidad al servicio
+                        servicioSeleccionado.cantidad--
+                        println(servicioSeleccionado.id.toString() + "= " + spinner1.selectedItem.toString())
+                        if (servicioSeleccionado.id == spinner1.selectedItem.toString()) {
+                            tvCantidad.text = servicioSeleccionado.cantidad.toString()
+                            if (servicioSeleccionado.cantidad == 0) {
+                                tvCantidad.setTextColor(resources.getColor(R.color.red))
+                            }else{
+                                tvCantidad.setTextColor(resources.getColor(R.color.green))
+                            }
+                        }
+
+
+                        val numeroMuestra = tvNum.text
+
+                        if (numeroMuestra != null) {
+                            val formatoEntrada = SimpleDateFormat("dd/MM/yyyy")
+                            val formatoSalida = SimpleDateFormat("yyyyMMdd")
+
+                            val fecha = formatoEntrada.parse(tvfecham.text.toString())
+
+                            // Formatea la fecha al nuevo formato sin barras
+                            fechaSinBarras = formatoSalida.format(fecha)
+
+
+                            //val fechaSinBarras = tvfecham.text.toString().replace("/", "")
+                            //val horaSinPuntos = tvhoram.text.toString().replace(":", "")
+                            /*val horaRecortada =
+                                if (horaSinPuntos.length >= 4) horaSinPuntos.substring(
+                                    0,
+                                    4
+                                ) else horaSinPuntos*/
+                            val idLab = fechaSinBarras + tvregistromuestra.text.toString()
+
+                            // El valor de idServicio es un entero válido, puedes usarlo aquí
+                            val muestraobjeto =
+                                Muestra(
+                                    numeroMuestra = numeroMuestra.toString(),
+                                    fechaMuestra = tvfecham.text.toString(),
+                                    registroMuestra = tvregistromuestra.text.toString(),
+                                    nombreMuestra = txtnombrem.text.toString().trim(),
+                                    idLab = idLab,
+                                    cantidadAprox = txtcantidad.text.toString().trim(),
+                                    tempM = txtTemp.text.toString().trim()+"°C",
+                                    lugarToma = txtLugar.text.toString().trim(),
+                                    descripcionM = txtDescripcion.text.toString().trim(),
+                                    emicro = "FQ",
+                                    efisico = txtFisico.text.toString().trim(),
+                                    observaciones = txtObserva.text.toString().trim(),
+                                    servicioId = idServicioEntero,
+                                    subtipo = subtipo.selectedItem.toString()
+                                )
+
+                            muestraMutableList.add(muestraobjeto)
+                            contador = muestraMutableList.size
+                            tvNum.text = (contador + 1).toString()
+
+                            adapter.notifyItemInserted(muestraMutableList.size - 1)
+                            Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
+                            sepudo = true
+                            if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
+                                servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
+                                servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                                txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                            }
+
+                            val tvRegM = binding.tvregistromuestra
+                            val tvFolio = binding.tvFolio
+                            tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
+
+
+
+                        } else {
+                            // Manejar el caso donde la conversión falló
+                            Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT)
+                                .show()
+                            Log.i("Ray", "Ingrese numero valido")
+
+                        }
+
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "No hay suficiente cantidad disponible para este servicio",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                }else if (cantidadMuestras == 2){
+
+
+                    if (servicioSeleccionado != null && servicioSeleccionado.cantidad > 1) {
+                        // Restar la cantidad al servicio
+                        servicioSeleccionado.cantidad = servicioSeleccionado.cantidad - 2
+                        println(servicioSeleccionado.id.toString() + "= " + spinner1.selectedItem.toString())
+                        if (servicioSeleccionado.id == spinner1.selectedItem.toString()) {
+                            tvCantidad.text = servicioSeleccionado.cantidad.toString()
+                            if (servicioSeleccionado.cantidad == 0) {
+                                tvCantidad.setTextColor(resources.getColor(R.color.red))
+                            }else{
+                                tvCantidad.setTextColor(resources.getColor(R.color.green))
+                            }
+                        }
+
+                        //Repetir dos veces
+                        for (i in 1..2) {
+
+                            val numeroMuestra = tvNum.text
+
+                            if (numeroMuestra != null) {
+                                val formatoEntrada = SimpleDateFormat("dd/MM/yyyy")
+                                val formatoSalida = SimpleDateFormat("yyyyMMdd")
+
+                                val fecha = formatoEntrada.parse(tvfecham.text.toString())
+
+                                // Formatea la fecha al nuevo formato sin barras
+                                fechaSinBarras = formatoSalida.format(fecha)
+
+
+                                //val fechaSinBarras = tvfecham.text.toString().replace("/", "")
+                                //val horaSinPuntos = tvhoram.text.toString().replace(":", "")
+                                /*val horaRecortada =
+                                    if (horaSinPuntos.length >= 4) horaSinPuntos.substring(
+                                        0,
+                                        4
+                                    ) else horaSinPuntos*/
+                                val idLab = fechaSinBarras + tvregistromuestra.text.toString()
+                                var valorMB = ""
+                                var cantidadToma = ""
+
+                                if (i==1){
+                                    valorMB = "Cf"
+                                    cantidadToma = "100ml"
+                                }else if (i==2){
+                                    valorMB = "Avl"
+                                    cantidadToma = "600ml"
+                                }
+
+                                // El valor de idServicio es un entero válido, puedes usarlo aquí
+                                val muestraobjeto =
+                                    Muestra(
+                                        numeroMuestra = numeroMuestra.toString(),
+                                        fechaMuestra = tvfecham.text.toString(),
+                                        registroMuestra = tvregistromuestra.text.toString(),
+                                        nombreMuestra = txtnombrem.text.toString().trim(),
+                                        idLab = idLab,
+                                        cantidadAprox = cantidadToma,
+                                        tempM = txtTemp.text.toString().trim()+"°C",
+                                        lugarToma = txtLugar.text.toString().trim(),
+                                        descripcionM = txtDescripcion.text.toString().trim(),
+                                        emicro = valorMB,
+                                        efisico = txtFisico.text.toString().trim(),
+                                        observaciones = txtObserva.text.toString().trim(),
+                                        servicioId = idServicioEntero,
+                                        subtipo = subtipo.selectedItem.toString()
+                                    )
+                                muestraMutableList.add(muestraobjeto)
+                                contador = muestraMutableList.size
+                                tvNum.text = (contador + 1).toString()
+
+                                adapter.notifyItemInserted(muestraMutableList.size - 1)
+                                Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
+                                sepudo = true
+                                if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
+                                    servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
+                                    servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                                    txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                                }
+                                val tvRegM = binding.tvregistromuestra
+                                val tvFolio = binding.tvFolio
+                                tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
+
+                            } else {
+                                // Manejar el caso donde la conversión falló
+                                Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT)
+                                    .show()
+                                Log.i("Ray", "Ingrese numero valido")
+
+                            }
+                        }
+
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "No hay suficiente cantidad disponible para este servicio",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                }
+                else if (cantidadMuestras == 3){
+
+
+                    if (servicioSeleccionado != null && servicioSeleccionado.cantidad > 2) {
+                        // Restar la cantidad al servicio
+                        servicioSeleccionado.cantidad = servicioSeleccionado.cantidad - 3
+                        println(servicioSeleccionado.id.toString() + "= " + spinner1.selectedItem.toString())
+                        if (servicioSeleccionado.id == spinner1.selectedItem.toString()) {
+                            tvCantidad.text = servicioSeleccionado.cantidad.toString()
+                            if (servicioSeleccionado.cantidad == 0) {
+                                tvCantidad.setTextColor(resources.getColor(R.color.red))
+                            }else{
+                                tvCantidad.setTextColor(resources.getColor(R.color.green))
+                            }
+                        }
+
+                        //Repetir dos veces
+                        for (i in 1..3) {
+
+                            val numeroMuestra = tvNum.text
+
+                            if (numeroMuestra != null) {
+                                val formatoEntrada = SimpleDateFormat("dd/MM/yyyy")
+                                val formatoSalida = SimpleDateFormat("yyyyMMdd")
+
+                                val fecha = formatoEntrada.parse(tvfecham.text.toString())
+
+                                // Formatea la fecha al nuevo formato sin barras
+                                fechaSinBarras = formatoSalida.format(fecha)
+
+
+                                //val fechaSinBarras = tvfecham.text.toString().replace("/", "")
+                                //val horaSinPuntos = tvhoram.text.toString().replace(":", "")
+                                /*val horaRecortada =
+                                    if (horaSinPuntos.length >= 4) horaSinPuntos.substring(
+                                        0,
+                                        4
+                                    ) else horaSinPuntos*/
+                                val idLab = fechaSinBarras + tvregistromuestra.text.toString()
+                                var valorMB = ""
+                                var cantidadToma = ""
+
+                                if (i==1){
+                                    valorMB = "Cf"
+                                    cantidadToma = "100ml"
+                                }else if (i==2){
+                                    valorMB = "Avl"
+                                    cantidadToma = "600ml"
+                                }else if (i==3){
+                                    valorMB = "FQ"
+                                    cantidadToma = "100ml"
+                                }
+
+                                // El valor de idServicio es un entero válido, puedes usarlo aquí
+                                val muestraobjeto =
+                                    Muestra(
+                                        numeroMuestra = numeroMuestra.toString(),
+                                        fechaMuestra = tvfecham.text.toString(),
+                                        registroMuestra = tvregistromuestra.text.toString(),
+                                        nombreMuestra = txtnombrem.text.toString().trim(),
+                                        idLab = idLab,
+                                        cantidadAprox = cantidadToma,
+                                        tempM = txtTemp.text.toString().trim()+"°C",
+                                        lugarToma = txtLugar.text.toString().trim(),
+                                        descripcionM = txtDescripcion.text.toString().trim(),
+                                        emicro = valorMB,
+                                        efisico = txtFisico.text.toString().trim(),
+                                        observaciones = txtObserva.text.toString().trim(),
+                                        servicioId = idServicioEntero,
+                                        subtipo = subtipo.selectedItem.toString()
+                                    )
+                                muestraMutableList.add(muestraobjeto)
+                                contador = muestraMutableList.size
+                                tvNum.text = (contador + 1).toString()
+
+                                adapter.notifyItemInserted(muestraMutableList.size - 1)
+                                Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
+                                sepudo = true
+                                if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
+                                    servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
+                                    servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                                    txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                                }
+                                val tvRegM = binding.tvregistromuestra
+                                val tvFolio = binding.tvFolio
+                                tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
+
+                            } else {
+                                // Manejar el caso donde la conversión falló
+                                Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT)
+                                    .show()
+                                Log.i("Ray", "Ingrese numero valido")
+
+                            }
+                        }
+
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "No hay suficiente cantidad disponible para este servicio",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+
+
+                dialog.dismiss()
+            }
+
+// Botón para cancelar
+            builder.setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+// Mostrar el diálogo
+            builder.show()
+
+
+
+
+
+        }
+
+        return sepudo
     }
 
     private fun createMuestrasMicrobiologicas() :Boolean{
@@ -1127,9 +1518,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             builder.setView(input)
 
 
-            builder.setMessage("¿Estás seguro de que deseas eliminar la muestra?")
+            builder.setMessage("¿De que forma quieres eliminar la muestra?")
 
-            builder.setPositiveButton("Sí") { dialog, which ->
+            builder.setPositiveButton("Eliminacion normativa") { dialog, which ->
                 try {
 
                     val motivoEliminacion = input.text.toString().trim()
@@ -1193,7 +1584,62 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 } catch (e: Exception) {
                     Log.e("Error".toString(), "Hubo un error")
                 }
+            }
 
+            builder.setNeutralButton("Eliminacion Flexible") { dialog, which ->
+                try {
+
+                    val muestraEliminada = muestraMutableList[position]
+                    val tvCantidad = binding.tvCantidadRestante
+                    val servicioAsociado =
+                        serviciosList.find { it.id == muestraEliminada.servicioId }
+                    val spinner1 = binding.idSpinner1
+
+                    // Verificar si se encontró el servicio asociado
+                    if (servicioAsociado != null) {
+                        // Incrementar la cantidad del servicio
+                        servicioAsociado.cantidad++
+                        println(muestraEliminada.servicioId.toString() + "= " + spinner1.selectedItem.toString())
+                        if (muestraEliminada.servicioId == spinner1.selectedItem.toString()
+                        ) {
+                            tvCantidad.text = servicioAsociado.cantidad.toString()
+                            if (servicioAsociado.cantidad == 0) {
+                                tvCantidad.setTextColor(resources.getColor(R.color.red))
+                            }else{
+                                tvCantidad.setTextColor(resources.getColor(R.color.green))
+                            }
+                        }
+
+                    }
+
+                    muestraMutableList.removeAt(position)
+                    //Notificar al listado que se ha en este caso borrado un item con una posicion
+                    adapter.notifyItemRemoved(position)
+                    val tvFolio = binding.tvFolio
+
+
+                    // Actualizar los números de muestra en la lista
+                    for (i in position until muestraMutableList.size) {
+                        muestraMutableList[i].numeroMuestra = (i + 1).toString()
+                        muestraMutableList[i].registroMuestra =
+                            tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
+                        muestraMutableList[i].idLab = fechaSinBarras+tvFolio.text.toString() + "-" + muestraMutableList[i].numeroMuestra
+
+                    }
+                    adapter.notifyItemRangeChanged(position, muestraMutableList.size)
+
+                    // Actualizar contador y TextView de número de muestra
+                    contador = muestraMutableList.size
+                    binding.tvNumeroMuestra.text = (contador + 1).toString()
+                    binding.tvregistromuestra.text =
+                        tvFolio.text.toString() + "-" + binding.tvNumeroMuestra.text.toString()
+                    Log.e("Prueba".toString(), "El contador es:$contador")
+
+                    checkStoragePermissionAndSaveJson()
+
+                } catch (e: Exception) {
+                    Log.e("Error".toString(), "Hubo un error")
+                }
             }
 
             // Configurar el botón "No"
