@@ -251,6 +251,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                             servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
                             servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
+                            servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI",ignoreCase = true) ||
                             servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO")) {
                             txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                         }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED")){
@@ -884,6 +885,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
                                 txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                             }
+
+
 
                             val tvRegM = binding.tvregistromuestra
                             val tvFolio = binding.tvFolio

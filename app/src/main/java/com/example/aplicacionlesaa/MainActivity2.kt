@@ -855,7 +855,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 
             val image = Image(ImageDataFactory.create(imageData))
-            image.scaleToFit(150f, 100f)
+            image.scaleToFit(125f, 90f)
             //document.add(image)
 
             // Colores
@@ -868,7 +868,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val fontSize = 8f // Tamaño de fuente más pequeño
 
             // Crear tabla principal (2 columnas)
-            val mainTable = Table(UnitValue.createPercentArray(floatArrayOf(3f, 1f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
+            val mainTable = Table(UnitValue.createPercentArray(floatArrayOf(5f, 1f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
 
             // Tabla de encabezado (3 columnas)
             val tableEncabezado = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
@@ -876,7 +876,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             // Encabezado principal
             val mainHeaderCell = Cell(1, 2)
-                .add(Paragraph("F-LAB 83. SOLICITUD DE SERVICIO DE ANÁLISIS DE AGUAS Y ALIMENTOS").setFontColor(whiteColor).setFontSize(fontSize))
+                .add(Paragraph("F-LAB 83. SOLICITUD DE SERVICIO DE ANÁLISIS DE AGUAS Y ALIMENTOS").setFontColor(whiteColor).setFontSize(fontSize).setBold())
                 .setBackgroundColor(headerColor).setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .setBorder(Border.NO_BORDER)
@@ -884,7 +884,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             // Sub-encabezado
             val subHeaderCell = Cell(1, 2)
-                .add(Paragraph("Servicios que generan valor").setFontColor(whiteColor).setFontSize(fontSize))
+                .add(Paragraph("Servicios que generan valor").setFontColor(whiteColor).setFontSize(fontSize).setBold())
                 .setBackgroundColor(headerColor)
                 .setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
@@ -897,37 +897,37 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             datosSolicitudTable.setHeight(UnitValue.createPercentValue(100f))
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("AÑO:").setFontSize(fontSize)).setFontColor(whiteColor).setBackgroundColor(headerColor))
-            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().year.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().year.toString()).setFontSize(fontSize).setBold())).setBackgroundColor(whiteColor)
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("MES:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().monthValue.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+            datosSolicitudTable.addCell(Cell().add(Paragraph(String.format("%02d", LocalDate.now().monthValue)).setFontSize(fontSize).setBold())).setBackgroundColor(whiteColor)
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("DÍA:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().dayOfMonth.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+            datosSolicitudTable.addCell(Cell().add(Paragraph(String.format("%02d", LocalDate.now().dayOfMonth)).setFontSize(fontSize).setBold())).setBackgroundColor(whiteColor)
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("FOLIO:").setFontSize(fontSize).setFontColor(whiteColor)).setBackgroundColor(headerColor))
-            datosSolicitudTable.addCell(Cell().add(Paragraph(binding.tvFolio.text.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+            datosSolicitudTable.addCell(Cell().add(Paragraph(binding.tvFolio.text.toString()).setFontSize(fontSize).setBold())).setBackgroundColor(whiteColor)
 
             // Crear subtabla para "DATOS DE QUIEN SOLICITA LOS ANÁLISIS" (4 columnas)
-            val datosSolicitanteTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            val datosSolicitanteTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f))).useAllAvailableWidth()
 
             datosSolicitanteTable.addCell(Cell().add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.nombre_empresa).setFontSize(fontSize)))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.nombre_empresa).setFontSize(fontSize).setBold()))
 
             datosSolicitanteTable.addCell(Cell().add(Paragraph("DIRECCIÓN:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.direccion).setFontSize(fontSize)))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.direccion).setFontSize(fontSize).setBold()))
 
             datosSolicitanteTable.addCell(Cell().add(Paragraph("ATENCIÓN A:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.atencion).setFontSize(fontSize)))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.atencion).setFontSize(fontSize).setBold()))
 
             datosSolicitanteTable.addCell(Cell().add(Paragraph("TELÉFONO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.telefono).setFontSize(fontSize)))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.telefono).setFontSize(fontSize).setBold()))
 
             datosSolicitanteTable.addCell(Cell().add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.puesto).setFontSize(fontSize)))
+            datosSolicitanteTable.addCell(Cell().add(Paragraph(clientePdm?.puesto).setFontSize(fontSize).setBold()))
 
             datosSolicitanteTable.addCell(Cell().add(Paragraph("CORREO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.correo).setFontSize(fontSize)))
+            datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.correo).setFontSize(fontSize).setBold()))
 
             // Agregar sub-tablas a la tabla de encabezado en la misma fila
             tableEncabezado.addCell(Cell(1, 1).add(Paragraph("DATOS DE SOLICITUD").setFontColor(whiteColor)).setBackgroundColor(headerColor).setFontSize(fontSize))
@@ -949,11 +949,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 //            document.add(Paragraph("Muestras Realizadas"))
 
             // Crear la tabla
-            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
             table.setWidth(UnitValue.createPercentValue(100f))
 
             // Agregar encabezados de celda
-            val tabeadercell = Cell(1, 9)
+            val tabeadercell = Cell(1, 8)
                 .add(Paragraph("Datos de las muestras colectadas").setFontColor(whiteColor).setFontSize(10f))
                 .setBackgroundColor(headerColor)
                 .setTextAlignment(TextAlignment.CENTER)
@@ -1217,7 +1217,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 
             val image = Image(ImageDataFactory.create(imageData))
-            image.scaleToFit(150f, 100f)
+            image.scaleToFit(125f, 90f)
             //document.add(image)
 
             // Colores
@@ -1230,7 +1230,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val fontSize = 8f // Tamaño de fuente más pequeño
 
             // Crear tabla principal (2 columnas)
-            val mainTable = Table(UnitValue.createPercentArray(floatArrayOf(3f, 1f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
+            val mainTable = Table(UnitValue.createPercentArray(floatArrayOf(5f, 1f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
 
             // Tabla de encabezado (3 columnas)
             val tableEncabezado = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
@@ -1261,16 +1261,16 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().year.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("MES:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().monthValue.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+            datosSolicitudTable.addCell(Cell().add(Paragraph(String.format("%02d", LocalDate.now().monthValue)).setFontSize(fontSize).setBold())).setBackgroundColor(whiteColor)
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("DÍA:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
-            datosSolicitudTable.addCell(Cell().add(Paragraph(LocalDate.now().dayOfMonth.toString()).setFontSize(fontSize))).setBackgroundColor(whiteColor)
+            datosSolicitudTable.addCell(Cell().add(Paragraph(String.format("%02d", LocalDate.now().dayOfMonth)).setFontSize(fontSize).setBold())).setBackgroundColor(whiteColor)
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("FOLIO:").setFontSize(fontSize).setFontColor(whiteColor)).setBackgroundColor(headerColor))
             datosSolicitudTable.addCell(Cell().add(Paragraph(binding.tvFolio.text.toString()+"E").setFontSize(fontSize))).setBackgroundColor(whiteColor)
 
             // Crear subtabla para "DATOS DE QUIEN SOLICITA LOS ANÁLISIS" (4 columnas)
-            val datosSolicitanteTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            val datosSolicitanteTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f))).useAllAvailableWidth()
 
             datosSolicitanteTable.addCell(Cell().add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor))
             datosSolicitanteTable.addCell(Cell(1, 3).add(Paragraph(clientePdm?.nombre_empresa).setFontSize(fontSize)))
@@ -1310,11 +1310,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 //            document.add(Paragraph("Muestras Realizadas"))
 
             // Crear la tabla
-            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
             table.setWidth(UnitValue.createPercentValue(100f))
 
             // Agregar encabezados de celda
-            val tabeadercell = Cell(1, 9)
+            val tabeadercell = Cell(1, 8)
                 .add(Paragraph("Datos de las muestras colectadas").setFontColor(whiteColor).setFontSize(10f))
                 .setBackgroundColor(headerColor)
                 .setTextAlignment(TextAlignment.CENTER)
@@ -1553,12 +1553,22 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
     private fun addTableHeader(table: Table) {
         val headers = arrayOf(
-            "# Muestra", "Fecha de Muestra",
-            "Registro de Muestra", "Nombre de Muestra", "ID de Lab",
-            "Cantidad   Aprox.", "TEMP.°[C]", "Lugar de Toma",
-            "Descripción", "Estudios Microbiológicos", "Estudios Fisicoquímicos",
+            "NO.", "Fecha de Muestra",
+            "Registro", "Nombre de Muestra",
+            "Lugar de Toma.", "Descripción", "Cantidad Aprox.",
+            "TEMP.°[C]", "MB", "FQ",
             "Observaciones"
         )
+
+
+//        val headers = arrayOf(
+//            "# Muestra", "Fecha de Muestra",
+//            "Registro de Muestra", "Nombre de Muestra",
+//            "Cantidad   Aprox.", "TEMP.°[C]", "Lugar de Toma",
+//            "Descripción", "MB", "FQ",
+//            "Observaciones"
+//        )
+
 
         headers.forEach {
             val headerCell : Cell
@@ -1582,7 +1592,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         table.addCell(muestra.fechaMuestra)
         table.addCell(muestra.registroMuestra)
         table.addCell(muestra.nombreMuestra)
-        table.addCell(muestra.idLab)
+//        table.addCell(muestra.idLab)
         table.addCell(muestra.cantidadAprox)
         table.addCell(muestra.tempM)
         table.addCell(muestra.lugarToma)
