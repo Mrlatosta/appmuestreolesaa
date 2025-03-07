@@ -48,6 +48,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.io.source.ByteArrayOutputStream
+import com.itextpdf.kernel.colors.DeviceCmyk
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.kernel.events.Event
 import com.itextpdf.kernel.events.IEventHandler
@@ -862,7 +863,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             // Crear colores para la tabla
             // Crear colores para la tabla
             // Crear colores para la tabla
-            val headerColor = DeviceRgb(0, 0, 102)
+            val headerColor = DeviceCmyk(99, 38, 0, 67	)
             val subHeaderColor = DeviceRgb(153, 204, 255)
             val whiteColor = DeviceRgb(255, 255, 255)
             val fontSize = 8f // Tamaño de fuente más pequeño
@@ -949,11 +950,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 //            document.add(Paragraph("Muestras Realizadas"))
 
             // Crear la tabla
-            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
             table.setWidth(UnitValue.createPercentValue(100f))
 
             // Agregar encabezados de celda
-            val tabeadercell = Cell(1, 8)
+            val tabeadercell = Cell(1, 7)
                 .add(Paragraph("Datos de las muestras colectadas").setFontColor(whiteColor).setFontSize(10f))
                 .setBackgroundColor(headerColor)
                 .setTextAlignment(TextAlignment.CENTER)
@@ -963,7 +964,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             val estutablcell = Cell(1, 2)
                 .add(Paragraph("Estudios a realizar").setFontColor(whiteColor).setFontSize(10f))
-                .setBackgroundColor(DeviceRgb(46,105,140))
+                .setBackgroundColor(DeviceRgb(22, 127, 165))
                 .setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .setBorder(Border.NO_BORDER)
@@ -1018,6 +1019,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val firmaTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
             firmaTable.setWidth(UnitValue.createPercentValue(100f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
 
+            firmaTable.setMarginRight(10f)
 // Encabezado
             val headerAutorizaCell = Cell(1, 3)
                 .add(Paragraph("QUIÉN AUTORIZA ANÁLISIS DE LAS MUESTRAS").setFontColor(whiteColor).setFontSize(fontSize))
@@ -1086,8 +1088,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 // Agregar tabla de firmas al documento
 
-            val puntoCriticoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
-            puntoCriticoTable.setWidth(UnitValue.createPercentValue(80f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
+            val puntoCriticoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f))).useAllAvailableWidth()
+//            puntoCriticoTable.setWidth(UnitValue.createPercentValue(80f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
 
             val puntoCriticoHeader = Cell(1, 4)
                 .add(Paragraph("PUNTO CRITICO PRE - ANALISIS").setFontColor(whiteColor).setFontSize(fontSize))
@@ -1095,8 +1097,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 .setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .setBorder(Border.NO_BORDER)
-
-
 
             puntoCriticoTable.addCell(puntoCriticoHeader)
 
@@ -1224,7 +1224,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             // Crear colores para la tabla
             // Crear colores para la tabla
             // Crear colores para la tabla
-            val headerColor = DeviceRgb(1, 53, 85)
+            val headerColor = DeviceCmyk(99, 38, 0, 67)
             val subHeaderColor = DeviceRgb(153, 204, 255)
             val whiteColor = DeviceRgb(255, 255, 255)
             val fontSize = 8f // Tamaño de fuente más pequeño
@@ -1310,11 +1310,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 //            document.add(Paragraph("Muestras Realizadas"))
 
             // Crear la tabla
-            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f)
-            table.setWidth(UnitValue.createPercentValue(100f))
+            val table = Table(floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)).setMarginTop(10f).useAllAvailableWidth()
+//            table.setWidth(UnitValue.createPercentValue(100f))
 
             // Agregar encabezados de celda
-            val tabeadercell = Cell(1, 8)
+            val tabeadercell = Cell(1, 7)
                 .add(Paragraph("Datos de las muestras colectadas").setFontColor(whiteColor).setFontSize(10f))
                 .setBackgroundColor(headerColor)
                 .setTextAlignment(TextAlignment.CENTER)
@@ -1324,7 +1324,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             val estutablcell = Cell(1, 2)
                 .add(Paragraph("Estudios a realizar").setFontColor(whiteColor).setFontSize(10f))
-                .setBackgroundColor(DeviceRgb(46,105,140))
+                .setBackgroundColor(DeviceRgb(22, 127, 165))
                 .setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .setBorder(Border.NO_BORDER)
@@ -1553,50 +1553,48 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
     private fun addTableHeader(table: Table) {
         val headers = arrayOf(
-            "NO.", "Fecha de Muestra",
-            "Registro", "Nombre de Muestra",
+            "NO.", "Registro", "Nombre de Muestra",
             "Lugar de Toma.", "Descripción", "Cantidad Aprox.",
-            "TEMP.°[C]", "MB", "FQ",
-            "Observaciones"
+            "TEMP.°[C]", "MB", "FQ", "Observaciones"
         )
 
+        val columnWidths = mapOf(
+            "NO." to 10f,
+//            "Fecha de Muestra" to 50f,
+            "Registro" to 50f,
+            "Nombre de Muestra" to 120f,
+            "Lugar de Toma." to 150f,
+            "Descripción" to 160f,
+            "Cantidad Aprox." to 80f,
+            "TEMP.°[C]" to 50f,
+            "MB" to 50f,
+            "FQ" to 50f,
+            "Observaciones" to 120f
+        )
 
-//        val headers = arrayOf(
-//            "# Muestra", "Fecha de Muestra",
-//            "Registro de Muestra", "Nombre de Muestra",
-//            "Cantidad   Aprox.", "TEMP.°[C]", "Lugar de Toma",
-//            "Descripción", "MB", "FQ",
-//            "Observaciones"
-//        )
-
-
-        headers.forEach {
-            val headerCell : Cell
-            if (it.contains("Estudios")){
-                 headerCell = Cell().add(Paragraph(it))
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setBackgroundColor(DeviceRgb(46,105,140)).setFontColor(DeviceRgb(255,255,255))
-
-            }else{
-                 headerCell = Cell().add(Paragraph(it))
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setBackgroundColor(DeviceRgb(0, 0, 102)).setFontColor(DeviceRgb(255,255,255))
-            }
+        headers.forEach { header ->
+            val bgColor = if (header == "MB" || header == "FQ") DeviceRgb(22, 127, 165) else DeviceCmyk(99, 38, 0, 67	)
+            val headerCell = Cell().add(Paragraph(header))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setBackgroundColor(bgColor)
+                .setFontColor(DeviceRgb(255, 255, 255))
+                .setWidth(columnWidths[header] ?: 100f) // Valor por defecto si no está en el mapa
 
             table.addHeaderCell(headerCell)
         }
     }
 
+
     private fun addTableRow(table: Table, muestra: Muestra) {
         table.addCell(muestra.numeroMuestra)
-        table.addCell(muestra.fechaMuestra)
+//        table.addCell(muestra.fechaMuestra)
         table.addCell(muestra.registroMuestra)
         table.addCell(muestra.nombreMuestra)
 //        table.addCell(muestra.idLab)
-        table.addCell(muestra.cantidadAprox)
-        table.addCell(muestra.tempM)
         table.addCell(muestra.lugarToma)
         table.addCell(muestra.descripcionM)
+        table.addCell(muestra.cantidadAprox)
+        table.addCell(muestra.tempM)
         table.addCell(muestra.emicro)
         table.addCell(muestra.efisico)
         table.addCell(muestra.observaciones)

@@ -543,8 +543,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 if (servicioSeleccionado!!.clasificacion.contains("AGUA DE USO RECREACTIVO")
                     && servicioSeleccionado!!.descripcion.contains("Estudio microbiológico")) {
                     sepudo = createMuestrasMicrobiologicas()
-                }else if(servicioSeleccionado!!.descripcion.contains("Estudio fisicoquimico y microbiologico")
-                    || servicioSeleccionado!!.descripcion.contains("EFyM")){
+                }else if(servicioSeleccionado!!.descripcion.contains("Estudio fisicoquimico y microbiologico",ignoreCase = true)
+                    || servicioSeleccionado!!.descripcion.contains("EFyM", ignoreCase = true)){
 
                     sepudo = createMuestrasFisicoquimicas()
 
