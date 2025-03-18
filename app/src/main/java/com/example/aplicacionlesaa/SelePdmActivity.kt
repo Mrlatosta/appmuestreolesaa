@@ -51,6 +51,7 @@ class SelePdmActivity : AppCompatActivity() {
     private var lugares: MutableList<Lugares>? = null
     private val descripcionesList: MutableList<Descripcion> = mutableListOf()
     var nombresLugares: MutableList<String> = mutableListOf()
+    val apiService = RetrofitClient.instance
 
 
     class servicioProvider {
@@ -83,7 +84,6 @@ class SelePdmActivity : AppCompatActivity() {
 
 
         val spinnerSele = binding.spinnerSelePdm
-        val apiService = RetrofitClient.instance
         //Obtener ultimo folio
         apiService.getLastFolioMuestreo().enqueue(object : Callback<UltimoFolio> {
             override fun onResponse(call: Call<UltimoFolio>, response: Response<UltimoFolio>) {
@@ -140,8 +140,8 @@ class SelePdmActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<Plandemuestreo>>, response: Response<List<Plandemuestreo>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { planes ->
+                        planesList.addAll(planes)
                         for (plan in planes) {
-                            planesList.addAll(planes)
                             println("La lista de planes es: "+ planesList)
                             val nomplanes = planes.map { it.nombre_pdm.toString() } // Convertir IDs a Strings
 
@@ -507,6 +507,129 @@ class SelePdmActivity : AppCompatActivity() {
     }
 
     private fun onItemSelectedPDM(pdm: Pdm) {
+
+        try {
+
+            var clientId = pdm.nombre_pdm
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val response =
+                    RetrofitClient.instance.getPlanClienteByPdmName(clientId).awaitResponse()
+                if (response.isSuccessful) {
+                    clientePdm = response.body()
+                    withContext(Dispatchers.Main) {
+                        clientePdm?.let { updateUI(it) }
+                        Log.d("SelePdmActivity", "Cliente encontrado: $clientePdm")
+                        val call: Call<List<Lugares>> = apiService.getClienteLugarById(clientePdm?.folio.toString())
+
+                        call.enqueue(object : Callback<List<Lugares>> {
+                            override fun onResponse(call: Call<List<Lugares>>, response: Response<List<Lugares>>) {
+                                if (response.isSuccessful) {
+                                    val lugaresList: List<Lugares>? = response.body()
+                                    nombresLugares.clear()
+
+                                    lugaresList?.forEach { lugar ->
+                                        nombresLugares.add(lugar.nombre_lugar)
+                                    }
+                                    Log.d("ApiService", "Lugares: $lugaresList")
+
+                                    // Llamar a la función para iniciar la otra actividad y pasar la lista de nombres
+                                } else {
+                                    Log.e("ApiService", "Error en la respuesta: ${response.code()}")
+                                }
+                            }
+
+                            override fun onFailure(call: Call<List<Lugares>>, t: Throwable) {
+                                Log.e("ApiService", "Error al realizar la llamada: ${t.message}", t)
+                                // Manejar el error de la llamada aquí
+                            }
+                        })
+
+                    }
+                } else {
+                    Log.e("SelePdmActivity", "Error: ${response.code()}")
+                }
+            }
+
+
+
+            apiService.getPlanServicesByName(pdm.nombre_pdm)
+                .enqueue(object : Callback<List<Servicio>> {
+                    override fun onResponse(
+                        call: Call<List<Servicio>>,
+                        response: Response<List<Servicio>>
+                    ) {
+                        if (response.isSuccessful) {
+                            response.body()?.let { servicios ->
+                                servicioMutableList.clear()
+                                servicioMutableList.addAll(servicios)
+                                adapter.notifyDataSetChanged()
+
+
+                            }
+                            /*for (servicio in servicioMutableList) {
+                                if (servicio.descripcion.contains("AGUA DE USO RECREATIVO") || servicio.descripcion.contains("AGUA DE ALBERCA")) {
+                                    if (servicio.descripcion.contains("microbiológico") || servicio.descripcion.contains("microbiologico")){
+                                        println("Por dos")
+                                        servicio.cantidad *= 4
+                                    }
+                                }
+                            }*/
+                            for (servicio in servicioMutableList) {
+                                if (servicio.descripcion.contains("RECOLECCION DE MUESTRAS")){
+                                    servicio.cantidad = 0
+                                }
+                                else {
+                                    if (servicio.descripcion.contains(
+                                            "AGUA DE USO RECREATIVO",
+                                            true
+                                        ) || servicio.descripcion.contains(
+                                            "AGUA DE ALBERCA",
+                                            true
+                                        )
+                                    ) {
+                                        if (servicio.estudios_microbiologicos.contains(
+                                                "Ng,Ac",
+                                                true
+                                            )
+                                        ) {
+                                            servicio.estudios_microbiologicos =
+                                                servicio.estudios_microbiologicos.replace(
+                                                    "Ng,Ac",
+                                                    "Avl"
+                                                )
+                                            Log.e(
+                                                "SelePdmActivity",
+                                                "Ng,Ac Encontrado, cambiando"
+                                            )
+                                        }
+                                    }else if(servicio.descripcion.contains("CRUDOS", true)){
+                                        servicio.estudios_microbiologicos = "ALIMENTOS CRUDOS"
+                                    }else{
+                                        servicio.estudios_microbiologicos = extractBeforeHyphen(servicio.descripcion)
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.e("MainActivity", "Error: ${response.code()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<Servicio>>, t: Throwable) {
+                        Log.e("MainActivity", "Failure: ${t.message}")
+                    }
+                })
+
+            val spinnerPdm = binding.spinnerSelePdm
+            //Buscar pdm que corresponda y ponerlo en el spinner
+            spinnerPdm.setSelection(planesList.indexOfFirst {
+                it.nombre_pdm.trim() == pdm.nombre_pdm.trim()
+            })
+
+        }catch (e:Exception){
+            Toast.makeText(this@SelePdmActivity, "Error al buscar, probablemente no hayas seleccionado ningun pdm", Toast.LENGTH_SHORT).show()
+        }
+
 
     }
 

@@ -32,6 +32,10 @@ class PdmAdapter(private val pdmList: List<Pdm>,private val onClickListener: (Pd
         holder.ingenieroCampo.text = currentItem.ingeniero_campo
         holder.nombre_empresa.text = currentItem.nombre_empresa
 
+        holder.itemView.setOnClickListener {
+            onClickListener(currentItem)
+        }
+
     }
 
     override fun getItemCount() = pdmList.size
