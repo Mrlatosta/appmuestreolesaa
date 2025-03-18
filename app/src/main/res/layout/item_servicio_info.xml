@@ -9,7 +9,8 @@
         android:id="@+id/id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ID" />
+        android:text="ID"
+        android:textColor="@color/red"/>
 
     <TextView
         android:id="@+id/cantidad"
@@ -33,7 +34,8 @@
         android:id="@+id/descripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Descripcion" />
+        android:text="Descripcion"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/cantidad_de_toma"

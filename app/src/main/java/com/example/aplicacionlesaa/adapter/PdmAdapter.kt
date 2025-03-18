@@ -28,7 +28,14 @@ class PdmAdapter(private val pdmList: List<Pdm>,private val onClickListener: (Pd
         holder.nombrePdm.text = currentItem.nombre_pdm
         holder.pqAtendera.text = currentItem.pq_atendera
         holder.folioIdCot.text = currentItem.folio_id_cot
-        holder.fechaHoraCita.text = currentItem.fecha_hora_cita
+        //FOrmatear bien la hecha hora cita esta como: 2025-03-17T13:00:00.000Z
+
+        val fechaHoraCita = currentItem.fecha_hora_cita
+        val partes = fechaHoraCita.split("T")
+        val fecha = partes[0]
+        val hora = partes[1]
+
+        holder.fechaHoraCita.text = "$fecha $hora"
         holder.ingenieroCampo.text = currentItem.ingeniero_campo
         holder.nombre_empresa.text = currentItem.nombre_empresa
 

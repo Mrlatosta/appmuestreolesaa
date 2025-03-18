@@ -35,6 +35,7 @@ class MuestraViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         binding.tvMicro.text = muestra.emicro
         binding.tvFisico.text = muestra.efisico
         binding.tvObservaciones.text = muestra.observaciones
+        binding.tvServicioIDMuestras.text = "ID: " + muestra.servicioId
 
 //        itemView.setOnClickListener { onClickListener(muestra) }
 

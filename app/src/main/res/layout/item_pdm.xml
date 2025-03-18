@@ -39,7 +39,9 @@
         android:id="@+id/nombre_empresa"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre_Empresa" />
+        android:text="Nombre_Empresa"
+        android:textColor="#09023E"
+        />
     <View
         android:id="@+id/viewUnamed"
         android:layout_width="match_parent"

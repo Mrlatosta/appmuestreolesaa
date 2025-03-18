@@ -219,8 +219,9 @@ class SelePdmActivity : AppCompatActivity() {
                                         nombresLugares.clear()
 
                                         lugaresList?.forEach { lugar ->
-                                            nombresLugares.add(lugar.nombre_lugar)
-                                        }
+                                            if (!nombresLugares.contains(lugar.nombre_lugar)) {
+                                                nombresLugares.add(lugar.nombre_lugar)
+                                            }                                        }
                                         Log.d("ApiService", "Lugares: $lugaresList")
 
                                         // Llamar a la función para iniciar la otra actividad y pasar la lista de nombres
@@ -506,7 +507,7 @@ class SelePdmActivity : AppCompatActivity() {
         })
     }
 
-    private fun onItemSelectedPDM(pdm: Pdm) {
+    private fun onItemSelectedPDM(pdm: Pdm, dialog: AlertDialog) {
 
         try {
 
@@ -529,7 +530,11 @@ class SelePdmActivity : AppCompatActivity() {
                                     nombresLugares.clear()
 
                                     lugaresList?.forEach { lugar ->
-                                        nombresLugares.add(lugar.nombre_lugar)
+                                        // Si el lugar no esta en la lista, agregarlo
+                                        if (!nombresLugares.contains(lugar.nombre_lugar)) {
+                                            nombresLugares.add(lugar.nombre_lugar)
+                                        }
+
                                     }
                                     Log.d("ApiService", "Lugares: $lugaresList")
 
@@ -626,6 +631,8 @@ class SelePdmActivity : AppCompatActivity() {
                 it.nombre_pdm.trim() == pdm.nombre_pdm.trim()
             })
 
+            dialog.dismiss()
+
         }catch (e:Exception){
             Toast.makeText(this@SelePdmActivity, "Error al buscar, probablemente no hayas seleccionado ningun pdm", Toast.LENGTH_SHORT).show()
         }
@@ -639,8 +646,6 @@ class SelePdmActivity : AppCompatActivity() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_pdm_list, null)
         val recyclerView: RecyclerView = dialogView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = PdmAdapter(pdmList = planesDetalladosList,
-            onClickListener = { pdm -> onItemSelectedPDM(pdm) } )
 
         val dialog = AlertDialog.Builder(this)
             .setTitle("Lista de planes de muestreo de hoy")
@@ -648,8 +653,14 @@ class SelePdmActivity : AppCompatActivity() {
             .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
             .create()
 
+        recyclerView.adapter = PdmAdapter(pdmList = planesDetalladosList,
+            onClickListener = { pdm -> onItemSelectedPDM(pdm, dialog) } )
+
+
+
         dialog.show()
     }
+
     fun extractBeforeHyphen(input: String): String {
         val regex = Regex("^(.*?)(\\s-\\s)")
         val matchResult = regex.find(input)

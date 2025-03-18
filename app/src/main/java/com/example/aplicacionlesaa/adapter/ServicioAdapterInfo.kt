@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.aplicacionlesaa.R
 import com.example.aplicacionlesaa.model.Servicio
 
-class ServicioAdapterInfo(private val servicioList: List<Servicio>) : RecyclerView.Adapter<ServicioAdapterInfo.ServicioViewHolder>() {
+class ServicioAdapterInfo(private val servicioList: List<Servicio>,private val onClickListener: (Servicio) -> Unit) : RecyclerView.Adapter<ServicioAdapterInfo.ServicioViewHolder>() {
 
     class ServicioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvIdServicio: TextView = itemView.findViewById(R.id.id)
@@ -32,6 +32,10 @@ class ServicioAdapterInfo(private val servicioList: List<Servicio>) : RecyclerVi
         holder.tvEstudiosFisico.text = "Estudios Fisicoquimicos: ${currentItem.estudios_fisicoquimicos}"
         holder.tvDescripcion.text = "Descripcion: ${currentItem.descripcion}"
         holder.tvCantidadToma.text = "Cantidad de Toma: ${currentItem.cantidad_de_toma}"
+
+        holder.itemView.setOnClickListener {
+            onClickListener(currentItem)
+        }
     }
 
 

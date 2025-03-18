@@ -50,9 +50,8 @@ import java.util.Locale
 class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var adapterSubtipo: ArrayAdapter<String>
     //private lateinit var handler: Handler
-    private lateinit var runnable: Runnable
     private var modoEdicion = false
 
     //Lista a la cual le vamos a quitar o poner muestras
@@ -70,7 +69,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     private var lugares: ArrayList<String> = ArrayList()
     private var adapterEdicion: muestraAdapter? = null
     private var fechaSinBarras: String = ""
-    private var existeExtra: Boolean = false
     private var muestrasExtras: ArrayList<Muestra> = ArrayList()
     val subtipos = mutableListOf<String>()
 
@@ -119,14 +117,14 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         binding.txtLugar.setAdapter(adapterLugares)
 
 
-        var descripcionesLista = intent.getParcelableArrayListExtra<Descripcion>("descripciones")
+        val descripcionesLista = intent.getParcelableArrayListExtra<Descripcion>("descripciones")
         if (descripcionesLista != null) {
             descripcionesList.addAll(descripcionesLista)
             println("La lista de descripciones es: $descripcionesList")
         }
 
         val descris =
-            descripcionesList.map { it.descripcion.toString() } // Convertir IDs a Strings
+            descripcionesList.map { it.descripcion } // Convertir IDs a Strings
         // Configurar Autocompleteview
         val adapterDesci = ArrayAdapter(
             this@MainActivity,
@@ -136,11 +134,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         binding.txtdescripcion.setAdapter(adapterDesci)
 
-        binding.txtLugar.setOnClickListener(View.OnClickListener {
+        binding.txtLugar.setOnClickListener( {
             binding.txtLugar.showDropDown()
         })
 
-        binding.txtdescripcion.setOnClickListener(View.OnClickListener {
+        binding.txtdescripcion.setOnClickListener( {
             binding.txtdescripcion.showDropDown()
         })
 
@@ -177,7 +175,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 
 
-        val adapterSubtipo = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, subtipos)
+        adapterSubtipo = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, subtipos)
         adapterSubtipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerSubtipo.adapter = adapterSubtipo
 
@@ -489,15 +487,18 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             binding.btnStart.text = "Agregar"
                             indexMuestraAEditar = -1
                             binding.idSpinner1.isEnabled = true
+                            binding.btnInfo.isEnabled = true
 
                         }
 
                     } catch (e: Exception) {
-                        Log.e("Error".toString(), "Hubo un error ${e}")
+                        Log.e("Error", "Hubo un error ${e}")
                         setEditMode(false)
                         binding.tvTitulo.text = "Registro de Muestras"
                         binding.btnStart.text = "Agregar"
                         binding.idSpinner1.isEnabled = true
+                        binding.btnInfo.isEnabled = true
+
                         clearTextFields()
                         Toast.makeText(
                             this,
@@ -518,6 +519,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     binding.tvTitulo.text = "Registro de Muestras"
                     binding.btnStart.text = "Agregar"
                     binding.idSpinner1.isEnabled = true
+                    binding.btnInfo.isEnabled = true
+
                     clearTextFields()
                     Toast.makeText(
                         this,
@@ -544,7 +547,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     && servicioSeleccionado!!.descripcion.contains("Estudio microbiológico")) {
                     sepudo = createMuestrasMicrobiologicas()
                 }else if(servicioSeleccionado!!.descripcion.contains("Estudio fisicoquimico y microbiologico",ignoreCase = true)
-                    || servicioSeleccionado!!.descripcion.contains("EFyM", ignoreCase = true)){
+                    || servicioSeleccionado!!.descripcion.contains("EFyM", ignoreCase = true)
+                    || servicioSeleccionado!!.descripcion.contains("Estudios fisicoquimicos y microbiologicos", ignoreCase = true)
+                    || servicioSeleccionado!!.descripcion.contains("Estudios microbiologicos y fisicoquimicos", ignoreCase = true) ){
 
                     sepudo = createMuestrasFisicoquimicas()
 
@@ -786,6 +791,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         {
             Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
             sepudo = false
+            return sepudo
         } else {
             try {
                 idServicioEntero = idServicioString
@@ -879,7 +885,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
                             adapter.notifyItemInserted(muestraMutableList.size - 1)
                             Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
-                            sepudo = true
+
                             if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                                 servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
                                 servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
@@ -960,6 +966,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                     cantidadToma = "600ml"
                                 }
 
+                                var valorFQ = txtFisico.text.toString().trim()
+                                if (valorFQ.contains("TEMP,PH,Crl,CLT,Cya,Tur,Crnas", ignoreCase = true)){
+                                    valorFQ = ""
+                                }
+
                                 // El valor de idServicio es un entero válido, puedes usarlo aquí
                                 val muestraobjeto =
                                     Muestra(
@@ -973,7 +984,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                         lugarToma = txtLugar.text.toString().trim(),
                                         descripcionM = txtDescripcion.text.toString().trim(),
                                         emicro = valorMB,
-                                        efisico = txtFisico.text.toString().trim(),
+                                        efisico = valorFQ,
                                         observaciones = txtObserva.text.toString().trim(),
                                         servicioId = idServicioEntero,
                                         subtipo = subtipo.selectedItem.toString()
@@ -984,7 +995,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
                                 adapter.notifyItemInserted(muestraMutableList.size - 1)
                                 Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
-                                sepudo = true
+
                                 if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                                     servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
                                     servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
@@ -1054,16 +1065,28 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 var valorMB = ""
                                 var cantidadToma = ""
 
+                                var valorFQ = txtFisico.text.toString().trim()
+
+
                                 if (i==1){
                                     valorMB = "Cf"
+                                    if (valorFQ.contains("TEMP,PH,Crl,CLT,Cya,Tur,Crnas", ignoreCase = true)){
+                                        valorFQ = ""
+                                    }
+
                                     cantidadToma = "100ml"
                                 }else if (i==2){
                                     valorMB = "Avl"
                                     cantidadToma = "600ml"
+                                    if (valorFQ.contains("TEMP,PH,Crl,CLT,Cya,Tur,Crnas", ignoreCase = true)){
+                                        valorFQ = ""
+                                    }
                                 }else if (i==3){
                                     valorMB = "FQ"
                                     cantidadToma = "100ml"
                                 }
+
+
 
                                 // El valor de idServicio es un entero válido, puedes usarlo aquí
                                 val muestraobjeto =
@@ -1078,7 +1101,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                         lugarToma = txtLugar.text.toString().trim(),
                                         descripcionM = txtDescripcion.text.toString().trim(),
                                         emicro = valorMB,
-                                        efisico = txtFisico.text.toString().trim(),
+                                        efisico = valorFQ,
                                         observaciones = txtObserva.text.toString().trim(),
                                         servicioId = idServicioEntero,
                                         subtipo = subtipo.selectedItem.toString()
@@ -1089,7 +1112,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
                                 adapter.notifyItemInserted(muestraMutableList.size - 1)
                                 Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
-                                sepudo = true
+
                                 if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                                     servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
                                     servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
@@ -1118,8 +1141,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 }
 
 
-
+                sepudo = true
                 dialog.dismiss()
+                clearTextFields()
             }
 
 // Botón para cancelar
@@ -1135,6 +1159,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 
         }
+
 
         return sepudo
     }
@@ -1674,6 +1699,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             val spinner1 = binding.idSpinner1
                             spinner1.setSelection(serviciosList.indexOf(servicio))
                             spinner1.isEnabled = false
+                            binding.btnInfo.isEnabled = true
+
 
                             val subtipo = binding.idspinnerSubtipo
                             subtipo.setSelection(subtipos.indexOf(muestraMutableList[position].subtipo))
@@ -1785,18 +1812,170 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         modoEdicion = editMode
         // Aquí puedes hacer otras acciones necesarias cuando el modo edición cambia
     }
+
+    private fun onItemSelectedServicio(servicio: Servicio, dialog: AlertDialog) {
+        val tvDescripcion = binding.tvdescripcionmuestra
+        val tvCantidad = binding.tvCantidadRestante
+        val txtCantidadAprox = binding.txtcantidadaprox
+        val txtEmicro = binding.txtMicro
+        val txtEfisico = binding.txtFisico
+        val txtNombre = binding.txtnombre
+
+
+        // Obtener el servicio seleccionado
+        val servicioSeleccionado = servicio
+        try {
+            try{
+                if (servicioSeleccionado.cantidad == 0){
+                    tvCantidad.setTextColor(resources.getColor(R.color.red))
+                }else{
+                    tvCantidad.setTextColor(resources.getColor(R.color.green))
+                }
+            }catch (e:Exception) {
+                Log.e("Error", "Error al establecer color en tvCantidad")
+            }
+
+            try {
+                txtEmicro.text.clear()
+            } catch (e: Exception) {
+                Log.e("Error", "Error al limpiar txtEmicro")
+            }
+
+            try {
+                txtEfisico.text.clear()
+            } catch (e: Exception) {
+                Log.e("Error", "Error al limpiar txtEfisico")
+            }
+
+            try {
+                txtCantidadAprox.text.clear()
+            } catch (e: Exception) {
+                Log.e("Error", "Error al limpiar txtCantidadAprox")
+            }
+
+            try {
+                txtNombre.text.clear()
+            } catch (e: Exception) {
+                Log.e("Error", "Error al limpiar txtNombre")
+            }
+
+            try {
+                tvDescripcion.text = servicioSeleccionado.descripcion
+            } catch (e: Exception) {
+                Log.e("Error", "Error al establecer la descripción en tvDescripcion")
+            }
+
+            try {
+                tvCantidad.text = servicioSeleccionado.cantidad.toString()
+            } catch (e: Exception) {
+                Log.e("Error", "Error al establecer la cantidad en tvCantidad")
+            }
+
+            try{
+                if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
+                    servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
+                    servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
+                    servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI",ignoreCase = true) ||
+                    servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO")) {
+                    txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED")){
+                    txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
+                }else if (servicioSeleccionado.clasificacion.contains("HIELO")){
+                    txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
+                }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO")){
+                    txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
+                }else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL")){
+                    txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
+                }
+            }catch (e:Exception){
+                Log.e("Error", "Error al establecer el nombre en txtNombre")
+            }
+
+            try {
+                txtEmicro.text = Editable.Factory.getInstance()
+                    .newEditable(servicioSeleccionado.estudios_microbiologicos)
+            } catch (e: Exception) {
+                Log.e(
+                    "Error",
+                    "Error al establecer los estudios microbiológicos en txtEmicro"
+                )
+            }
+
+            try {
+                txtEfisico.text = Editable.Factory.getInstance()
+                    .newEditable(servicioSeleccionado.estudios_fisicoquimicos)
+            } catch (e: Exception) {
+                Log.e(
+                    "Error",
+                    "Error al establecer los estudios físicoquímicos en txtEfisico"
+                )
+            }
+
+            try {
+                txtCantidadAprox.text = Editable.Factory.getInstance()
+                    .newEditable(servicioSeleccionado.cantidad_de_toma)
+            } catch (e: Exception) {
+                Log.e(
+                    "Error",
+                    "Error al establecer la cantidad aproximada en txtCantidadAprox"
+                )
+            }
+
+            if (servicioSeleccionado.clasificacion == "ALIMENTOS COCIDOS"){
+                //Eliminar si hay contenido en subtipos
+                subtipos.clear()
+                //Add to subtipos array the string: hola
+                subtipos.add("Cocidos")
+                subtipos.add("Salsas y pures cocidos")
+                subtipos.add("Ensaladas cocidas")
+            }else if (servicioSeleccionado.clasificacion == "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )"){
+                subtipos.clear()
+                subtipos.add("Crudos listos para consumo")
+                subtipos.add("Pulpas")
+                subtipos.add("JUGOS")
+                subtipos.add("AGUAS PREPARADAS")
+                subtipos.add("Carnicos no listos para el consumo")
+                subtipos.add("Carnicos crudos listos para consumo")
+                subtipos.add("Productos de la pesca crudos")
+                subtipos.add("Ahumados")
+            }else if (servicioSeleccionado.clasificacion == "POSTRES"){
+                subtipos.clear()
+                subtipos.add("Postres lacteos")
+                subtipos.add("Postres a base de harina")
+                subtipos.add("Postres no lacteos")
+                subtipos.add("Helados")
+
+            }else{
+                subtipos.clear()
+                subtipos.add("")
+            }
+
+            adapterSubtipo.notifyDataSetChanged()
+
+            // Seleccionar el id del servicio correspondiente en el spinner
+            val spinner1 = binding.idSpinner1
+            spinner1.setSelection(serviciosList.indexOf(servicioSeleccionado))
+            dialog.dismiss()
+
+        } catch (e: Exception) {
+            Log.e("Error", "Error al mostrar los datos en los txt y tv")
+        }
+    }
+
     private fun showServicioDialog() {
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_servicio_list, null)
         val recyclerView: RecyclerView = dialogView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ServicioAdapterInfo(serviciosList)
-
         val dialog = AlertDialog.Builder(this)
             .setTitle("Lista de Servicios")
             .setView(dialogView)
             .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
             .create()
+        recyclerView.adapter = ServicioAdapterInfo(serviciosList,
+                            onClickListener = { servicio -> onItemSelectedServicio(servicio, dialog) })
+
+
 
         dialog.show()
     }
