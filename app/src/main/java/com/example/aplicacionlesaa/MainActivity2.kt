@@ -810,9 +810,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             var paragraph: Paragraph
             if (pdfDoc.getPageNumber(page) == pdfDoc.numberOfPages) {
-                 paragraph = Paragraph("Pagina: ${pdfDoc.getPageNumber(page)} de ${pdfDoc.numberOfPages} - Fin del documento")
+                 paragraph = Paragraph("Pagina: ${pdfDoc.getPageNumber(page)} de ${pdfDoc.numberOfPages}")
             }else{
-                 paragraph = Paragraph("Pagina: ${pdfDoc.getPageNumber(page)} de ${pdfDoc.numberOfPages}                                                                                                                                                                          -Continua Abajo")
+                 paragraph = Paragraph("Pagina: ${pdfDoc.getPageNumber(page)} de ${pdfDoc.numberOfPages}")
                 paragraph.setFixedPosition(pdfDoc.getPageNumber(page), 25f, y, width)
             }
             document.add(paragraph)
@@ -882,6 +882,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .setBorder(Border.NO_BORDER)
             tableEncabezado.addCell(mainHeaderCell)
+
+            
 
             // Sub-encabezado
             val subHeaderCell = Cell(1, 2)
@@ -1016,7 +1018,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 
             // Crear tabla para la sección de firmas
-            val firmaTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            var firmaTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
             firmaTable.setWidth(UnitValue.createPercentValue(100f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
 
             firmaTable.setMarginRight(10f)
@@ -1054,11 +1056,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val autorizaNombreCell = Cell()
                 .add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
             val autorizaNombreValueCell = Cell(1,2)
-                .add(Paragraph(binding.txtNombreAutoAnalisis.text.toString())).setFontSize(fontSize)
+                .add(Paragraph(binding.txtNombreAutoAnalisis.text.toString())).setFontSize(fontSize).setBold()
             val autorizaPuestoCell = Cell()
                 .add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
             val autorizaPuestoValueCell = Cell(1,2)
-                .add(Paragraph(binding.txtPuestoAutoAnalisis.text.toString())).setFontSize(fontSize)
+                .add(Paragraph(binding.txtPuestoAutoAnalisis.text.toString())).setFontSize(fontSize).setBold()
 
             firmaTable.addCell(autorizaNombreCell)
             firmaTable.addCell(autorizaNombreValueCell)
@@ -1070,12 +1072,12 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val tomaNombreCell = Cell()
                 .add(Paragraph("NOMBRE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
             val tomaNombreValueCell = Cell(1, 2)
-                .add(Paragraph(binding.txtNombreMuestreador.text.toString()).setFontSize(fontSize))
+                .add(Paragraph(binding.txtNombreMuestreador.text.toString()).setFontSize(fontSize).setBold())
 
             val tomaPuestoCell = Cell()
                 .add(Paragraph("PUESTO:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor)
             val tomaPuestoValueCell = Cell(1, 2)
-                .add(Paragraph("Ing. de campo").setFontSize(fontSize))
+                .add(Paragraph("Ing. de campo").setFontSize(fontSize).setBold())
 
             firmaTable.addCell(headerTomaCell)
             firmaTable.addCell(headerFirmaCell2)
@@ -1088,7 +1090,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 // Agregar tabla de firmas al documento
 
-            val puntoCriticoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f))).useAllAvailableWidth()
+            var puntoCriticoTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f))).useAllAvailableWidth()
 //            puntoCriticoTable.setWidth(UnitValue.createPercentValue(80f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
 
             val puntoCriticoHeader = Cell(1, 4)
@@ -1145,6 +1147,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             puntoCriticoTable.addCell(Cell(2,2).add(subtablaSalida).setBorder(Border.NO_BORDER))
             puntoCriticoTable.addCell(datosrecepcionPuntoCritico)
             puntoCriticoTable.addCell(Cell(2,2).add(subtablaEntrada).setBorder(Border.NO_BORDER))
+
 
             val tablaPrincipal = Table(2)
             tablaPrincipal.setWidth(UnitValue.createPercentValue(100f))
@@ -1376,8 +1379,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
 
             // Crear tabla para la sección de firmas
-            val firmaTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
-            firmaTable.setWidth(UnitValue.createPercentValue(100f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
+            val firmaTableExtra = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f, 1f, 1f)))
+            firmaTableExtra.setWidth(UnitValue.createPercentValue(100f)).setHorizontalAlignment(HorizontalAlignment.CENTER)
 
 // Encabezado
             val headerAutorizaCell = Cell(1, 3)
@@ -1405,8 +1408,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 .setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
 
-            firmaTable.addCell(headerAutorizaCell)
-            firmaTable.addCell(headerFirmaCell1)
+            firmaTableExtra.addCell(headerAutorizaCell)
+            firmaTableExtra.addCell(headerFirmaCell1)
 //
 
 // Datos de quien autoriza
@@ -1419,11 +1422,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val autorizaPuestoValueCell = Cell(1,2)
                 .add(Paragraph(binding.txtPuestoAutoAnalisis.text.toString())).setFontSize(fontSize)
 
-            firmaTable.addCell(autorizaNombreCell)
-            firmaTable.addCell(autorizaNombreValueCell)
-            firmaTable.addCell(Cell(2, 2).add(signatureImageUno))
-            firmaTable.addCell(autorizaPuestoCell)
-            firmaTable.addCell(autorizaPuestoValueCell)
+            firmaTableExtra.addCell(autorizaNombreCell)
+            firmaTableExtra.addCell(autorizaNombreValueCell)
+            firmaTableExtra.addCell(Cell(2, 2).add(signatureImageUno))
+            firmaTableExtra.addCell(autorizaPuestoCell)
+            firmaTableExtra.addCell(autorizaPuestoValueCell)
 
 // Datos de quien toma las muestras
             val tomaNombreCell = Cell()
@@ -1436,13 +1439,13 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val tomaPuestoValueCell = Cell(1, 2)
                 .add(Paragraph("Ing. de campo").setFontSize(fontSize))
 
-            firmaTable.addCell(headerTomaCell)
-            firmaTable.addCell(headerFirmaCell2)
-            firmaTable.addCell(tomaNombreCell)
-            firmaTable.addCell(tomaNombreValueCell)
-            firmaTable.addCell(Cell(2, 2).add(signatureImageDos))
-            firmaTable.addCell(tomaPuestoCell)
-            firmaTable.addCell(tomaPuestoValueCell)
+            firmaTableExtra.addCell(headerTomaCell)
+            firmaTableExtra.addCell(headerFirmaCell2)
+            firmaTableExtra.addCell(tomaNombreCell)
+            firmaTableExtra.addCell(tomaNombreValueCell)
+            firmaTableExtra.addCell(Cell(2, 2).add(signatureImageDos))
+            firmaTableExtra.addCell(tomaPuestoCell)
+            firmaTableExtra.addCell(tomaPuestoValueCell)
 
 
 // Agregar tabla de firmas al documento
@@ -1511,8 +1514,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             tablaPrincipal.setWidth(UnitValue.createPercentValue(100f))
 
             // Agregar las tablas a la tabla principal
-            tablaPrincipal.addCell(Cell().add(firmaTable).setBorder(Border.NO_BORDER))
+            tablaPrincipal.addCell(Cell().add(firmaTableExtra).setBorder(Border.NO_BORDER))
             tablaPrincipal.addCell(Cell().add(puntoCriticoTable).setBorder(Border.NO_BORDER))
+
 
 
             // Agregar tablas al documento

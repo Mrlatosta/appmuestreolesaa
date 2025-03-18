@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.aplicacionlesaa.R
 import com.example.aplicacionlesaa.model.Pdm
 
-class PdmAdapter(private val pdmList: List<Pdm>) : RecyclerView.Adapter<PdmAdapter.PdmViewHolder>() {
+class PdmAdapter(private val pdmList: List<Pdm>,private val onClickListener: (Pdm) -> Unit) : RecyclerView.Adapter<PdmAdapter.PdmViewHolder>() {
 
     class PdmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombrePdm: TextView = itemView.findViewById(R.id.nombre_pdm)
@@ -31,6 +31,7 @@ class PdmAdapter(private val pdmList: List<Pdm>) : RecyclerView.Adapter<PdmAdapt
         holder.fechaHoraCita.text = currentItem.fecha_hora_cita
         holder.ingenieroCampo.text = currentItem.ingeniero_campo
         holder.nombre_empresa.text = currentItem.nombre_empresa
+
     }
 
     override fun getItemCount() = pdmList.size

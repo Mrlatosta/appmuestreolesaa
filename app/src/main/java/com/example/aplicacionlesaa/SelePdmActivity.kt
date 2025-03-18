@@ -506,13 +506,18 @@ class SelePdmActivity : AppCompatActivity() {
         })
     }
 
+    private fun onItemSelectedPDM(pdm: Pdm) {
+
+    }
+
     private fun showPdmDialog() {
 
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_pdm_list, null)
         val recyclerView: RecyclerView = dialogView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = PdmAdapter(planesDetalladosList)
+        recyclerView.adapter = PdmAdapter(pdmList = planesDetalladosList,
+            onClickListener = { pdm -> onItemSelectedPDM(pdm) } )
 
         val dialog = AlertDialog.Builder(this)
             .setTitle("Lista de planes de muestreo de hoy")
