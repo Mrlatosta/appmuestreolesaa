@@ -4,7 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +30,7 @@ import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 import java.io.InputStreamReader
 import java.time.LocalDate
 
@@ -45,14 +50,14 @@ class ContinuarFolioActivity : AppCompatActivity() {
     }
 
     private val descripcionesList: MutableList<Descripcion> = mutableListOf()
-
+    private val foliosHoy: MutableList<String> = mutableListOf()
+    private val muestrasMap: MutableMap<String, MuestraData> = mutableMapOf()
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_continuar_folio)
         binding = ActivityContinuarFolioBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -60,6 +65,8 @@ class ContinuarFolioActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        cargarArchivosAutomaticamente()
 
         val apiService = RetrofitClient.instance
         apiService.getDescriptions().enqueue(object : Callback<List<Descripcion>> {
@@ -94,16 +101,23 @@ class ContinuarFolioActivity : AppCompatActivity() {
 
 
 
-        val btnSubir = binding.btnSubir
-        btnSubir.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-                type = "application/json"
-            }
-            muestraData = null  // Limpia muestraData antes de cargar un nuevo archivo
-            muestraMutableList?.clear()  // Limpia la lista de muestras
-            muestrasExtras?.clear()
-            getFile.launch(intent)
-        }
+//        val btnSubir = binding.btnSubir
+//        btnSubir.setOnClickListener {
+//            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+//                type = "application/json"
+//            }
+//            muestraData = null  // Limpia muestraData antes de cargar un nuevo archivo
+//            muestraMutableList?.clear()  // Limpia la lista de muestras
+//            muestrasExtras?.clear()
+//            getFile.launch(intent)
+//        }
+        var spnSeleFolio = binding.spnSeleFolio
+
+        val adapterSpnSele = ArrayAdapter(this@ContinuarFolioActivity, android.R.layout.simple_spinner_item, foliosHoy)
+        adapterSpnSele.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spnSeleFolio.adapter = adapterSpnSele
+
+
 
         val btnContinuar = binding.btnContinuar
         btnContinuar.setOnClickListener {
@@ -184,18 +198,45 @@ class ContinuarFolioActivity : AppCompatActivity() {
             val reader = InputStreamReader(inputStream)
             val muestraDataType = object : TypeToken<MuestraData>() {}.type
             muestraData = Gson().fromJson(reader, muestraDataType)
-            updateUI()
-
+            muestraData?.let { data ->
+                foliosHoy.add(data.folio)
+                muestrasMap[data.folio] = data
+                actualizarSpinnerFolios()
+            }
         }
     }
 
+    private fun actualizarSpinnerFolios() {
+        val adapterSpnSele = ArrayAdapter(this, android.R.layout.simple_spinner_item, foliosHoy)
+        adapterSpnSele.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spnSeleFolio.adapter = adapterSpnSele
+        binding.spnSeleFolio.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val folioSeleccionado = foliosHoy[position]
+                muestraData = muestrasMap[folioSeleccionado]
+                updateUI()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
+
+
     private fun updateUI() {
         muestraData?.let { data ->
+
+            Log.e("MuestraData", "Las las muestras extras:")
+
             // Actualiza la UI o realiza las acciones necesarias con muestraData
             Log.e("MuestraData", "MuestraData: $data")
             binding.tvFolio.text = muestraData!!.folio
             binding.tvCliente.text = muestraData!!.clientePdm?.nombre_empresa ?: "Error"
             binding.tvPdm.text = muestraData!!.planMuestreo
+
+            //Limpiar las listas
+            muestraMutableList?.clear()
+            muestrasExtras?.clear()
+
 
             try{
                 println("MuestraData.muestras: ${muestraData!!.muestras}")
@@ -264,4 +305,41 @@ class ContinuarFolioActivity : AppCompatActivity() {
     private fun onDeletedItem(position: Int) {
         println("Funcion desactivada")
     }
+
+    private fun cargarArchivosAutomaticamente() {
+        val directorio = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+
+        if (!directorio.exists()) {
+            Log.e("CargaAutomatica", "El directorio no existe.")
+            return
+        }
+
+        val fechaHoy = LocalDate.now().toString()
+        val archivosHoy = directorio.listFiles { file ->
+            file.extension == "json" && file.name.contains(fechaHoy)
+        }
+
+        if (!archivosHoy.isNullOrEmpty()) {
+            for (archivo in archivosHoy) {
+                val uri = Uri.fromFile(archivo)
+                contentResolver.openInputStream(uri)?.use { inputStream ->
+                    val reader = InputStreamReader(inputStream)
+                    val muestraDataType = object : TypeToken<MuestraData>() {}.type
+                    val data: MuestraData = Gson().fromJson(reader, muestraDataType)
+                    foliosHoy.add(data.folio)
+                    muestrasMap[data.folio] = data
+                    Log.e("CargaAutomatica", "Archivo cargado: $data")
+                    //Ver si hay muestras extras
+                    Log.e("CargaAutomatica", "Muestras extras: ${data.muestrasExtra}")
+                }
+            }
+            actualizarSpinnerFolios()
+        } else {
+            Log.e("CargaAutomatica", "No hay archivos JSON para hoy.")
+        }
+    }
+
+
+
+
 }

@@ -694,7 +694,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     pdmDetallado,
                     ArrayList(muestrasExtra)
                 )
-                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
                 savePdf("ray.contacto06@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
                     savePdfExtra("ray.contacto06@gmail.com")
@@ -719,7 +720,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     muestraMutableList,
                     pdmDetallado,
                     ArrayList(muestrasExtra))
-                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
                                 savePdf("ray.contacto06@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
                     savePdfExtra("ray.contacto06@gmail.com")
@@ -746,7 +748,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     ArrayList(muestrasExtra)
 
                 )
-                saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
                 savePdf("ray.contacto06@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
                     savePdfExtra("ray.contacto06@gmail.com")
@@ -776,7 +779,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         muestraMutableList,
                         pdmDetallado,
                         ArrayList(muestrasExtra))
-                    saveDataToJson(this, muestraData,"Datos-folio-${binding.tvFolio.text}.json")
+                    val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                    saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
                 }

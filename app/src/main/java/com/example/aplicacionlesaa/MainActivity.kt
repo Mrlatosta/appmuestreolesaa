@@ -43,6 +43,7 @@ import com.example.aplicacionlesaa.utils.OnItemMovedListener
 import com.google.gson.Gson
 import java.io.File
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Date
 import java.util.Locale
 
@@ -158,6 +159,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         println("La lista de servicios es: " + serviciosList)
 
+        for (servicio in serviciosList) {
+            servicio.estudios_microbiologicos.trim()
+            servicio.estudios_fisicoquimicos.trim()
+        }
+
         binding.btnInfo.setOnClickListener {
             showServicioDialog()
         }
@@ -171,8 +177,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         spinner.adapter = adapter
 
         //Create an empty array of strings
-
-
 
 
         adapterSubtipo = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, subtipos)
@@ -664,13 +668,14 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_AGREGAR_MUESTRA && resultCode == Activity.RESULT_OK) {
 
-
             muestrasExtras= data?.getParcelableArrayListExtra("muestrasList")!!
             muestrasExtras?.let { list ->
                 for (muestra in list) {
                     Log.e("Muestra", muestra.toString())
                 }
                 binding.tvMuestaEta.text = "Muestras Extra: " + list.size.toString()
+                checkStoragePermissionAndSaveJson()
+
 
             } ?: run {
                 Log.e("Error", "No se recibieron muestras")
@@ -1153,10 +1158,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 // Mostrar el diálogo
             builder.show()
-
-
-
-
 
         }
 
@@ -1764,7 +1765,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     pdmDetallado,
                     muestrasExtras
                 )
-                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
+                //Fecha de hoy
+                val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
             }
         } else {
             if (ContextCompat.checkSelfPermission(
@@ -1787,7 +1790,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     pdmDetallado,
                     muestrasExtras
                 )
-                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}.json")
+                val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
             }
         }
     }
