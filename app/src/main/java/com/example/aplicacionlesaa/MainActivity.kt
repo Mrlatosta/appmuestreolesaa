@@ -92,6 +92,28 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             insets
         }
 
+        val txtTemperatura = binding.txtTemp
+
+        txtTemperatura.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) { // Si perdió el enfoque
+                val tempText = txtTemperatura.text.toString()
+
+                if (tempText.isEmpty()) {
+                    txtTemperatura.error = "Por favor ingresa la temperatura"
+                } else {
+                    val temperatura = tempText.toFloatOrNull()
+                    if (temperatura == null) {
+                        txtTemperatura.error = "Formato inválido"
+                    } else if (temperatura > 100) {
+                        txtTemperatura.error = "La temperatura no puede ser mayor a 100"
+                    } else {
+                        txtTemperatura.error = null // Borra el error si todo está bien
+                    }
+                }
+            }
+        }
+
+
 
         val serviciosRecibidos = intent.getParcelableArrayListExtra<Servicio>("listaServicios")
         if (serviciosRecibidos != null) {
@@ -250,12 +272,12 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     }
 
                     try{
-                        if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
-                            servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
+                        binding.txtFisico.isEnabled = true
+                        if (servicioSeleccionado.descripcion.contains("Agua de alberca",ignoreCase = true) ||
                             servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI",ignoreCase = true) ||
                             servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO")) {
                             txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                            binding.txtFisico.isEnabled = false
                         }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED")){
                             txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
                         }else if (servicioSeleccionado.clasificacion.contains("HIELO")){
@@ -484,7 +506,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 binding.idspinnerSubtipo.selectedItem.toString()
 
                             adapterEdicion?.notifyItemChanged(indexMuestraAEditar)
-                            clearTextFields()
+                            clearTextFields("no")
                             Toast.makeText(this, "Muestra editada", Toast.LENGTH_SHORT).show()
                             setEditMode(false)
                             binding.tvTitulo.text = "Registro de Muestras"
@@ -503,7 +525,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         binding.idSpinner1.isEnabled = true
                         binding.btnInfo.isEnabled = true
 
-                        clearTextFields()
+                        clearTextFields("no")
                         Toast.makeText(
                             this,
                             "Error al editar la muestra, Saliendo del modo edicion",
@@ -525,7 +547,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     binding.idSpinner1.isEnabled = true
                     binding.btnInfo.isEnabled = true
 
-                    clearTextFields()
+                    clearTextFields("no")
                     Toast.makeText(
                         this,
                         "Saliendo del modo edicion",
@@ -548,7 +570,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 val servicioSeleccionado = serviciosList.find { it.id == idServicioEntero }
                 //Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
                 if (servicioSeleccionado!!.clasificacion.contains("AGUA DE USO RECREACTIVO")
-                    && servicioSeleccionado!!.descripcion.contains("Estudio microbiológico")) {
+                    && servicioSeleccionado!!.descripcion.contains("Estudio microbiológico"
+                            )) {
                     sepudo = createMuestrasMicrobiologicas()
                 }else if(servicioSeleccionado!!.descripcion.contains("Estudio fisicoquimico y microbiologico",ignoreCase = true)
                     || servicioSeleccionado!!.descripcion.contains("EFyM", ignoreCase = true)
@@ -564,7 +587,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 
                 if (sepudo == true) {
-                    clearTextFields()
+                    clearTextFields("no")
                     Log.i("Ray", "Boton Pulsado")
 
 
@@ -575,10 +598,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
                         Log.e("Servicio", servicioSeleccionado.descripcion)
 
-                        if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
-                            servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
-                            servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO") ) {
+                        if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
+                            servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO", ignoreCase = true) ) {
                             txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                         }
 
@@ -650,11 +671,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         muestraProvider.listademuestras
 
         initRecyclerView()
-
-
-
-
-
 
 
     }
@@ -746,15 +762,20 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
 
-    private fun clearTextFields() {
+    private fun clearTextFields(alberca: String) {
 
-        val txtnombrem = binding.txtnombre
+        if (alberca == "no" ){
+            val txtnombrem = binding.txtnombre
+            txtnombrem.text.clear()
+        }else{
+            Log.i(" alberca", "es alberca" )
+        }
+
         val txtTemp = binding.txtTemp
         val txtLugar = binding.txtLugar
         val txtDescripcion = binding.txtdescripcion
         val txtObserva = binding.txtobservaciones
 
-        txtnombrem.text.clear()
         txtTemp.text.clear()
         txtLugar.text.clear()
         txtDescripcion.text.clear()
@@ -818,6 +839,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             builder.setSingleChoiceItems(opciones, seleccion) { _, which ->
                 seleccion = which
             }
+
+            val albercas = "si"
 
 // Botón para confirmar la selección
             builder.setPositiveButton("Aceptar") { dialog, _ ->
@@ -891,12 +914,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             adapter.notifyItemInserted(muestraMutableList.size - 1)
                             Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
 
-                            if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
-                                servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                                servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                            if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true)   ) {
                                 txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                             }
-
 
 
                             val tvRegM = binding.tvregistromuestra
@@ -966,15 +986,15 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 if (i==1){
                                     valorMB = "Cf"
                                     cantidadToma = "100ml"
+
                                 }else if (i==2){
                                     valorMB = "Avl"
                                     cantidadToma = "600ml"
                                 }
 
                                 var valorFQ = txtFisico.text.toString().trim()
-                                if (valorFQ.contains("TEMP,PH,Crl,CLT,Cya,Tur,Crnas", ignoreCase = true)){
                                     valorFQ = ""
-                                }
+
 
                                 // El valor de idServicio es un entero válido, puedes usarlo aquí
                                 val muestraobjeto =
@@ -1075,17 +1095,15 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
                                 if (i==1){
                                     valorMB = "Cf"
-                                    if (valorFQ.contains("TEMP,PH,Crl,CLT,Cya,Tur,Crnas", ignoreCase = true)){
-                                        valorFQ = ""
-                                    }
+                                    valorFQ = ""
+
 
                                     cantidadToma = "100ml"
                                 }else if (i==2){
                                     valorMB = "Avl"
                                     cantidadToma = "600ml"
-                                    if (valorFQ.contains("TEMP,PH,Crl,CLT,Cya,Tur,Crnas", ignoreCase = true)){
-                                        valorFQ = ""
-                                    }
+                                    valorFQ = ""
+
                                 }else if (i==3){
                                     valorMB = "FQ"
                                     cantidadToma = "100ml"
@@ -1121,8 +1139,10 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                                     servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
                                     servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+
                                     txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                                 }
+
                                 val tvRegM = binding.tvregistromuestra
                                 val tvFolio = binding.tvFolio
                                 tvRegM.text = tvFolio.text.toString() + "-" + tvNum.text.toString()
@@ -1148,7 +1168,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
                 sepudo = true
                 dialog.dismiss()
-                clearTextFields()
+                clearTextFields("si")
             }
 
 // Botón para cancelar
@@ -1501,7 +1521,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             builder.setMessage("¿Estás seguro de que deseas copiar la muestra ${muestra.nombreMuestra}?")
             builder.setPositiveButton("Sí") { dialog, which ->
                 try {
-                    clearTextFields()
+                    clearTextFields("no")
                     binding.txtnombre.setText(muestra.nombreMuestra)
 
                     if (muestra.tempM.contains("°C") ) {

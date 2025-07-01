@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothClass.Device
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -69,7 +70,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.text.format
 
 
-class fisicoquimicosActivity : AppCompatActivity() {
+class fisicoquimicosActivity : AppCompatActivity(),SignatureDialogFragment.SignatureDialogListener {
 
     private lateinit var binding: ActivityFisicoquimicosBinding
     private lateinit var adapter: analisisFisicoAdapter
@@ -169,6 +170,23 @@ class fisicoquimicosActivity : AppCompatActivity() {
         }
 
 
+        binding.btnInsertSignature.setOnClickListener {
+            //Mostrarle una ventana de informacion antes de proceder
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Información")
+            builder.setMessage("Al firmar, usted confirma que los lugares de toma de muestra o centros de consumo proporcionados son correctos. Asimismo, se le informa que podrán realizarse modificaciones en la información de las muestras en caso de errores ortográficos, y cualquier cambio derivado de esta situación le será notificado debidamente.")
+            builder.setPositiveButton("Aceptar") { dialog, which ->
+                // Acción a realizar al hacer clic en "Aceptar"
+                val signatureDialog = SignatureDialogFragment()
+                signatureDialog.setSignatureDialogListener(this)
+                signatureDialog.show(supportFragmentManager, "SignatureDialogFragment")
+            }
+            val dialog = builder.create()
+            dialog.show()
+
+
+        }
+
         binding.btnBorrarFQ.setOnClickListener {
             //Preguntar si si quiere borrar todo
             val builder = AlertDialog.Builder(this)
@@ -266,7 +284,7 @@ class fisicoquimicosActivity : AppCompatActivity() {
             // Agregar el logotipo al documento
             val headerTable = Table(2).useAllAvailableWidth()
             headerTable.addCell(Cell().add(logo).setBorder(Border.NO_BORDER).setTextAlignment(TextAlignment.LEFT)).setTextAlignment(TextAlignment.CENTER)
-            headerTable.addCell(Cell().add(Paragraph("Centro Integral en Servicios de Laboratorio de Aguas y Alimentos S.A de C.V")).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold()
+            headerTable.addCell(Cell().add(Paragraph("Centro Integral en Servicios de Laboratorio de Agua y Alimentos S.A de C.V")).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold()
                 .setBorderTop(SolidBorder(DeviceRgb(0, 32,96), 6f)
             ).setBorderBottom(SolidBorder(DeviceRgb(0, 112,192), 6f)).setTextAlignment(TextAlignment.CENTER)
             )
@@ -330,11 +348,11 @@ class fisicoquimicosActivity : AppCompatActivity() {
             document.add(infoTable)
 
             // Tabla de parámetros fisicoquímicos
-            val columnWidths = floatArrayOf(2f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)
+            val columnWidths = floatArrayOf(2f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)
             val paramTable = Table(columnWidths).useAllAvailableWidth()
             val headers = arrayOf(
                 "Nombre de la Muestra / Registro", "Hora de Análisis", "TEMP(°C)", "pH",
-                "CLR", "CLT", "CRNAS", "CYA", "TUR", "Fe")
+                "CLR (mg/L)", "CLT (mg/L)", "CRNAS (mg/L)", "CYA (mg/L)", "TUR (NTU)")
 
             headers.forEach { header -> paramTable.addHeaderCell(Cell().add(Paragraph(header).setBold())) }
 
@@ -349,7 +367,6 @@ class fisicoquimicosActivity : AppCompatActivity() {
                 paramTable.addCell(Cell().add(Paragraph("${fisico.crnas}")))
                 paramTable.addCell(Cell().add(Paragraph("${fisico.cya}")))
                 paramTable.addCell(Cell().add(Paragraph("${fisico.tur}")))
-                paramTable.addCell(Cell().add(Paragraph("-")))
             }
             paramTable.addCell(Cell(1,1).add(Paragraph("Observaciones generales:")))
             paramTable.addCell(Cell(1,9).add(Paragraph("")))
@@ -360,11 +377,10 @@ class fisicoquimicosActivity : AppCompatActivity() {
             val subtabla = Table(2).useAllAvailableWidth().setBorder(Border.NO_BORDER)
             subtabla.addCell(Cell().add(Paragraph("PH: Potencial de Hidrógeno \n" +
                     "            CLR: Cloro Libre Residual\n" +
-                    "            CLT: Cloro Total")).setBorder(Border.NO_BORDER))
+                    "            CLT: Cloro Total")).setBorder(Border.NO_BORDER).setFontSize(10f))
             subtabla.addCell(Cell().add(Paragraph("CRNAS: Cloraminas\n" +
                     "            CYA: Ácido Cianúrico\n" +
-                    "            TUR: Turbidez\n" +
-                    "            Fe: Hierro")).setBorder(Border.NO_BORDER))
+                    "            TUR: Turbidez\n")).setBorder(Border.NO_BORDER).setFontSize(10f))
 
             paramTable.addCell(Cell(3,5).add(subtabla))
 
@@ -516,6 +532,11 @@ class fisicoquimicosActivity : AppCompatActivity() {
 
             }
         }
+    }
+
+    override fun onSignatureSaved(bitmap: Bitmap) {
+        var signatureView = binding.signatureViewDos3
+        signatureView.setSignatureBitmap(bitmap)
     }
 
 

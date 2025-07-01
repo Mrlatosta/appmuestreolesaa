@@ -11,94 +11,112 @@ class analisisFisicoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     val binding = ItemFisicoquimicosBinding.bind(view)
 
+    private var currentItem: analisisFisico? = null
+
+    init {
+        binding.tvPH.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                currentItem?.let {
+                    val phText = s.toString()
+                    it.ph = phText
+
+                    val phValue = phText.toFloatOrNull()
+                    if (phText.isNotEmpty()) {
+                        if (phValue == null) {
+                            binding.tvPH.error = "Formato inválido"
+                        } else if (phValue < 1 || phValue > 14) {
+                            binding.tvPH.error = "El pH debe estar entre 1 y 14 (P/Alb: 6.5 - 8.5)"
+                        } else {
+                            binding.tvPH.error = null
+                        }
+                    } else {
+                        binding.tvPH.error = "Este campo es obligatorio"
+                    }
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.tvCLT.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                currentItem?.let {
+                    it.clt = s.toString().toBigDecimalOrNull()
+                    actualizarCRNAS(it)
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.tvCLR.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                currentItem?.let {
+                    it.clr = s.toString().toBigDecimalOrNull()
+                    actualizarCRNAS(it)
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.tvCYA.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                currentItem?.cya = s.toString().toBigDecimalOrNull()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.tvTUR.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                currentItem?.tur = s.toString().toBigDecimalOrNull()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
     fun bind(analisisF: analisisFisico, onEdit: (Int) -> Unit) {
-        // Configurar valores iniciales en los EditText
+        currentItem = analisisF
+
         binding.tvRegistroMuestra.text = analisisF.registro_muestra
         binding.tvnombreMuestra.text = analisisF.nombre_muestra
         binding.tvhoraAnalisis.text = analisisF.hora_analisis
         binding.tvtemp.text = analisisF.temperatura
 
-        binding.tvPH.text = Editable.Factory.getInstance().newEditable(analisisF.ph)
-        binding.tvCLT.text = Editable.Factory.getInstance().newEditable(analisisF.clt?.toString() ?: "")
-        binding.tvCLR.text = Editable.Factory.getInstance().newEditable(analisisF.clr?.toString() ?: "")
-        binding.tvCRNAS.text = Editable.Factory.getInstance().newEditable(analisisF.crnas?.toString() ?: "")
-        binding.tvCYA.text = Editable.Factory.getInstance().newEditable(analisisF.cya?.toString() ?: "")
-        binding.tvTUR.text = Editable.Factory.getInstance().newEditable(analisisF.tur?.toString() ?: "")
+        // Al actualizar texto debemos deshabilitar temporalmente el listener para evitar loops
+        binding.tvPH.setText(analisisF.ph)
+        binding.tvCLT.setText(analisisF.clt?.toPlainString() ?: "")
+        binding.tvCLR.setText(analisisF.clr?.toPlainString() ?: "")
+        binding.tvCRNAS.setText(analisisF.crnas?.toPlainString() ?: "")
+        binding.tvCYA.setText(analisisF.cya?.toPlainString() ?: "")
+        binding.tvTUR.setText(analisisF.tur?.toPlainString() ?: "")
+    }
 
-        // Remover los TextWatcher anteriores antes de añadir nuevos
-        binding.tvPH.removeTextChangedListener(binding.tvPH.tag as? TextWatcher)
-        binding.tvCLT.removeTextChangedListener(binding.tvCLT.tag as? TextWatcher)
-        binding.tvCLR.removeTextChangedListener(binding.tvCLR.tag as? TextWatcher)
-        binding.tvCRNAS.removeTextChangedListener(binding.tvCRNAS.tag as? TextWatcher)
-        binding.tvCYA.removeTextChangedListener(binding.tvCYA.tag as? TextWatcher)
-        binding.tvTUR.removeTextChangedListener(binding.tvTUR.tag as? TextWatcher)
+    private fun actualizarCRNAS(analisisF: analisisFisico) {
+        val cltValue = binding.tvCLT.text.toString().toBigDecimalOrNull()
+        val clrValue = binding.tvCLR.text.toString().toBigDecimalOrNull()
 
-        // Agregar nuevos TextWatcher y guardar referencia en la etiqueta (tag)
-        val phWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                analisisF.ph = s.toString()
+        if (cltValue != null && clrValue != null) {
+            if (cltValue < clrValue) {
+                binding.tvCLR.error = "CLR no puede ser mayor que CLT"
+                binding.tvCLT.error = "CLT no puede ser menor que CLR"
+                binding.tvCRNAS.setText("")
+                analisisF.crnas = null
+            } else {
+                binding.tvCLR.error = null
+                binding.tvCLT.error = null
+                val resta = cltValue - clrValue
+                binding.tvCRNAS.setText(resta.toPlainString())
+                analisisF.crnas = resta
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        } else {
+            binding.tvCLR.error = null
+            binding.tvCLT.error = null
+            binding.tvCRNAS.setText("")
+            analisisF.crnas = null
         }
-        binding.tvPH.addTextChangedListener(phWatcher)
-        binding.tvPH.tag = phWatcher
-
-        val cltWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                analisisF.clt = s.toString().toBigDecimalOrNull()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        }
-        binding.tvCLT.addTextChangedListener(cltWatcher)
-        binding.tvCLT.tag = cltWatcher
-
-        val clrWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                analisisF.clr = s.toString().toBigDecimalOrNull()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        }
-        binding.tvCLR.addTextChangedListener(clrWatcher)
-        binding.tvCLR.tag = clrWatcher
-
-        val crnasWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                analisisF.crnas = s.toString().toBigDecimalOrNull()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        }
-        binding.tvCRNAS.addTextChangedListener(crnasWatcher)
-        binding.tvCRNAS.tag = crnasWatcher
-
-        val cyaWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                analisisF.cya = s.toString().toBigDecimalOrNull()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        }
-        binding.tvCYA.addTextChangedListener(cyaWatcher)
-        binding.tvCYA.tag = cyaWatcher
-
-        val turWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                analisisF.tur = s.toString().toBigDecimalOrNull()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        }
-        binding.tvTUR.addTextChangedListener(turWatcher)
-        binding.tvTUR.tag = turWatcher
     }
 }
 

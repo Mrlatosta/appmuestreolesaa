@@ -100,10 +100,11 @@
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
+        android:enabled="false"
         android:inputType="numberDecimal"
         android:textColor="@color/black"
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="671dp"
+
         app:layout_constraintStart_toEndOf="@+id/tvCLR"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="0.0-0.5mg/l" />

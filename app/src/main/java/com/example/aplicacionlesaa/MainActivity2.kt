@@ -1730,7 +1730,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
             .toString()
 
-
         // Crear el archivo en la carpeta Documents
         val file = File(documentsDir, filename)
 

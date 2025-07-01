@@ -32,8 +32,21 @@ class SignatureDialogFragmentDos : DialogFragment() {
 
         btnSave.setOnClickListener {
             signatureView?.let {
-                val bitmap = it.getSignatureBitmap()
-                listener?.onSignatureSavedDos(bitmap)
+                val originalBitmap = it.getSignatureBitmap()
+
+                // Escalamos al tamaño deseado
+                val targetWidth = 282  // ancho en dp del SignatureView pequeño
+                val targetHeight = 96  // alto en dp
+
+                // Convertir dp a pixels:
+                val scale = resources.displayMetrics.density
+                val targetWidthPx = (targetWidth * scale).toInt()
+                val targetHeightPx = (targetHeight * scale).toInt()
+
+                val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, targetWidthPx, targetHeightPx, true)
+
+
+                listener?.onSignatureSavedDos(scaledBitmap)
                 dismiss()
             }
         }

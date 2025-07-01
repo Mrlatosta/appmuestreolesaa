@@ -12,7 +12,8 @@ class analisisFisicoAdapter(
 ) : RecyclerView.Adapter<analisisFisicoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): analisisFisicoViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_fisicoquimicos, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_fisicoquimicos, parent, false)
         return analisisFisicoViewHolder(view)
     }
 
@@ -22,9 +23,5 @@ class analisisFisicoAdapter(
 
     override fun getItemCount(): Int = lista.size
 
-    // Método para obtener la lista actualizada
-    fun obtenerDatosActualizados(): List<analisisFisico> {
-        return lista
-    }
+    fun obtenerDatosActualizados(): List<analisisFisico> = lista
 }
-
