@@ -38,8 +38,8 @@ class SendEmailWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     private fun sendEmail(emailAddress: String, file: File,emailSubject : String, messageText: String) {
-        val username = "raymundolarasandoval@gmail.com"
-        val password = "hwmgsnaxyzaeqfuy"
+        val username = "notificacioneslesaa@gmail.com"
+        val password = "amhfznhqvxgctruh"
 
         val props = Properties().apply {
             put("mail.smtp.auth", "true")

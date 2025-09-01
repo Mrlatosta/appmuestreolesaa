@@ -271,7 +271,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Temp"
-        android:inputType="numberDecimal"
+        android:inputType="numberSigned|numberDecimal"
         android:nextFocusDown="@id/txtLugar"
         app:layout_constraintStart_toEndOf="@+id/txtcantidadaprox"
         app:layout_constraintTop_toBottomOf="@+id/textView14" />

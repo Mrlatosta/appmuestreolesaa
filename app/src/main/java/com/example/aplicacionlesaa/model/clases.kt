@@ -27,7 +27,8 @@ data class Servicio(
     val estudios_fisicoquimicos: String,
     val descripcion: String,
     val cantidad_de_toma: String,
-    val clasificacion: String
+    val clasificacion: String,
+    val estudio_clave_interna: String,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -37,6 +38,7 @@ data class Servicio(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: ""
+        ,parcel.readString() ?: ""
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -47,6 +49,7 @@ data class Servicio(
         parcel.writeString(descripcion)
         parcel.writeString(cantidad_de_toma)
         parcel.writeString(clasificacion)
+        parcel.writeString(estudio_clave_interna)
     }
 
     override fun describeContents(): Int {

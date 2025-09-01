@@ -21,8 +21,10 @@ import com.example.aplicacionlesaa.adapter.muestraAdapterActResumen
 import com.example.aplicacionlesaa.databinding.ActivityResendMuBinding
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Muestra_pdm
+import com.example.aplicacionlesaa.model.Muestra_pdmExtra
 import com.example.aplicacionlesaa.utils.NetworkUtils
 import com.example.aplicacionlesaa.worker.SendDataWorker
+import com.example.aplicacionlesaa.worker.SendDataWorkerMuestrasExtra
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.InputStreamReader
@@ -68,7 +70,6 @@ class ResendMuActivity : AppCompatActivity() {
 
         val btnReenviar = binding.btnReenviar
         btnReenviar.setOnClickListener {
-            val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
 
             if (NetworkUtils.isInternetAvailable(this)) {
                 Log.i("Internet", "Si hay internet")
@@ -76,94 +77,216 @@ class ResendMuActivity : AppCompatActivity() {
 
 
                 Toast.makeText(this, "Si hay internet, enviando muestras", Toast.LENGTH_SHORT).show()
-                val tamaño = muestraListaNueva.size
 
-                // Crear una lista de Data para cada muestra en muestraMutableList
-                val dataList = mutableListOf<Data>()
-                //Envio de lista de muestra
-                muestraListaNueva.forEachIndexed { index, muestra ->
-                    val data = Data.Builder()
-                        .putInt("muestra_count",tamaño)
-                        .putString("registro_muestra_$index", muestra.registro_muestra)
-                        .putString("folio_muestreo_$index", muestra.folio_muestreo)
-                        .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
-                        .putString("nombre_muestra_$index", muestra.nombre_muestra)
-                        .putString("id_lab_$index", muestra.id_lab)
-                        .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
-                        .putString("temperatura_$index", muestra.temperatura)
-                        .putString("lugar_toma_$index", muestra.lugar_toma)
-                        .putString("descripcion_toma_$index", muestra.descripcion_toma)
-                        .putString("e_micro_$index", muestra.e_micro)
-                        .putString("e_fisico_$index", muestra.e_fisico)
-                        .putString("observaciones_$index", muestra.observaciones)
-                        .putString("folio_pdm_$index", muestra.folio_pdm)
-                        .putString("servicio_id_$index", muestra.servicio_id)
-                        .putString("subtipo_$index", muestra.subtipo)
-                        .build()
 
-                    dataList.add(data)
+
+
+
+                //Ver primero si el folio tiene una "E"
+                val folio = muestraMutableList[0].registroMuestra
+
+
+                if (folio.contains("E")) {
+
+                    val dataListExtra = mutableListOf<Data>()
+                    val muestraListaNuevaExtra = convertirAMuestraPdmExtra(muestraMutableList)
+                    val tamanoExtra = muestraListaNuevaExtra.size
+                    muestraListaNuevaExtra.forEachIndexed { index, muestra ->
+                        val data = Data.Builder()
+                            .putInt("muestra_count",tamanoExtra)
+                            .putString("registro_muestra_$index", muestra.registro_muestra)
+                            .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                            .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                            .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                            .putString("id_lab_$index", muestra.id_lab)
+                            .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                            .putString("temperatura_$index", muestra.temperatura)
+                            .putString("lugar_toma_$index", muestra.lugar_toma)
+                            .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                            .putString("e_micro_$index", muestra.e_micro)
+                            .putString("e_fisico_$index", muestra.e_fisico)
+                            .putString("observaciones_$index", muestra.observaciones)
+                            .putString("folio_pdm_$index", muestra.folio_pdm)
+                            .putInt("estudio_id_$index", muestra.estudio_id)
+                            .putString("cliente", muestraData?.clientePdm.toString())
+                            .putString("folio",binding.tvFolio.text.toString() + "E")
+                            .putString("folioPDM", muestra.folio_pdm)
+                            .build()
+
+                        dataListExtra.add(data)
+                    }
+
+                    // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                    dataListExtra.forEach { data ->
+                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorkerMuestrasExtra>()
+                            .setInputData(data)
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+
+                        Log.i("Si hay internet", "Entre al worker")
+                        WorkManager.getInstance(this).enqueue(workRequest)
+                    }
+
+
+
+                }else{
+                    //Envio de lista de muestra
+                    // Crear una lista de Data para cada muestra en muestraMutableList
+
+
+
+                    val dataList = mutableListOf<Data>()
+                    val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
+
+                    val tamaño = muestraListaNueva.size
+
+                    muestraListaNueva.forEachIndexed { index, muestra ->
+                        val data = Data.Builder()
+                            .putInt("muestra_count",tamaño)
+                            .putString("registro_muestra_$index", muestra.registro_muestra)
+                            .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                            .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                            .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                            .putString("id_lab_$index", muestra.id_lab)
+                            .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                            .putString("temperatura_$index", muestra.temperatura)
+                            .putString("lugar_toma_$index", muestra.lugar_toma)
+                            .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                            .putString("e_micro_$index", muestra.e_micro)
+                            .putString("e_fisico_$index", muestra.e_fisico)
+                            .putString("observaciones_$index", muestra.observaciones)
+                            .putString("folio_pdm_$index", muestra.folio_pdm)
+                            .putString("servicio_id_$index", muestra.servicio_id)
+                            .putString("subtipo_$index", muestra.subtipo)
+                            .build()
+
+                        dataList.add(data)
+                    }
+
+                    // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                    dataList.forEach { data ->
+                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                            .setInputData(data)
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+
+                        Log.i("Si hay internet", "Entre al worker")
+                        WorkManager.getInstance(this).enqueue(workRequest)
+                    }
                 }
 
-                // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
-                dataList.forEach { data ->
-                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
-                        .setInputData(data)
-                        .setConstraints(
-                            Constraints.Builder()
-                                .setRequiredNetworkType(NetworkType.CONNECTED)
-                                .build()
-                        )
-                        .build()
 
-                    Log.i("Si hay internet", "Entre al worker")
-                    WorkManager.getInstance(this).enqueue(workRequest)
-                }
 
                 /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
                     "$pdfPath/$nombreArchivoPdf")*/
             } else {
                 Toast.makeText(this, "No hay internet, los datos se enviarán cuando se establezca una conexión", Toast.LENGTH_SHORT).show()
                 Log.i("Internet", "No hay internet")
-                val tamaño = muestraListaNueva.size
 
-                // Crear una lista de Data para cada muestra en muestraMutableList
-                val dataList = mutableListOf<Data>()
-                muestraListaNueva.forEachIndexed { index, muestra ->
-                    val data = Data.Builder()
-                        .putInt("muestra_count",tamaño)
-                        .putString("registro_muestra_$index", muestra.registro_muestra)
-                        .putString("folio_muestreo_$index", muestra.folio_muestreo)
-                        .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
-                        .putString("nombre_muestra_$index", muestra.nombre_muestra)
-                        .putString("id_lab_$index", muestra.id_lab)
-                        .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
-                        .putString("temperatura_$index", muestra.temperatura)
-                        .putString("lugar_toma_$index", muestra.lugar_toma)
-                        .putString("descripcion_toma_$index", muestra.descripcion_toma)
-                        .putString("e_micro_$index", muestra.e_micro)
-                        .putString("e_fisico_$index", muestra.e_fisico)
-                        .putString("observaciones_$index", muestra.observaciones)
-                        .putString("folio_pdm_$index", muestra.folio_pdm)
-                        .putString("servicio_id_$index", muestra.servicio_id)
-                        .putString("subtipo_$index", muestra.subtipo)
-                        .build()
+                //Ver primero si el folio tiene una "E"
+                val folio = muestraMutableList[0].registroMuestra
+                if (folio.contains("E")) {
 
-                    dataList.add(data)
-                }
+                    val muestraListaNuevaExtra = convertirAMuestraPdmExtra(muestraMutableList)
+                    val tamanoExtra = muestraListaNuevaExtra.size
 
-                // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
-                dataList.forEach { data ->
-                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
-                        .setInputData(data)
-                        .setConstraints(
-                            Constraints.Builder()
-                                .setRequiredNetworkType(NetworkType.CONNECTED)
-                                .build()
-                        )
-                        .build()
+                    val dataListExtra = mutableListOf<Data>()
 
-                    Log.i("Datos", "Entre al worker")
-                    WorkManager.getInstance(this).enqueue(workRequest)
+                    muestraListaNuevaExtra.forEachIndexed { index, muestra ->
+                        val data = Data.Builder()
+                            .putInt("muestra_count", tamanoExtra)
+                            .putString("registro_muestra_$index", muestra.registro_muestra)
+                            .putString("folio_muestreo_$index", muestra.folio_muestreo + "E")
+                            .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                            .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                            .putString("id_lab_$index", muestra.id_lab)
+                            .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                            .putString("temperatura_$index", muestra.temperatura)
+                            .putString("lugar_toma_$index", muestra.lugar_toma)
+                            .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                            .putString("e_micro_$index", muestra.e_micro)
+                            .putString("e_fisico_$index", muestra.e_fisico)
+                            .putString("observaciones_$index", muestra.observaciones)
+                            .putString("folio_pdm_$index", muestra.folio_pdm)
+                            .putInt("estudio_id_$index", muestra.estudio_id)
+                            .putString("cliente", muestraData?.clientePdm.toString())
+                            .putString("folio", binding.tvFolio.text.toString() + "E")
+                            .putString("folioPDM", muestra.folio_pdm)
+                            .build()
+
+                        dataListExtra.add(data)
+                    }
+
+                    dataListExtra.forEach { data ->
+                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorkerMuestrasExtra>()
+                            .setInputData(data)
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+
+                        Log.i("Datos", "Entre al worker")
+                        WorkManager.getInstance(this).enqueue(workRequest)
+                    }
+
+
+
+                }else {
+
+                    val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
+
+                    val tamaño = muestraListaNueva.size
+
+                    // Crear una lista de Data para cada muestra en muestraMutableList
+                    val dataList = mutableListOf<Data>()
+                    muestraListaNueva.forEachIndexed { index, muestra ->
+                        val data = Data.Builder()
+                            .putInt("muestra_count", tamaño)
+                            .putString("registro_muestra_$index", muestra.registro_muestra)
+                            .putString("folio_muestreo_$index", muestra.folio_muestreo)
+                            .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
+                            .putString("nombre_muestra_$index", muestra.nombre_muestra)
+                            .putString("id_lab_$index", muestra.id_lab)
+                            .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
+                            .putString("temperatura_$index", muestra.temperatura)
+                            .putString("lugar_toma_$index", muestra.lugar_toma)
+                            .putString("descripcion_toma_$index", muestra.descripcion_toma)
+                            .putString("e_micro_$index", muestra.e_micro)
+                            .putString("e_fisico_$index", muestra.e_fisico)
+                            .putString("observaciones_$index", muestra.observaciones)
+                            .putString("folio_pdm_$index", muestra.folio_pdm)
+                            .putString("servicio_id_$index", muestra.servicio_id)
+                            .putString("subtipo_$index", muestra.subtipo)
+                            .build()
+
+                        dataList.add(data)
+                    }
+
+                    // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
+                    dataList.forEach { data ->
+                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                            .setInputData(data)
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+
+                        Log.i("Datos", "Entre al worker")
+                        WorkManager.getInstance(this).enqueue(workRequest)
+                    }
+
                 }
 
             }
@@ -181,6 +304,36 @@ class ResendMuActivity : AppCompatActivity() {
             updateUI()
 
         }
+    }
+
+    fun convertirAMuestraPdmExtra(muestras: List<Muestra>): List<Muestra_pdmExtra> {
+        if (muestras.isNotEmpty()){
+            val listaMuestrasPdmExtra = mutableListOf<Muestra_pdmExtra>()
+            for (muestra in muestras) {
+                val muestraPdm = Muestra_pdmExtra(
+                    registro_muestra = muestra.registroMuestra,
+                    folio_muestreo = binding.tvFolio.text.toString(),
+                    fecha_muestreo = muestra.fechaMuestra,
+                    nombre_muestra = muestra.nombreMuestra,
+                    id_lab = muestra.idLab,
+                    cantidad_aprox = muestra.cantidadAprox,
+                    temperatura = muestra.tempM,
+                    lugar_toma = muestra.lugarToma,
+                    descripcion_toma = muestra.descripcionM,
+                    e_micro = muestra.emicro,
+                    e_fisico = muestra.efisico,
+                    observaciones = muestra.observaciones,
+                    folio_pdm = binding.tvPdm.text.toString(),
+                    estudio_id = muestra.idEstudio.toInt()
+                )
+                listaMuestrasPdmExtra.add(muestraPdm)
+            }
+            return listaMuestrasPdmExtra
+
+        }else{
+            Log.e("Muestra","Algo paso")
+        }
+        return emptyList()
     }
 
     private fun updateUI() {

@@ -267,6 +267,8 @@ class SelePdmActivity : AppCompatActivity() {
                                     }
                                 }*/
                                 for (servicio in servicioMutableList) {
+                                    Log.e("SelePdmActivity", "Servicio: $servicio")
+                                    Log.e("Claveinterna", "Clave interna: ${servicio.estudio_clave_interna}")
                                     if (servicio.descripcion.contains("RECOLECCION DE MUESTRAS")){
                                         servicio.cantidad = 0
                                         }

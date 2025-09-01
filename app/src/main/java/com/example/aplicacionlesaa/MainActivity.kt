@@ -254,7 +254,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     }
 
                     try {
-                        txtNombre.text.clear()
+                        if (modoEdicion == false){
+                            txtNombre.text.clear()
+                        }
                     } catch (e: Exception) {
                         Log.e("Error", "Error al limpiar txtNombre")
                     }
@@ -272,21 +274,34 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     }
 
                     try{
-                        binding.txtFisico.isEnabled = true
-                        if (servicioSeleccionado.descripcion.contains("Agua de alberca",ignoreCase = true) ||
-                            servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI",ignoreCase = true) ||
-                            servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO")) {
-                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
-                            binding.txtFisico.isEnabled = false
-                        }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED")){
-                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
-                        }else if (servicioSeleccionado.clasificacion.contains("HIELO")){
-                            txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
-                        }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO")){
-                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
-                        }else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL")){
-                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
+
+                        //Ver si esta en modo edicion
+                        if (modoEdicion == true){
+                            Log.e("Errordos", "no se pondra nombre")
+                        }else{
+                            Log.e("Nomodoedicion", "intentando establecer el nombre en txtNombre")
+                            binding.txtFisico.isEnabled = true
+                            if (servicioSeleccionado.descripcion.contains("Agua de alberca",ignoreCase = true) ||
+                                servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI",ignoreCase = true) ||
+                                servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO", ignoreCase = true)) {
+                                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                                binding.txtFisico.isEnabled = false
+                            }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED", ignoreCase = true)){
+                                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
+                            }else if (servicioSeleccionado.clasificacion.contains("HIELO" , ignoreCase = true)){
+                                txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
+                            }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO", ignoreCase = true)){
+                                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
+                            }else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL", ignoreCase = true)){
+                                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
+                            }else if (servicioSeleccionado.clasificacion.contains("Superficia viva", ignoreCase = true)){
+                                txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Viva")
+                            }else if (servicioSeleccionado.clasificacion.contains("Superficie Inerte", ignoreCase = true)){
+                                txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Inerte")
+                            }
+
                         }
+
                     }catch (e:Exception){
                         Log.e("Error", "Error al establecer el nombre en txtNombre")
                     }
@@ -326,7 +341,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         subtipos.clear()
                         //Add to subtipos array the string: hola
                         subtipos.add("Cocidos")
-                        subtipos.add("Salsas y pures cocidos")
+                        subtipos.add("Salsas y purés cocidos")
                         subtipos.add("Ensaladas cocidas")
                     }else if (servicioSeleccionado.clasificacion == "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )"){
                         subtipos.clear()
@@ -340,9 +355,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         subtipos.add("Ahumados")
                     }else if (servicioSeleccionado.clasificacion == "POSTRES"){
                         subtipos.clear()
-                        subtipos.add("Postres lacteos")
+                        subtipos.add("Postres lácteos")
                         subtipos.add("Postres a base de harina")
-                        subtipos.add("Postres no lacteos")
+                        subtipos.add("Postres no lácteos")
                         subtipos.add("Helados")
 
                     }else{
@@ -457,7 +472,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                     subtipos.clear()
                                     //Add to subtipos array the string: hola
                                     subtipos.add("Cocidos")
-                                    subtipos.add("Salsas y pures cocidos")
+                                    subtipos.add("Salsas y purés cocidos")
                                     subtipos.add("Ensaladas cocidas")
                                 }else if (clasificacion == "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )"){
                                     subtipos.clear()
@@ -471,9 +486,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                     subtipos.add("Ahumados")
                                 }else if (clasificacion == "POSTRES"){
                                     subtipos.clear()
-                                    subtipos.add("Postres lacteos")
+                                    subtipos.add("Postres lácteos")
                                     subtipos.add("Postres a base de harina")
-                                    subtipos.add("Postres no lacteos")
+                                    subtipos.add("Postres no lácteos")
                                     subtipos.add("Helados")
 
                                 }else{
@@ -568,18 +583,16 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 var idServicioEntero = idServicioString
 
                 val servicioSeleccionado = serviciosList.find { it.id == idServicioEntero }
+
+                //Imprimir el servicio
+                Log.e("Servicio","El servicio seleccionado es: ${servicioSeleccionado}")
+                Log.e("Servicio estudio","El servicio seleccionado es: ${servicioSeleccionado!!.estudio_clave_interna}")
                 //Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
                 if (servicioSeleccionado!!.clasificacion.contains("AGUA DE USO RECREACTIVO")
-                    && servicioSeleccionado!!.descripcion.contains("Estudio microbiológico"
-                            )) {
+                    && servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-020")) {
                     sepudo = createMuestrasMicrobiologicas()
-                }else if(servicioSeleccionado!!.descripcion.contains("Estudio fisicoquimico y microbiologico",ignoreCase = true)
-                    || servicioSeleccionado!!.descripcion.contains("EFyM", ignoreCase = true)
-                    || servicioSeleccionado!!.descripcion.contains("Estudios fisicoquimicos y microbiologicos", ignoreCase = true)
-                    || servicioSeleccionado!!.descripcion.contains("Estudios microbiologicos y fisicoquimicos", ignoreCase = true) ){
-
+                }else if(servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-063")){
                     sepudo = createMuestrasFisicoquimicas()
-
                 }
                 else{
                     sepudo = createMuestra()
@@ -604,8 +617,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         }
 
                     }
-
-
 
                 }
                 checkStoragePermissionAndSaveJson()
@@ -765,6 +776,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     private fun clearTextFields(alberca: String) {
 
         if (alberca == "no" ){
+            Log.i(" erroralberca", "no es alberca" )
             val txtnombrem = binding.txtnombre
             txtnombrem.text.clear()
         }else{
@@ -1500,6 +1512,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         val callback = DragManageAdapter(adapter) {modoEdicion}
         val touchHelper = ItemTouchHelper(callback)
         touchHelper.attachToRecyclerView(binding.recyclerMuestras)
+        Toast.makeText(this, "El modo de edicion es: $modoEdicion", Toast.LENGTH_SHORT).show()
 
 
 
@@ -1732,7 +1745,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 
 
-                    Toast.makeText(this, "Editando la muestra ${muestraMutableList[position].nombreMuestra}", Toast.LENGTH_SHORT).show()
+
+
+//                    Toast.makeText(this, "Editando la muestra ${muestraMutableList[position].nombreMuestra}", Toast.LENGTH_SHORT).show()
                     binding.tvTitulo.text = "Editando Muestra ${muestraMutableList[position].registroMuestra}"
                     binding.btnStart.text = "Aceptar Edicion"
                     binding.txtnombre.setText(muestraMutableList[position].nombreMuestra)
@@ -1747,6 +1762,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     indexMuestraAEditar = position
 
                     adapterEdicion = adapter
+
+                    Toast.makeText(this, "Editando la muestra ${muestraMutableList[position].nombreMuestra}", Toast.LENGTH_SHORT).show()
 
 
                 }catch (e:Exception){
@@ -1879,6 +1896,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
             try {
                 txtNombre.text.clear()
+                Toast.makeText(this, "Limpiando txtNombre", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Log.e("Error", "Error al limpiar txtNombre")
             }
@@ -1896,6 +1914,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             }
 
             try{
+
+//                Toast.makeText(this, "Estableciendo nombre", Toast.LENGTH_SHORT).show()
+//                Log.e("Error", "Estableciendo nombre")
                 if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                     servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
                     servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
@@ -1950,7 +1971,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 subtipos.clear()
                 //Add to subtipos array the string: hola
                 subtipos.add("Cocidos")
-                subtipos.add("Salsas y pures cocidos")
+                subtipos.add("Salsas y purés cocidos")
                 subtipos.add("Ensaladas cocidas")
             }else if (servicioSeleccionado.clasificacion == "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )"){
                 subtipos.clear()
@@ -1964,9 +1985,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 subtipos.add("Ahumados")
             }else if (servicioSeleccionado.clasificacion == "POSTRES"){
                 subtipos.clear()
-                subtipos.add("Postres lacteos")
+                subtipos.add("Postres lácteos")
                 subtipos.add("Postres a base de harina")
-                subtipos.add("Postres no lacteos")
+                subtipos.add("Postres no lácteos")
                 subtipos.add("Helados")
 
             }else{
@@ -1996,6 +2017,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             .setView(dialogView)
             .setPositiveButton("Cerrar") { dialog, _ -> dialog.dismiss() }
             .create()
+
+        Toast.makeText(this, "Mostrando lista de servicios", Toast.LENGTH_SHORT).show()
         recyclerView.adapter = ServicioAdapterInfo(serviciosList,
                             onClickListener = { servicio -> onItemSelectedServicio(servicio, dialog) })
 

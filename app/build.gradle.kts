@@ -93,6 +93,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.itextpdf/html2pdf
     implementation("com.itextpdf:html2pdf:5.0.4")
 
+
     implementation("org.postgresql:postgresql:42.6.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
@@ -108,6 +109,8 @@ dependencies {
     implementation ("com.itextpdf:kernel:7.2.3")
     implementation ("com.itextpdf:layout:7.2.3")
     implementation ("com.itextpdf:io:7.2.3")
+    implementation ("com.google.zxing:core:3.5.3")
+    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
 
 
 

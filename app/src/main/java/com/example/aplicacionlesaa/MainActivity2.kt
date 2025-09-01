@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -46,6 +47,8 @@ import com.example.aplicacionlesaa.worker.SendDataWorkerMuestrasExtra
 import com.example.aplicacionlesaa.worker.SendDatosFaltantesWorker
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.io.source.ByteArrayOutputStream
 import com.itextpdf.kernel.colors.DeviceCmyk
@@ -72,6 +75,10 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDate
+import java.util.EnumMap
+import com.google.zxing.qrcode.QRCodeWriter
+import com.itextpdf.barcodes.BarcodeQRCode
+import java.net.URLEncoder
 
 
 class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialogListener,SignatureDialogFragmentDos.SignatureDialogListener  {
@@ -285,7 +292,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                             WorkManager.getInstance(this).enqueue(workRequest)
                         }
                         enqueueSendEmailTask(this,
-                            "ray.contacto06@gmail.com",
+                            "raymundolarasandoval@gmail.com",
                             "$pdfPath/$nombreArchivoPdf",
                             false
                         )
@@ -366,11 +373,21 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
                             val nombreArchivoPdfExtra = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
 
-                            enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
+                            enqueueSendEmailTask(this, "raymundolarasandoval@gmail.com",
                                 "$pdfPath/$nombreArchivoPdfExtra",
                                 true)
 
                         }
+
+                        val sharedPreferences = getSharedPreferences("FisicoquimicosPrefs", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+
+            // Borrar todas las preferencias
+                        editor.clear()
+                        editor.apply()
+
+                        Toast.makeText(this, "Preferencias eliminadas", Toast.LENGTH_SHORT).show()
+
 
 
                     } else {
@@ -425,7 +442,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         val file = File(pdfPath, nombreArchivoPdf)
                         /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf")*/
-                        enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
+                        enqueueSendEmailTask(this, "raymundolarasandoval@gmail.com",
                             "$pdfPath/$nombreArchivoPdf",false)
 
                         val nombreAutoAnalisis = binding.txtNombreAutoAnalisis.text.toString()
@@ -510,8 +527,18 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
                             val nombreArchivoPdfExtra = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
 
-                            enqueueSendEmailTask(this, "ray.contacto06@gmail.com",
+                            enqueueSendEmailTask(this, "raymundolarasandoval@gmail.com",
                                 "$pdfPath/$nombreArchivoPdfExtra",true)
+
+
+                            val sharedPreferences = getSharedPreferences("FisicoquimicosPrefs", Context.MODE_PRIVATE)
+                            val editor = sharedPreferences.edit()
+
+                            // Borrar todas las preferencias
+                            editor.clear()
+                            editor.apply()
+
+                            Toast.makeText(this, "Preferencias eliminadas", Toast.LENGTH_SHORT).show()
 
 
                         }
@@ -650,9 +677,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-
-
-
     }
 
 
@@ -696,9 +720,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 )
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                savePdf("ray.contacto06@gmail.com")
+                savePdf("raymundolarasandoval@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("ray.contacto06@gmail.com")
+                    savePdfExtra("raymundolarasandoval@gmail.com")
                 }
             }
         } else {
@@ -722,9 +746,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     ArrayList(muestrasExtra))
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                                savePdf("ray.contacto06@gmail.com")
+                                savePdf("raymundolarasandoval@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("ray.contacto06@gmail.com")
+                    savePdfExtra("raymundolarasandoval@gmail.com")
                 }
             }
         }
@@ -750,9 +774,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 )
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                savePdf("ray.contacto06@gmail.com")
+                savePdf("raymundolarasandoval@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("ray.contacto06@gmail.com")
+                    savePdfExtra("raymundolarasandoval@gmail.com")
                 }
 
             } else {
@@ -768,9 +792,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         if (requestCode == storagePermissionRequestCode) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    savePdf("ray.contacto06@gmail.com")
+                    savePdf("raymundolarasandoval@gmail.com")
                     if (muestrasExtra.isNotEmpty()) {
-                        savePdfExtra("ray.contacto06@gmail.com")
+                        savePdfExtra("raymundolarasandoval@gmail.com")
                     }
                     val muestraData = MuestraData(binding.tvFolio.text.toString(),
                         pdmSeleccionado,
@@ -798,6 +822,29 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             emptyList()
         }
     }
+
+    fun crearQrImage(muestraData: MuestraData, pdfDoc: PdfDocument): Image {
+        val folio = muestraData.folio
+        val expires = (System.currentTimeMillis() / 1000L) + 86400 // expira en 24h
+        val secret = "LesaaClaveSecreta20251256"  // puedes mandarlo desde backend seguro
+
+        // Generar el token con HMAC SHA256
+        val data = "$folio|$expires"
+        val mac = javax.crypto.Mac.getInstance("HmacSHA256")
+        val secretKeySpec = javax.crypto.spec.SecretKeySpec(secret.toByteArray(), "HmacSHA256")
+        mac.init(secretKeySpec)
+        val tokenBytes = mac.doFinal(data.toByteArray())
+        val token = tokenBytes.joinToString("") { "%02x".format(it) }
+
+        val url = "https://grupolesaa.com.mx/scan?folio=$folio&expires=$expires&token=$token"
+
+        Log.i("URL_QR", url)
+
+        val qrCode = BarcodeQRCode(url)
+        val qrObject = qrCode.createFormXObject(null, pdfDoc)
+        return Image(qrObject).scaleToFit(100f, 100f)
+    }
+
 
 
     class FooterEventHandler(private val document: Document) : IEventHandler {
@@ -841,10 +888,26 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         try {
             val pdfWriter = PdfWriter(file)
             val pdfDocument = PdfDocument(pdfWriter)
+
+            val muestraData = MuestraData(binding.tvFolio.text.toString(),
+                pdmSeleccionado,
+                clientePdm,
+                serviciosList,
+                muestraMutableList,
+                pdmDetallado,
+                ArrayList(muestrasExtra))
+
+            val qrImage = crearQrImage(muestraData, pdfDocument)
+
+
             val document = Document(pdfDocument, PageSize.A4.rotate())
 
             val footerHandler = FooterEventHandler(document)
             pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, footerHandler)
+
+
+
+//            val qrCode = crearPdfConQrItext(muestraData)
 
 
             val inputStream = applicationContext.resources.openRawResource(R.raw.logorectangulartrans)
@@ -872,8 +935,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val whiteColor = DeviceRgb(255, 255, 255)
             val fontSize = 8f // Tamaño de fuente más pequeño
 
-            // Crear tabla principal (2 columnas)
-            val mainTable = Table(UnitValue.createPercentArray(floatArrayOf(5f, 1f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
+            // Crear tabla principal (3 columnas)
+            val mainTable = Table(UnitValue.createPercentArray(floatArrayOf(4f,1f,1f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
 
             // Tabla de encabezado (3 columnas)
             val tableEncabezado = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f))).useAllAvailableWidth().setBorder(Border.NO_BORDER)
@@ -881,13 +944,12 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             // Encabezado principal
             val mainHeaderCell = Cell(1, 2)
-                .add(Paragraph("F-LAB 83. SOLICITUD DE SERVICIO DE ANÁLISIS DE AGUAS Y ALIMENTOS").setFontColor(whiteColor).setFontSize(fontSize).setBold())
+                .add(Paragraph("F-ING-LAB-02. HOJA DE REGISTRO DE CAMPO").setFontColor(whiteColor).setFontSize(fontSize).setBold())
                 .setBackgroundColor(headerColor).setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .setBorder(Border.NO_BORDER)
             tableEncabezado.addCell(mainHeaderCell)
 
-            
 
             // Sub-encabezado
             val subHeaderCell = Cell(1, 2)
@@ -945,9 +1007,11 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             // Agregar la tabla de encabezado y el logo a la tabla principal
             mainTable.addCell(Cell().add(tableEncabezado).setBorder(Border.NO_BORDER)).setBorder(Border.NO_BORDER)
+            mainTable.addCell(Cell().add(qrImage).setVerticalAlignment(VerticalAlignment.MIDDLE).setHorizontalAlignment(HorizontalAlignment.RIGHT).setBorder(Border.NO_BORDER)).setBorder(Border.NO_BORDER)
             mainTable.addCell(Cell().add(image).setVerticalAlignment(VerticalAlignment.MIDDLE).setHorizontalAlignment(HorizontalAlignment.RIGHT).setBorder(Border.NO_BORDER)).setBorder(Border.NO_BORDER)
-
             // Agregar la tabla principal al documento
+
+
             document.add(mainTable)
 
 //            val logoPath = "res/raw/logorectangulartrans.png" // Ruta a tu imagen
@@ -1146,12 +1210,17 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 .add(Paragraph("DATOS DE SALIDA:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor).setTextAlignment(TextAlignment.CENTER)
             val datosrecepcionPuntoCritico = Cell(2, 2)
                 .add(Paragraph("DATOS DE RECEPCION:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor).setTextAlignment(TextAlignment.CENTER)
+            val idCliente = Cell(2, 2)
+                .add(Paragraph("ID CLIENTE:").setFontSize(fontSize)).setBackgroundColor(headerColor).setFontColor(whiteColor).setTextAlignment(TextAlignment.CENTER)
+
 
             puntoCriticoTable.addCell(datosPuntoCriticaCell)
             puntoCriticoTable.addCell(Cell(2,2).add(subtablaSalida).setBorder(Border.NO_BORDER))
             puntoCriticoTable.addCell(datosrecepcionPuntoCritico)
             puntoCriticoTable.addCell(Cell(2,2).add(subtablaEntrada).setBorder(Border.NO_BORDER))
-
+            puntoCriticoTable.addCell(idCliente)
+            //Añadir una celda vacia
+            puntoCriticoTable.addCell(Cell(2,2).add(Paragraph("").setFontSize(fontSize)))
 
             val tablaPrincipal = Table(2)
             tablaPrincipal.setWidth(UnitValue.createPercentValue(100f))
@@ -1171,8 +1240,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val fontSizeFooter = 6f
             tableFooter.addCell(Cell().add(Paragraph("recepcionlab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("998 310 8622").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
-            tableFooter.addCell(Cell(2,2).add(Paragraph("DOCUMENTO CONTROLADO\n Documento propiedad de Centro Integral en Servicios de Laboratorio de Aguas y Alimentos S.A de C.V.\n No puede reproducirse en forma parcial o total, si nla previa autorizacion del Laboratorio").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
-            tableFooter.addCell(Cell().add(Paragraph("F-ADM-LAB-83/REV0.5/FEBRERO 2024").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell(2,2).add(Paragraph("DOCUMENTO CONTROLADO\n Documento propiedad de Centro Integral en Servicios de Laboratorio de Agua y Alimentos S.A de C.V.\n No puede reproducirse en forma parcial o total, si nla previa autorizacion del Laboratorio").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("F-ING-LAB-02/ VERSION 0").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("operacioneslab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("998 310 8623").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("A.FRANCISCO I. MADERO MZ 107 LT 12 Int: LOCAL 4 REGION 94. CP 7717. Benito Juarez, Q.roo").setFontColor(whiteColor).setFontSize(5f).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
@@ -1205,6 +1274,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         try {
             val pdfWriter = PdfWriter(file)
             val pdfDocument = PdfDocument(pdfWriter)
+
             val document = Document(pdfDocument, PageSize.A4.rotate())
 
             val footerHandler = FooterEventHandler(document)
@@ -1244,7 +1314,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
             // Encabezado principal
             val mainHeaderCell = Cell(1, 2)
-                .add(Paragraph("F-LAB 83. SOLICITUD DE SERVICIO DE ANÁLISIS DE AGUAS Y ALIMENTOS").setFontColor(whiteColor).setFontSize(fontSize))
+                .add(Paragraph("F-LAB 83. SOLICITUD DE SERVICIO DE ANÁLISIS DE AGUA Y ALIMENTOS").setFontColor(whiteColor).setFontSize(fontSize))
                 .setBackgroundColor(headerColor).setTextAlignment(TextAlignment.CENTER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE)
                 .setBorder(Border.NO_BORDER)
@@ -1533,8 +1603,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             val fontSizeFooter = 6f
             tableFooter.addCell(Cell().add(Paragraph("recepcionlab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("998 310 8622").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
-            tableFooter.addCell(Cell(2,2).add(Paragraph("DOCUMENTO CONTROLADO\n Documento propiedad de Centro Integral en Servicios de Laboratorio de Aguas y Alimentos S.A de C.V.\n No puede reproducirse en forma parcial o total, si nla previa autorizacion del Laboratorio").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
-            tableFooter.addCell(Cell().add(Paragraph("F-ADM-LAB-83/REV0.5/FEBRERO 2024").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell(2,2).add(Paragraph("DOCUMENTO CONTROLADO\n Documento propiedad de Centro Integral en Servicios de Laboratorio de Agua y Alimentos S.A de C.V.\n No puede reproducirse en forma parcial o total, si nla previa autorizacion del Laboratorio").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("F-ING-LAB-02/ VERSION 0").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("operacioneslab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("998 310 8623").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("A.FRANCISCO I. MADERO MZ 107 LT 12 Int: LOCAL 4 REGION 94. CP 7717. Benito Juarez, Q.roo").setFontColor(whiteColor).setFontSize(5f).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
