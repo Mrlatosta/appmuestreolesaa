@@ -66,7 +66,7 @@ class SendEmailWorker(appContext: Context, workerParams: WorkerParameters) :
 
         // Crea la parte del cuerpo del mensaje de texto
         val textBodyPart = MimeBodyPart().apply {
-            setText(messageText)
+            setContent(messageText, "text/html; charset=utf-8")
         }
 
         // Crea la parte del cuerpo del mensaje con el archivo adjunto

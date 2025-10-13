@@ -109,7 +109,7 @@ class ResendMuActivity : AppCompatActivity() {
                             .putString("folio_pdm_$index", muestra.folio_pdm)
                             .putInt("estudio_id_$index", muestra.estudio_id)
                             .putString("cliente", muestraData?.clientePdm.toString())
-                            .putString("folio",binding.tvFolio.text.toString() + "E")
+                            .putString("folio",binding.tvFolio.text.toString())
                             .putString("folioPDM", muestra.folio_pdm)
                             .build()
 
@@ -204,7 +204,7 @@ class ResendMuActivity : AppCompatActivity() {
                         val data = Data.Builder()
                             .putInt("muestra_count", tamanoExtra)
                             .putString("registro_muestra_$index", muestra.registro_muestra)
-                            .putString("folio_muestreo_$index", muestra.folio_muestreo + "E")
+                            .putString("folio_muestreo_$index", muestra.folio_muestreo)
                             .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
                             .putString("nombre_muestra_$index", muestra.nombre_muestra)
                             .putString("id_lab_$index", muestra.id_lab)
@@ -218,7 +218,7 @@ class ResendMuActivity : AppCompatActivity() {
                             .putString("folio_pdm_$index", muestra.folio_pdm)
                             .putInt("estudio_id_$index", muestra.estudio_id)
                             .putString("cliente", muestraData?.clientePdm.toString())
-                            .putString("folio", binding.tvFolio.text.toString() + "E")
+                            .putString("folio", binding.tvFolio.text.toString())
                             .putString("folioPDM", muestra.folio_pdm)
                             .build()
 

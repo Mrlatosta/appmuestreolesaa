@@ -292,7 +292,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                             WorkManager.getInstance(this).enqueue(workRequest)
                         }
                         enqueueSendEmailTask(this,
-                            "raymundolarasandoval@gmail.com",
+                            "operacioneslab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf",
                             false
                         )
@@ -373,7 +373,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
                             val nombreArchivoPdfExtra = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
 
-                            enqueueSendEmailTask(this, "raymundolarasandoval@gmail.com",
+                            enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com",
                                 "$pdfPath/$nombreArchivoPdfExtra",
                                 true)
 
@@ -442,7 +442,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         val file = File(pdfPath, nombreArchivoPdf)
                         /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf")*/
-                        enqueueSendEmailTask(this, "raymundolarasandoval@gmail.com",
+                        enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf",false)
 
                         val nombreAutoAnalisis = binding.txtNombreAutoAnalisis.text.toString()
@@ -527,7 +527,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
                             val nombreArchivoPdfExtra = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
 
-                            enqueueSendEmailTask(this, "raymundolarasandoval@gmail.com",
+                            enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com",
                                 "$pdfPath/$nombreArchivoPdfExtra",true)
 
 
@@ -720,9 +720,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 )
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                savePdf("raymundolarasandoval@gmail.com")
+                savePdf("operacioneslab.lesa@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("raymundolarasandoval@gmail.com")
+                    savePdfExtra("operacioneslab.lesa@gmail.com")
                 }
             }
         } else {
@@ -746,9 +746,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     ArrayList(muestrasExtra))
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                                savePdf("raymundolarasandoval@gmail.com")
+                                savePdf("operacioneslab.lesa@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("raymundolarasandoval@gmail.com")
+                    savePdfExtra("operacioneslab.lesa@gmail.com")
                 }
             }
         }
@@ -774,9 +774,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 )
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                savePdf("raymundolarasandoval@gmail.com")
+                savePdf("operacioneslab.lesa@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("raymundolarasandoval@gmail.com")
+                    savePdfExtra("operacioneslab.lesa@gmail.com")
                 }
 
             } else {
@@ -792,9 +792,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         if (requestCode == storagePermissionRequestCode) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    savePdf("raymundolarasandoval@gmail.com")
+                    savePdf("operacioneslab.lesa@gmail.com")
                     if (muestrasExtra.isNotEmpty()) {
-                        savePdfExtra("raymundolarasandoval@gmail.com")
+                        savePdfExtra("operacioneslab.lesa@gmail.com")
                     }
                     val muestraData = MuestraData(binding.tvFolio.text.toString(),
                         pdmSeleccionado,
@@ -1694,25 +1694,44 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         }
     }
 
-    fun enqueueSendEmailTask(context: Context, emailAddress: String, filePath: String,folioExtra:Boolean) {
+    fun enqueueSendEmailTask(
+        context: Context,
+        emailAddress: String,
+        filePath: String,
+        folioExtra: Boolean
+    ) {
         Log.d("SendEmailTask", "Enviando correo electrónico... ${filePath}")
-        var mensaje = ""
-        if (folioExtra){
-            mensaje = "Hola ${clientePdm?.atencion} \n\n" +
-                    "Reciba un cordial saludo, por este medio le notificamos que ha recibido la solicitud de servicio correspondiente al muestreo del día ${LocalDate.now()} con No. de folio ${binding.tvFolio.text}E el cual está en proceso y garantizamos la terminación de este en tiempo y forma. \n"+
-                    "Sin más por el momento, quedamos a sus órdenes.\n\n"+
-                    "¡ Tenga un excelente día !"
-        }else{
-            mensaje = "Hola ${clientePdm?.atencion} \n\n" +
-                    "Reciba un cordial saludo, por este medio le notificamos que ha recibido la solicitud de servicio correspondiente al muestreo del día ${LocalDate.now()} con No. de folio ${binding.tvFolio.text} el cual está en proceso y garantizamos la terminación de este en tiempo y forma. \n"+
-                    "Sin más por el momento, quedamos a sus órdenes.\n\n"+
-                    "¡ Tenga un excelente día !"
+
+        val mensaje: String = if (folioExtra) {
+            """
+        <p>- Servicios que genera valor -</p>
+        <p><img src="https://grupolesaa.com.mx/img/logorectangulartrans.png" alt="Logo Lesaa" width="300"/></p>
+        <p><strong> ¡Tenemos información para tí!, </strong> </p>
+        <p>Buen dia</p>
+        <p>Esperando que se encuentre bien el dia de hoy, le notificamos que ha recibido reporte de servicio correspondiente a la colecta de muestras
+         del día <strong> ${LocalDate.now()} </strong> con No. de folio <strong> ${binding.tvFolio.text}E </strong> el cual está en proceso y garantizamos la terminación de este en tiempo y forma.</p>
+        <p>Sin más por el momento, quedamos a sus órdenes.</p>
+        <p>¡Tenga un excelente día!</p>
+        """.trimIndent()
+        } else {
+            """
+        <p>- Servicios que genera valor -</p>
+        <a href ="grupolesaa.com.mx"><img src="https://grupolesaa.com.mx/img/logorectangulartrans.png" alt="Logo Lesaa" width="300"/> </a>
+        <p><strong> ¡Tenemos información para tí!, </strong> </p>
+        <p>Buen dia</p>
+        <p>Esperando que se encuentre bien el dia de hoy, le notificamos que ha recibido reporte de servicio correspondiente a la colecta de muestras
+         del día <strong> ${LocalDate.now()} </strong> con No. de folio <strong> ${binding.tvFolio.text} </strong> el cual está en proceso y garantizamos la terminación de este en tiempo y forma.</p>
+        <p>Sin más por el momento, quedamos a sus órdenes.</p>
+        <p>¡Tenga un excelente día!</p>
+        """.trimIndent()
         }
+
         val data = Data.Builder()
             .putString("emailAddress", emailAddress)
             .putString("filePath", filePath)
-            .putString("subject","Solicitud de servicio GRUPO LESAA")
-            .putString("messageText",mensaje)
+            .putString("subject","Reporte de servicio GRUPO LESAA")
+            .putString("messageText", mensaje)
+            .putBoolean("isHtml", true) // Agregar flag para indicar que es HTML
             .build()
 
         val sendEmailWorkRequest = OneTimeWorkRequest.Builder(SendEmailWorker::class.java)
@@ -1721,6 +1740,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
         WorkManager.getInstance(context).enqueue(sendEmailWorkRequest)
     }
+
 
     fun convertirAMuestraPdmExtra(muestras: List<Muestra>): List<Muestra_pdmExtra> {
         if (muestras.isNotEmpty()){
