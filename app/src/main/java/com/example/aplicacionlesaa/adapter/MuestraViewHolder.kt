@@ -10,6 +10,7 @@ class MuestraViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val binding = ItemMuestraBinding.bind(view)
 
 
+
 //    val numMuestra = view.findViewById<TextView>(R.id.tvnumMuestra)
 //    val idMuestra = view.findViewById<TextView>(R.id.tvidMuestra)
 //    val descripcionMuestra = view.findViewById<TextView>(R.id.tvDescripcion)

@@ -716,6 +716,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     override fun onBackPressed() {
         // Crear un AlertDialog para la confirmación
         AlertDialog.Builder(this).apply {
+            checkStoragePermissionAndSaveJson()
             setTitle("Confirmación")
             setMessage("¿Estás seguro de que deseas salir?")
             setPositiveButton("Sí") { dialog, _ ->
@@ -768,9 +769,10 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             intent.putParcelableArrayListExtra("muestraExtraList", ArrayList(muestrasExtras))
             Log.e("muestras:", muestrasExtras.toString())
         }
-
+        checkStoragePermissionAndSaveJson()
         startActivity(intent)
     }
+
 
 
     private fun clearTextFields(alberca: String) {

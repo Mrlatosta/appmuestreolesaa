@@ -13,6 +13,7 @@ import com.example.aplicacionlesaa.model.Plandemuestreo
 import com.example.aplicacionlesaa.model.Servicio
 import com.example.aplicacionlesaa.model.UltimoFolio
 import com.example.aplicacionlesaa.model.analisisFisico
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -49,6 +50,13 @@ interface ApiService {
 
     @POST("crearfoliomuestreo")
     fun createFolioMuestreo(@Body folioMuestreo: FolioMuestreo): Call<Void>
+
+    @POST("muestras/bulk")
+    fun createMuestrasBulk(@Body muestras: List<Muestra_pdm>): Call<ResponseBody>
+//    @POST("muestras/extra/bulk")
+//    fun createMuestrasExtraBulk(
+//        @Body muestras: List<Muestra_pdmExtra>
+//    ): Call<ResponseBody>
 
 
     @GET("ultimofoliomuestreo")

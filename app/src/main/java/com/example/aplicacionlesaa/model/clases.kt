@@ -3,6 +3,7 @@ package com.example.aplicacionlesaa.model
 import android.os.Parcel
 import android.os.Parcelable
 import com.example.aplicacionlesaa.Muestra
+import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 
 
@@ -209,24 +210,46 @@ data class FolioMuestreo(
 data class UltimoFolio(
     val folio: String
 )
-
 data class Muestra_pdm(
+    @SerializedName("registroMuestra")
     val registro_muestra: String,
-    val folio_muestreo: String,
-    val fecha_muestreo: String,
+
+    @SerializedName("nombreMuestra")
     val nombre_muestra: String,
-    val id_lab: String,
+
+    @SerializedName("cantidadAprox")
     val cantidad_aprox: String,
-    val temperatura: String,
-    val lugar_toma: String,
-    val descripcion_toma: String,
-    val e_micro: String,
-    val e_fisico: String,
-    val observaciones: String,
-    val folio_pdm: String,
-    val servicio_id: String,
-    val estatus: String = "Pendiente",
-    val subtipo: String,
+
+    @SerializedName("efisico")
+    val e_fisico: String? = null,
+
+    @SerializedName("emicro")
+    val e_micro: String? = null,
+
+    @SerializedName("fechaMuestra")
+    val fecha_muestreo: String,
+
+    @SerializedName("idLab")
+    val id_lab: String,
+
+    @SerializedName("tempM")
+    val temperatura: String? = null,
+
+    @SerializedName("lugarToma")
+    val lugar_toma: String? = null,
+
+    @SerializedName("descripcionM")
+    val descripcion_toma: String? = null,
+
+    @SerializedName("observaciones")
+    val observaciones: String? = null,
+
+    val folio_pdm: String? = null,
+    val folio_muestreo: String? = null,
+    @SerializedName("servicioId")
+    val servicio_id: String? = null,
+    val estatus: String? = null,
+    val subtipo: String? = null
 )
 
 data class Muestra_pdmExtra(

@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 data class Muestra(
     var numeroMuestra: String,
-    val fechaMuestra: String,
+    var fechaMuestra: String,
     var registroMuestra: String,
     var nombreMuestra: String,
     var idLab: String,

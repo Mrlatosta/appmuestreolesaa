@@ -19,133 +19,133 @@ import com.example.aplicacionlesaa.api.ApiService
 import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
 import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.utils.NetworkUtils
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 
-class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
+    class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
 
-    private lateinit var muestraMutableList: MutableList<Muestra_pdm>
+        private lateinit var muestraMutableList: MutableList<Muestra_pdm>
 
-    override fun doWork(): Result {
-        return if (NetworkUtils.isInternetAvailable(applicationContext)) {
-            try {
-                // Obtener la lista de Muestras desde inputData
-                muestraMutableList = mutableListOf()
+        override fun doWork(): Result {
+            return if (NetworkUtils.isInternetAvailable(applicationContext)) {
+                try {
+                    val filePath = inputData.getString("filePath")
+                    if (filePath.isNullOrEmpty()) {
+                        Log.e("SendDataWorker", "❌ No se recibió filePath en inputData")
+                        return Result.failure()
+                    }
 
-                val muestraCount = inputData.getInt("muestra_count", 0)
-                var contador = 0
+                    val file = File(filePath)
+                    if (!file.exists()) {
+                        Log.e("SendDataWorker", "❌ Archivo no encontrado en $filePath")
+                        return Result.failure()
+                    }
 
-                for (i in 0 until muestraCount) {
-                    val muestra = Muestra_pdm(
-                        registro_muestra = inputData.getString("registro_muestra_$i") ?: "",
-                        folio_muestreo = inputData.getString("folio_muestreo_$i") ?: "",
-                        fecha_muestreo = inputData.getString("fecha_muestreo_$i") ?: "",
-                        nombre_muestra = inputData.getString("nombre_muestra_$i") ?: "",
-                        id_lab = inputData.getString("id_lab_$i") ?: "",
-                        cantidad_aprox = inputData.getString("cantidad_aprox_$i") ?: "",
-                        temperatura = inputData.getString("temperatura_$i") ?: "",
-                        lugar_toma = inputData.getString("lugar_toma_$i") ?: "",
-                        descripcion_toma = inputData.getString("descripcion_toma_$i") ?: "",
-                        e_micro = inputData.getString("e_micro_$i") ?: "",
-                        e_fisico = inputData.getString("e_fisico_$i") ?: "",
-                        observaciones = inputData.getString("observaciones_$i") ?: "",
-                        folio_pdm = inputData.getString("folio_pdm_$i") ?: "",
-                        servicio_id = inputData.getString("servicio_id_$i") ?: "",
-                        subtipo = inputData.getString("subtipo_$i") ?: "",
-                        estatus = "Pendiente",
-                    )
-                    muestraMutableList.add(muestra)
-                    contador++
+                    val muestrasJson = file.readText()
+                    val jsonObject = JSONObject(muestrasJson)
+
+                    val folio = jsonObject.optString("folio")
+                    val muestrasArray = jsonObject.getJSONArray("muestras")
+
+                    val type = object : TypeToken<List<Muestra_pdm>>() {}.type
+                    val muestras: List<Muestra_pdm> = Gson().fromJson(muestrasArray.toString(), type)
+
+                    // ✅ Validar que registro_muestra nunca sea null
+                    muestras.forEach {
+                        requireNotNull(it.registro_muestra) { "registro_muestra no puede ser null" }
+                    }
+
+                    val apiMuestras = muestras.map { m ->
+                        m.copy(
+                            registro_muestra = m.registro_muestra,
+                            folio_muestreo = folio,
+                            fecha_muestreo = m.fecha_muestreo,
+                            nombre_muestra = m.nombre_muestra,
+                            id_lab = m.id_lab,
+                            cantidad_aprox = m.cantidad_aprox,
+                            temperatura = m.temperatura,
+                            lugar_toma = m.lugar_toma,
+                            descripcion_toma = m.descripcion_toma,
+                            e_micro = m.e_micro,
+                            e_fisico = m.e_fisico,
+                            observaciones = m.observaciones,
+                            folio_pdm = folio,
+                            servicio_id = m.servicio_id,
+                            estatus = "Pendiente",
+                            subtipo = m.subtipo
+                        )
+                    }
+
+                    Log.e("SendDataWorker", "📦 Preparadas ${apiMuestras.size} muestras para enviar")
+                    Log.e("Las muestras 2vez son:","$apiMuestras" )
+                    sendDataToApi(apiMuestras)
+
+                    Result.success()
+
+                } catch (e: Exception) {
+                    Log.e("SendDataWorker", "⚠️ Error al enviar muestras: ${e.message}", e)
+                    Result.retry()
                 }
-                Log.e("MuestraMutableList", "Se intento enviar ${muestraMutableList.size} muestras")
-                Log.e("Contador:","El contador es $contador")
-                sendDataToApi(muestraMutableList)
-                Result.success()
-            } catch (e: Exception) {
-                Log.e("SendDataWorker", "Error al enviar muestras: ${e.message}")
+            } else {
+                Log.e("SendDataWorker", "🌐 No hay conexión a internet, reintentando...")
                 Result.retry()
             }
-        } else {
-            Log.e("SendDataWorker", "No hay conexión a internet")
-            Result.retry()
         }
-    }
 
-    private fun sendDataToApi(muestras: List<Muestra_pdm>) {
-        for (muestra in muestras) {
-            Log.e("Muestra es:", muestra.toString())
 
-            val callCreateMuestreo = RetrofitClient.instance.createMuestreo(muestra)
-            callCreateMuestreo.enqueue(object : Callback<Void> {
-                override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(applicationContext, "Muestra enviada con éxito", Toast.LENGTH_SHORT).show()
-                        if (hasNotificationPermission()) {
-                            showNotification(
-                                "Muestras enviadas",
-                                "Las muestras se han enviado con éxito."
-                            )
-                        } else {
-                            Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
-                        }
 
-                        // Preparar la solicitud de actualización
-                        val restarServicioRequest = ApiService.RestarServicioRequest(cantidad = 1)
 
-                        // Actualizar la cantidad del servicio
-                        val callUpdateServicio = RetrofitClient.instance.restarServicio(muestra.servicio_id, restarServicioRequest)
-                        callUpdateServicio.enqueue(object : Callback<Void> {
-                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                                if (response.isSuccessful) {
-                                    if (hasNotificationPermission()) {
-                                        showNotification(
-                                            "Cantidad Actualizada",
-                                            "Las cantidad de muestras se han actualizado con exito."
-                                        )
-                                    } else {
-                                        Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
-                                    }
 
-                                    Toast.makeText(applicationContext, "Cantidad actualizada con éxito", Toast.LENGTH_SHORT).show()
-                                    sendDatosFaltantesToApi()
-                                } else {
-                                    if (hasNotificationPermission()) {
-                                        showNotification(
-                                            "Cantidad NO Actualizada",
-                                            "Las cantidad de muestras no se ha actualizado, error."
-                                        )
-                                    } else {
-                                        Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
-                                    }
-                                    Toast.makeText(applicationContext, "Error al actualizar cantidad", Toast.LENGTH_SHORT).show()
-                                }
-                            }
+        // ✅ Función corregida para Retrofit con List<Muestra_pdm>
+        private fun sendDataToApi(muestras: List<Muestra_pdm>) {
+            try {
+                Log.e("SendDataWorker", "Enviando ${muestras.size} muestras en un solo paquete")
 
-                            override fun onFailure(call: Call<Void>, t: Throwable) {
-                                Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                val call = RetrofitClient.instance.createMuestrasBulk(muestras)
+                val response = call.execute() // llamada síncrona
+
+                if (response.isSuccessful) {
+                    Log.e("SendDataWorker", "Muestras enviadas correctamente (${muestras.size})")
+
+                    if (hasNotificationPermission()) {
+                        showNotification("Muestras enviadas", "Se enviaron ${muestras.size} muestras correctamente.")
+                    }
+
+                    // Actualizar servicio
+                    val restarServicioRequest = ApiService.RestarServicioRequest(cantidad = muestras.size)
+                    val callUpdate = RetrofitClient.instance.restarServicio(muestras[0].servicio_id!!, restarServicioRequest)
+                    val respUpdate = callUpdate.execute()
+                    if (respUpdate.isSuccessful) {
+                        Log.e("SendDataWorker", "Cantidad actualizada correctamente.")
                     } else {
-                        if (hasNotificationPermission()) {
-                            showNotification(
-                                "Muestras no enviadas",
-                                "Las muestras no se han podido enviar a la base de datos, ha ocurrido un error."
-                            )
-                        } else {
-                            Log.e("SendDataWorker", "Permiso de notificaciones no concedido.")
-                        }
-                        Toast.makeText(applicationContext, "Error al enviar muestra", Toast.LENGTH_SHORT).show()
+                        Log.e("SendDataWorker", "Error al actualizar cantidad.")
+                    }
+
+                    sendDatosFaltantesToApi()
+
+                } else {
+                    Log.e("SendDataWorker", "Error al enviar muestras. Código: ${response.code()}")
+                    if (hasNotificationPermission()) {
+                        showNotification("Error al enviar", "No se pudieron enviar las muestras (${response.code()})")
                     }
                 }
 
-                override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Log.e("SendDataWorker", "Error en envío bulk: ${e.message}", e)
+                if (hasNotificationPermission()) {
+                    showNotification("Error crítico", "Fallo al enviar muestras: ${e.message}")
                 }
-            })
+            }
         }
-    }
+
+
+
 
     private fun hasNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

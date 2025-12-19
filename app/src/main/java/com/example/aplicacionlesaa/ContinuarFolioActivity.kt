@@ -238,6 +238,7 @@ class ContinuarFolioActivity : AppCompatActivity() {
             muestrasExtras?.clear()
 
 
+
             try{
                 println("MuestraData.muestras: ${muestraData!!.muestras}")
 

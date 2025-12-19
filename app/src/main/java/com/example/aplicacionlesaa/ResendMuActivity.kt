@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -28,6 +29,9 @@ import com.example.aplicacionlesaa.worker.SendDataWorkerMuestrasExtra
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.InputStreamReader
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Locale
 
 
 class ResendMuActivity : AppCompatActivity() {
@@ -139,48 +143,32 @@ class ResendMuActivity : AppCompatActivity() {
 
 
 
-                    val dataList = mutableListOf<Data>()
+                    // ✅ Envío de muestras normales en una sola tarea (bulk)
                     val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
 
-                    val tamaño = muestraListaNueva.size
+                    // Convertir lista a JSON para el Worker
+                    val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                    val filename = "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json"
+                    val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+                    val filePath = "$documentsDir/$filename"
 
-                    muestraListaNueva.forEachIndexed { index, muestra ->
-                        val data = Data.Builder()
-                            .putInt("muestra_count",tamaño)
-                            .putString("registro_muestra_$index", muestra.registro_muestra)
-                            .putString("folio_muestreo_$index", muestra.folio_muestreo)
-                            .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
-                            .putString("nombre_muestra_$index", muestra.nombre_muestra)
-                            .putString("id_lab_$index", muestra.id_lab)
-                            .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
-                            .putString("temperatura_$index", muestra.temperatura)
-                            .putString("lugar_toma_$index", muestra.lugar_toma)
-                            .putString("descripcion_toma_$index", muestra.descripcion_toma)
-                            .putString("e_micro_$index", muestra.e_micro)
-                            .putString("e_fisico_$index", muestra.e_fisico)
-                            .putString("observaciones_$index", muestra.observaciones)
-                            .putString("folio_pdm_$index", muestra.folio_pdm)
-                            .putString("servicio_id_$index", muestra.servicio_id)
-                            .putString("subtipo_$index", muestra.subtipo)
-                            .build()
+//                        val muestrasJson = gson.toJson(muestraListaNueva)
 
-                        dataList.add(data)
-                    }
+                    val data = Data.Builder()
+                        .putString("filePath", filePath)
+                        .build()
 
-                    // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
-                    dataList.forEach { data ->
-                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
-                            .setInputData(data)
-                            .setConstraints(
-                                Constraints.Builder()
-                                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                                    .build()
-                            )
-                            .build()
+                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                        .setInputData(data)
+                        .setConstraints(
+                            Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+                        )
+                        .build()
 
-                        Log.i("Si hay internet", "Entre al worker")
-                        WorkManager.getInstance(this).enqueue(workRequest)
-                    }
+                    WorkManager.getInstance(this).enqueue(workRequest)
+                    Log.i("SendDataWorker", "🚀 Worker de envío bulk de ${muestraListaNueva.size} muestras iniciado")
                 }
 
 
@@ -243,49 +231,34 @@ class ResendMuActivity : AppCompatActivity() {
 
                 }else {
 
+                    // ✅ Envío de muestras normales en una sola tarea (bulk)
                     val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
 
-                    val tamaño = muestraListaNueva.size
 
-                    // Crear una lista de Data para cada muestra en muestraMutableList
-                    val dataList = mutableListOf<Data>()
-                    muestraListaNueva.forEachIndexed { index, muestra ->
-                        val data = Data.Builder()
-                            .putInt("muestra_count", tamaño)
-                            .putString("registro_muestra_$index", muestra.registro_muestra)
-                            .putString("folio_muestreo_$index", muestra.folio_muestreo)
-                            .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
-                            .putString("nombre_muestra_$index", muestra.nombre_muestra)
-                            .putString("id_lab_$index", muestra.id_lab)
-                            .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
-                            .putString("temperatura_$index", muestra.temperatura)
-                            .putString("lugar_toma_$index", muestra.lugar_toma)
-                            .putString("descripcion_toma_$index", muestra.descripcion_toma)
-                            .putString("e_micro_$index", muestra.e_micro)
-                            .putString("e_fisico_$index", muestra.e_fisico)
-                            .putString("observaciones_$index", muestra.observaciones)
-                            .putString("folio_pdm_$index", muestra.folio_pdm)
-                            .putString("servicio_id_$index", muestra.servicio_id)
-                            .putString("subtipo_$index", muestra.subtipo)
-                            .build()
+                    // Convertir lista a JSON para el Worker
+                    val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                    val filename = "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json"
+                    val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+                    val filePath = "$documentsDir/$filename"
 
-                        dataList.add(data)
-                    }
+//                        val muestrasJson = gson.toJson(muestraListaNueva)
 
-                    // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
-                    dataList.forEach { data ->
-                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
-                            .setInputData(data)
-                            .setConstraints(
-                                Constraints.Builder()
-                                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                                    .build()
-                            )
-                            .build()
+                    val data = Data.Builder()
+                        .putString("filePath", filePath)
+                        .build()
 
-                        Log.i("Datos", "Entre al worker")
-                        WorkManager.getInstance(this).enqueue(workRequest)
-                    }
+
+                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                        .setInputData(data)
+                        .setConstraints(
+                            Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+                        )
+                        .build()
+
+                    WorkManager.getInstance(this).enqueue(workRequest)
+                    Log.i("SendDataWorker", "🚀 Worker de envío bulk de ${muestraListaNueva.size} muestras iniciado")
 
                 }
 
@@ -306,7 +279,25 @@ class ResendMuActivity : AppCompatActivity() {
         }
     }
 
+    fun convertirFecha(fecha: String): String {
+        if (fecha.isBlank()) return ""
+
+        val entrada = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val salida = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        return salida.format(entrada.parse(fecha)!!)
+    }
+
+
     fun convertirAMuestraPdmExtra(muestras: List<Muestra>): List<Muestra_pdmExtra> {
+
+        //Fecha convertir
+        for (muestra in muestras) {
+            muestra.fechaMuestra = convertirFecha(muestra.fechaMuestra)
+        }
+
+
+
         if (muestras.isNotEmpty()){
             val listaMuestrasPdmExtra = mutableListOf<Muestra_pdmExtra>()
             for (muestra in muestras) {

@@ -131,6 +131,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val btnInsertSignature = binding.btnInsertSignature
         val btnInsertSignatureDos = binding.btnInsertSignatureDos
 
@@ -189,6 +190,10 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         val folio_cliente = clientePdm?.folio
         val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
 
+
+        binding.txtCorreo.setText(clientePdm?.correo.toString())
+        Log.i("Correo", clientePdm?.correo.toString())
+
         Log.i("Ray", muestraMutableList.toString())
         val btnAceptar = binding.btnAceptar
         btnAceptar.setOnClickListener {
@@ -199,7 +204,6 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 builder.setMessage("¿Estás seguro de  enviar y concluir el folio ${binding.tvFolio.text} con muestras extra con folio ${binding.tvFolio.text}E?")
             }else{
                 builder.setMessage("¿Estás seguro de  enviar y concluir el folio ${binding.tvFolio.text}?")
-
             }
 
             // Configurar el botón "Sí"
@@ -227,6 +231,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
                         }
 
+
+
                         for (lugar in lugarMutableList) {
                             Log.e("LugarAkirau:", lugar.nombre_lugar + lugar.cliente_folio+ lugar.folio_pdm)
                             val callCreateLugar = RetrofitClient.instance.createLugarCliente(lugar)
@@ -252,47 +258,37 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         val tamaño = muestraListaNueva.size
 
                         // Crear una lista de Data para cada muestra en muestraMutableList
-                        val dataList = mutableListOf<Data>()
-                        //Envio de lista de muestra
-                        muestraListaNueva.forEachIndexed { index, muestra ->
-                            val data = Data.Builder()
-                                .putInt("muestra_count",tamaño)
-                                .putString("registro_muestra_$index", muestra.registro_muestra)
-                                .putString("folio_muestreo_$index", muestra.folio_muestreo)
-                                .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
-                                .putString("nombre_muestra_$index", muestra.nombre_muestra)
-                                .putString("id_lab_$index", muestra.id_lab)
-                                .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
-                                .putString("temperatura_$index", muestra.temperatura)
-                                .putString("lugar_toma_$index", muestra.lugar_toma)
-                                .putString("descripcion_toma_$index", muestra.descripcion_toma)
-                                .putString("e_micro_$index", muestra.e_micro)
-                                .putString("e_fisico_$index", muestra.e_fisico)
-                                .putString("observaciones_$index", muestra.observaciones)
-                                .putString("folio_pdm_$index", muestra.folio_pdm)
-                                .putString("servicio_id_$index", muestra.servicio_id)
-                                .putString("subtipo_$index", muestra.subtipo)
-                                .build()
+                        // 🔹 NUEVO: solo un envío bulk
+//                        val gson = Gson()
+                        val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                        val filename = "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json"
+                        val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+                        val filePath = "$documentsDir/$filename"
 
-                            dataList.add(data)
-                        }
+//                        val muestrasJson = gson.toJson(muestraListaNueva)
 
-                        // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
-                        dataList.forEach { data ->
-                            val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
-                                .setInputData(data)
-                                .setConstraints(
-                                    Constraints.Builder()
-                                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                                        .build()
-                                )
-                                .build()
+                        val data = Data.Builder()
+                            .putString("filePath", filePath)
+                            .putString("folioText", binding.tvFolio.text.toString())
+                            .putString("nombreAutoAnalisis", binding.txtNombreAutoAnalisis.text.toString())
+                            .putString("puestoAutoAnalisis", binding.txtPuestoAutoAnalisis.text.toString())
+                            .putString("nombreMuestreador", binding.txtNombreMuestreador.text.toString())
+                            .putString("puestoMuestreador", binding.txtPuestoMuestreador.text.toString())
+                            .build()
 
-                            Log.i("Si hay internet", "Entre al worker")
-                            WorkManager.getInstance(this).enqueue(workRequest)
-                        }
+                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                            .setInputData(data)
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+
+                        WorkManager.getInstance(this).enqueue(workRequest)
+                        Log.i("MainActivity2", "📦 Enviando ${muestraListaNueva.size} muestras en una sola solicitud bulk")
                         enqueueSendEmailTask(this,
-                            "operacioneslab.lesa@gmail.com",
+                            "operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf",
                             false
                         )
@@ -373,7 +369,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
                             val nombreArchivoPdfExtra = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
 
-                            enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com",
+                            enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com",
                                 "$pdfPath/$nombreArchivoPdfExtra",
                                 true)
 
@@ -395,45 +391,36 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         Log.i("Internet", "No hay internet")
                         val tamaño = muestraListaNueva.size
 
-                        // Crear una lista de Data para cada muestra en muestraMutableList
-                        val dataList = mutableListOf<Data>()
-                        muestraListaNueva.forEachIndexed { index, muestra ->
-                            val data = Data.Builder()
-                                .putInt("muestra_count",tamaño)
-                                .putString("registro_muestra_$index", muestra.registro_muestra)
-                                .putString("folio_muestreo_$index", muestra.folio_muestreo )
-                                .putString("fecha_muestreo_$index", muestra.fecha_muestreo)
-                                .putString("nombre_muestra_$index", muestra.nombre_muestra)
-                                .putString("id_lab_$index", muestra.id_lab)
-                                .putString("cantidad_aprox_$index", muestra.cantidad_aprox)
-                                .putString("temperatura_$index", muestra.temperatura)
-                                .putString("lugar_toma_$index", muestra.lugar_toma)
-                                .putString("descripcion_toma_$index", muestra.descripcion_toma)
-                                .putString("e_micro_$index", muestra.e_micro)
-                                .putString("e_fisico_$index", muestra.e_fisico)
-                                .putString("observaciones_$index", muestra.observaciones)
-                                .putString("folio_pdm_$index", muestra.folio_pdm)
-                                .putString("servicio_id_$index", muestra.servicio_id)
-                                .putString("subtipo_$index", muestra.subtipo)
-                                .build()
+                        // 🔹 NUEVO: solo un envío bulk
+//                        val gson = Gson()
+//                        val muestrasJson = gson.toJson(muestraListaNueva)
+                        val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
+                        val filename = "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json"
+                        val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+                        val filePath = "$documentsDir/$filename"
 
-                            dataList.add(data)
-                        }
+//                        val muestrasJson = gson.toJson(muestraListaNueva)
 
-                        // Crear y enviar las tareas programadas para cada muestra en muestraMutableList
-                        dataList.forEach { data ->
-                            val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
-                                .setInputData(data)
-                                .setConstraints(
-                                    Constraints.Builder()
-                                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                                        .build()
-                                )
-                                .build()
+                        val data = Data.Builder()
+                            .putString("filePath", filePath)
+                            .putString("folioText", binding.tvFolio.text.toString())
+                            .putString("nombreAutoAnalisis", binding.txtNombreAutoAnalisis.text.toString())
+                            .putString("puestoAutoAnalisis", binding.txtPuestoAutoAnalisis.text.toString())
+                            .putString("nombreMuestreador", binding.txtNombreMuestreador.text.toString())
+                            .putString("puestoMuestreador", binding.txtPuestoMuestreador.text.toString())
+                            .build()
 
-                            Log.i("Datos", "Entre al worker")
-                            WorkManager.getInstance(this).enqueue(workRequest)
-                        }
+                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                            .setInputData(data)
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+
+                        WorkManager.getInstance(this).enqueue(workRequest)
+                        Log.i("MainActivity2", "📦 Enviando ${muestraListaNueva.size} muestras en una sola solicitud bulk")
 
 
 
@@ -442,7 +429,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                         val file = File(pdfPath, nombreArchivoPdf)
                         /*enqueueSendEmailTask(this, "atencionaclienteslab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf")*/
-                        enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com",
+                        enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com",
                             "$pdfPath/$nombreArchivoPdf",false)
 
                         val nombreAutoAnalisis = binding.txtNombreAutoAnalisis.text.toString()
@@ -527,7 +514,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
 
                             val nombreArchivoPdfExtra = "Muestras-Folio-${binding.tvFolio.text}E.pdf"
 
-                            enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com",
+                            enqueueSendEmailTask(this, "operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com",
                                 "$pdfPath/$nombreArchivoPdfExtra",true)
 
 
@@ -628,7 +615,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                             ApiService.RestarServicioRequest(cantidad = 1) // O la cantidad que desees restar
 
                         // Actualizar la cantidad del servicio
-                        val callUpdateServicio = RetrofitClient.instance.restarServicio(muestra.servicio_id, restarServicioRequest)
+                        val callUpdateServicio = RetrofitClient.instance.restarServicio(muestra.servicio_id!!, restarServicioRequest)
                         callUpdateServicio.enqueue(object : Callback<Void> {
                             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                                 if (response.isSuccessful) {
@@ -720,9 +707,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 )
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                savePdf("operacioneslab.lesa@gmail.com")
+                savePdf("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("operacioneslab.lesa@gmail.com")
+                    savePdfExtra("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com")
                 }
             }
         } else {
@@ -746,9 +733,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                     ArrayList(muestrasExtra))
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                                savePdf("operacioneslab.lesa@gmail.com")
+                                savePdf("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("operacioneslab.lesa@gmail.com")
+                    savePdfExtra("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com")
                 }
             }
         }
@@ -774,9 +761,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
                 )
                 val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
                 saveDataToJson(this, muestraData, "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json")
-                savePdf("operacioneslab.lesa@gmail.com")
+                savePdf("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com")
                 if (muestrasExtra.isNotEmpty()) {
-                    savePdfExtra("operacioneslab.lesa@gmail.com")
+                    savePdfExtra("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com")
                 }
 
             } else {
@@ -792,9 +779,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
         if (requestCode == storagePermissionRequestCode) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    savePdf("operacioneslab.lesa@gmail.com")
+                    savePdf("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com")
                     if (muestrasExtra.isNotEmpty()) {
-                        savePdfExtra("operacioneslab.lesa@gmail.com")
+                        savePdfExtra("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com")
                     }
                     val muestraData = MuestraData(binding.tvFolio.text.toString(),
                         pdmSeleccionado,
@@ -1242,7 +1229,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             tableFooter.addCell(Cell().add(Paragraph("998 310 8622").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell(2,2).add(Paragraph("DOCUMENTO CONTROLADO\n Documento propiedad de Centro Integral en Servicios de Laboratorio de Agua y Alimentos S.A de C.V.\n No puede reproducirse en forma parcial o total, si nla previa autorizacion del Laboratorio").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("F-ING-LAB-02/ VERSION 0").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
-            tableFooter.addCell(Cell().add(Paragraph("operacioneslab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("998 310 8623").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("A.FRANCISCO I. MADERO MZ 107 LT 12 Int: LOCAL 4 REGION 94. CP 7717. Benito Juarez, Q.roo").setFontColor(whiteColor).setFontSize(5f).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
 
@@ -1605,7 +1592,7 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
             tableFooter.addCell(Cell().add(Paragraph("998 310 8622").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell(2,2).add(Paragraph("DOCUMENTO CONTROLADO\n Documento propiedad de Centro Integral en Servicios de Laboratorio de Agua y Alimentos S.A de C.V.\n No puede reproducirse en forma parcial o total, si nla previa autorizacion del Laboratorio").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.CENTER)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("F-ING-LAB-02/ VERSION 0").setFontColor(whiteColor).setFontSize(fontSizeFooter).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
-            tableFooter.addCell(Cell().add(Paragraph("operacioneslab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
+            tableFooter.addCell(Cell().add(Paragraph("operacioneslab.lesa@gmail.com,recepcionlab.lesa@gmail.com,cuentasporcobrarlab.lesa@gmail.com").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("998 310 8623").setFontColor(whiteColor).setFontSize(fontSizeFooter)).setBorder(Border.NO_BORDER))
             tableFooter.addCell(Cell().add(Paragraph("A.FRANCISCO I. MADERO MZ 107 LT 12 Int: LOCAL 4 REGION 94. CP 7717. Benito Juarez, Q.roo").setFontColor(whiteColor).setFontSize(5f).setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER))
 
