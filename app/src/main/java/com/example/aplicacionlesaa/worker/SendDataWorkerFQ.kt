@@ -45,7 +45,8 @@ class SendDataWorkerFQ(appContext: Context, workerParams: WorkerParameters) : Wo
                         clr = BigDecimal(inputData.getString("clr_$i") ?: "0" ),
                         crnas = BigDecimal(inputData.getString("crnas_$i") ?: "0" ),
                         cya = BigDecimal(inputData.getString("cya_$i") ?: "0" ),
-                        tur = BigDecimal(inputData.getString("tur_$i") ?: "0" )
+                        tur = BigDecimal(inputData.getString("tur_$i") ?: "0" ),
+                        observaciones = inputData.getString("observaciones_$i") ?: ""
                     )
                     fisicoQuimicosMutableList.add(analisisfisico)
                     contador++

@@ -42,6 +42,15 @@
         android:text="Nombre_Empresa"
         android:textColor="#09023E"
         />
+
+    <TextView
+        android:id="@+id/observacionesPDMlista"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Obs"
+        android:textColor="#000000"
+        />
+
     <View
         android:id="@+id/viewUnamed"
         android:layout_width="match_parent"

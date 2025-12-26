@@ -133,7 +133,7 @@ class SelePdmActivity : AppCompatActivity() {
             }
         })
 
-        
+
 
         //ObtenerPlanes
 
@@ -202,6 +202,7 @@ class SelePdmActivity : AppCompatActivity() {
             try {
 
                 var clientId = spinnerSele.selectedItem.toString()
+
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val response =
@@ -318,6 +319,14 @@ class SelePdmActivity : AppCompatActivity() {
                 Toast.makeText(this@SelePdmActivity, "Error al buscar, probablemente no hayas seleccionado ningun pdm", Toast.LENGTH_SHORT).show()
             }
 
+            //Poner en tvobservaciones las observaciones del pdm seleccionado
+            val pdmSeleccionadoNombre = spinnerSele.selectedItem.toString()
+
+            val pdmSeleccionado = planesDetalladosList.find {
+                it.nombre_pdm == pdmSeleccionadoNombre
+            }
+
+            binding.tvObservacionesPDM.text = pdmSeleccionado?.observaciones ?: ""
 
         }
 
@@ -339,6 +348,7 @@ class SelePdmActivity : AppCompatActivity() {
                 txtAtencion.text = ""
                 txtDireccion.text = ""
                 txtNombre.text = ""
+                binding.tvObservacionesPDM.text = ""
 
                 servicioMutableList.clear()
                 adapter.notifyDataSetChanged()
@@ -515,6 +525,7 @@ class SelePdmActivity : AppCompatActivity() {
         try {
 
             var clientId = pdm.nombre_pdm
+            binding.tvObservacionesPDM.text = pdm.observaciones
 
             CoroutineScope(Dispatchers.IO).launch {
                 val response =

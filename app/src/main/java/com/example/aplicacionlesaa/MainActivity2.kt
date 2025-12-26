@@ -3,6 +3,7 @@ package com.example.aplicacionlesaa
 import RetrofitClient
 import SendEmailWorker
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -1699,6 +1701,9 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
          del día <strong> ${LocalDate.now()} </strong> con No. de folio <strong> ${binding.tvFolio.text}E </strong> el cual está en proceso y garantizamos la terminación de este en tiempo y forma.</p>
         <p>Sin más por el momento, quedamos a sus órdenes.</p>
         <p>¡Tenga un excelente día!</p>
+        
+        
+        <p style="font-size:0.3rem">Tablet: ${Build.MODEL.uppercase()} </p>
         """.trimIndent()
         } else {
             """
@@ -1710,6 +1715,8 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
          del día <strong> ${LocalDate.now()} </strong> con No. de folio <strong> ${binding.tvFolio.text} </strong> el cual está en proceso y garantizamos la terminación de este en tiempo y forma.</p>
         <p>Sin más por el momento, quedamos a sus órdenes.</p>
         <p>¡Tenga un excelente día!</p>
+         <p style="font-size:0.3rem">Tablet: ${Build.MODEL.uppercase()} </p>
+
         """.trimIndent()
         }
 
@@ -1792,12 +1799,47 @@ class MainActivity2 : AppCompatActivity(),SignatureDialogFragment.SignatureDialo
     override fun onSignatureSaved(bitmap: Bitmap) {
         var signatureView = binding.signatureViewUno
         signatureView.setSignatureBitmap(bitmap)
-    }
+        guardarFirmaEnGaleria(bitmap, "firma_autoriza_${binding.tvFolio.text}")
+
+}
 
     override fun onSignatureSavedDos(bitmap: Bitmap) {
         var signatureViewDos = binding.signatureViewDos
         signatureViewDos.setSignatureBitmap(bitmap)
+        guardarFirmaEnGaleria(bitmap, "firma_tomador_${binding.tvFolio.text}")
+
     }
+
+    private fun guardarFirmaEnGaleria(bitmap: Bitmap, nombreArchivo: String) {
+        val resolver = contentResolver
+        val imageCollection =
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "$nombreArchivo.png")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Firmas") // 📂 Carpeta
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val imageUri = resolver.insert(imageCollection, contentValues)
+
+        imageUri?.let { uri ->
+            resolver.openOutputStream(uri).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream!!)
+            }
+
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+
+            Toast.makeText(this, "Firma guardada en Galería/Firmas", Toast.LENGTH_SHORT).show()
+            Log.i("FIRMA_GALERIA", "Guardada en: $uri")
+        } ?: run {
+            Toast.makeText(this, "Error al guardar la firma", Toast.LENGTH_LONG).show()
+        }
+    }
+
 
     fun saveDataToJson(context: Context, muestraData: MuestraData, filename: String) {
         val gson = Gson()

@@ -557,7 +557,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginTop="32dp"
-        android:text="Observaciones"
+        android:text="Observaciones Muestra"
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvregistromuestra" />
@@ -641,7 +641,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="376dp"
-        android:layout_marginEnd="976dp"
+        android:layout_marginEnd="916dp"
         android:text="Cantidad Restante:"
         android:textColor="#0F1C4C"
         android:textSize="20sp"
@@ -729,6 +729,26 @@
         app:layout_constraintEnd_toStartOf="@+id/btnStart"
         app:layout_constraintHorizontal_bias="0.13"
         app:layout_constraintStart_toEndOf="@+id/tvSubtipo" />
+
+    <TextView
+        android:id="@+id/textView40"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="12dp"
+        android:text="Observaciones pdm:"
+        app:layout_constraintBottom_toTopOf="@+id/textView10"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvObserPDM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="153dp"
+        android:layout_marginBottom="10dp"
+        tools:text="Obsv"
+        app:layout_constraintBottom_toTopOf="@+id/textView12"
+        app:layout_constraintStart_toStartOf="@+id/textView40" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

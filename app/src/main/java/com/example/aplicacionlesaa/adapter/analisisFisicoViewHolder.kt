@@ -84,6 +84,8 @@ class analisisFisicoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         binding.tvnombreMuestra.text = analisisF.nombre_muestra
         binding.tvhoraAnalisis.text = analisisF.hora_analisis
         binding.tvtemp.text = analisisF.temperatura
+        binding.tvObservacionesFq.text = analisisF.observaciones
+
 
         // Al actualizar texto debemos deshabilitar temporalmente el listener para evitar loops
         binding.tvPH.setText(analisisF.ph)

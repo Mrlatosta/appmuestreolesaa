@@ -75,7 +75,7 @@ import java.io.File
                             e_micro = m.e_micro,
                             e_fisico = m.e_fisico,
                             observaciones = m.observaciones,
-                            folio_pdm = folio,
+                            folio_pdm = m.folio_pdm,
                             servicio_id = m.servicio_id,
                             estatus = "Pendiente",
                             subtipo = m.subtipo

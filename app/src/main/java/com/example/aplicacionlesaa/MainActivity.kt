@@ -115,6 +115,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 
 
+
         val serviciosRecibidos = intent.getParcelableArrayListExtra<Servicio>("listaServicios")
         if (serviciosRecibidos != null) {
             serviciosList.addAll(serviciosRecibidos)
@@ -166,6 +167,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         })
 
         pdmDetallado = intent.getParcelableExtra("pdmDetallado")!!
+
+        binding.tvObserPDM.text = pdmDetallado.observaciones
+
 
         Log.e("Thayli", "El pdmDetallado es: $pdmDetallado")
         //Inicio Api

@@ -16,6 +16,7 @@ class PdmAdapter(private val pdmList: List<Pdm>,private val onClickListener: (Pd
         val fechaHoraCita: TextView = itemView.findViewById(R.id.fecha_hora_cita)
         val ingenieroCampo: TextView = itemView.findViewById(R.id.ingeniero_campo)
         val nombre_empresa: TextView = itemView.findViewById(R.id.nombre_empresa)
+        val observacionesPDMlista: TextView = itemView.findViewById(R.id.observacionesPDMlista)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PdmViewHolder {
@@ -38,6 +39,8 @@ class PdmAdapter(private val pdmList: List<Pdm>,private val onClickListener: (Pd
         holder.fechaHoraCita.text = "$fecha $hora"
         holder.ingenieroCampo.text = currentItem.ingeniero_campo
         holder.nombre_empresa.text = currentItem.nombre_empresa
+        holder.observacionesPDMlista.text = currentItem.observaciones
+
 
         holder.itemView.setOnClickListener {
             onClickListener(currentItem)

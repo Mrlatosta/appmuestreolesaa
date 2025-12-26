@@ -2,6 +2,7 @@ package com.example.aplicacionlesaa
 
 import android.Manifest
 import android.bluetooth.BluetoothClass.Device
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
 import android.provider.Settings
 import android.text.Editable
 import android.util.Log
@@ -308,9 +310,9 @@ class fisicoquimicosActivity : AppCompatActivity(),SignatureDialogFragment.Signa
             mediumTable.addCell(Cell().add(Paragraph("Documento nuevo").setBold()).setPaddings(0f,0f,0f,0f))
 
             mediumTable.addCell(Cell().add(Paragraph("Vigente a partir de:")).setPaddings(0f,0f,0f,0f))
-            mediumTable.addCell(Cell().add(Paragraph("Agosto 2024").setBold()).setPaddings(0f,0f,0f,0f))
-            mediumTable.addCell(Cell().add(Paragraph("Próxima revisión:")).setPaddings(0f,0f,0f,0f))
             mediumTable.addCell(Cell().add(Paragraph("Agosto 2025").setBold()).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("Próxima revisión:")).setPaddings(0f,0f,0f,0f))
+            mediumTable.addCell(Cell().add(Paragraph("Agosto 2026").setBold()).setPaddings(0f,0f,0f,0f))
             mediumTable.addCell(Cell().add(Paragraph("Tipo de documento:")).setPaddings(0f,0f,0f,0f))
             mediumTable.addCell(Cell(1,3).add(Paragraph("Formato").setBold()).setPaddings(0f,0f,0f,0f))
 
@@ -451,6 +453,7 @@ class fisicoquimicosActivity : AppCompatActivity(),SignatureDialogFragment.Signa
                             crnas= null,
                             cya=  null,
                             tur= null,
+                            observaciones= muestra.observaciones
 
                             )
                         analisisFisicoList.add(analisisFisico)
@@ -534,9 +537,41 @@ class fisicoquimicosActivity : AppCompatActivity(),SignatureDialogFragment.Signa
         }
     }
 
+    private fun guardarFirmaEnGaleria(bitmap: Bitmap, nombreArchivo: String) {
+        val resolver = contentResolver
+        val imageCollection =
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "$nombreArchivo.png")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Firmas") // 📂 Carpeta
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val imageUri = resolver.insert(imageCollection, contentValues)
+
+        imageUri?.let { uri ->
+            resolver.openOutputStream(uri).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream!!)
+            }
+
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+
+            Toast.makeText(this, "Firma guardada en Galería/Firmas", Toast.LENGTH_SHORT).show()
+            Log.i("FIRMA_GALERIA", "Guardada en: $uri")
+        } ?: run {
+            Toast.makeText(this, "Error al guardar la firma", Toast.LENGTH_LONG).show()
+        }
+    }
+
     override fun onSignatureSaved(bitmap: Bitmap) {
         var signatureView = binding.signatureViewDos3
         signatureView.setSignatureBitmap(bitmap)
+        guardarFirmaEnGaleria(bitmap, "firma_autoriza_FISICOQUIMICOS_${folioSolicitud}")
+
     }
 
 
