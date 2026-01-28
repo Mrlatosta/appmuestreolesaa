@@ -29,21 +29,23 @@
             android:id="@+id/folioContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="@+id/imageView"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView">
+            app:layout_constraintTop_toTopOf="@+id/imageView">
+
+            <!-- El folio se carga aquí dinámicamente -->
 
         </LinearLayout>
 
-        <!-- Card: Selección PDM -->
+        <!-- Card: Lista de Planes de Muestreo -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardSeleccionPdm"
+            android:id="@+id/cardPlanesMuestreo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
             app:cardUseCompatPadding="true"
@@ -58,404 +60,117 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/textView31"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Selecciona un PDM:"
+                    android:text="Lista de planes de muestreo"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <LinearLayout
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="12dp">
 
-                    <Spinner
-                        android:id="@+id/spinnerSelePdm"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1" />
-
-                    <Button
-                        android:id="@+id/btnBuscar"
+                    <TableLayout
+                        android:id="@+id/tablePlanesMuestreo"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:backgroundTint="#536DFE"
-                        android:text="Buscar"
-                        android:textColor="#FFFFFF" />
+                        android:layout_height="wrap_content">
 
-                    <Button
-                        android:id="@+id/btnInfo"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="8dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:text="ℹ️"
-                        android:textSize="24sp" />
-                </LinearLayout>
+                        <!-- Header de la tabla -->
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#F5F5F5"
+                            android:padding="8dp">
+
+                            <TextView
+                                android:layout_width="150dp"
+                                android:padding="8dp"
+                                android:text="Plan de Muestreo"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="200dp"
+                                android:padding="8dp"
+                                android:text="Nombre del cliente"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="101dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Fase"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+
+                            <TextView
+                                android:layout_width="150dp"
+                                android:padding="8dp"
+                                android:text="Atención a"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="150dp"
+                                android:padding="8dp"
+                                android:text="Fecha y hora"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="150dp"
+                                android:padding="8dp"
+                                android:text="Nombre del muestreador"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="250dp"
+                                android:padding="8dp"
+                                android:text="Observaciones"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="50dp"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="Info"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </TableRow>
+
+                        <!-- Las filas de datos se agregarán aquí programáticamente -->
+
+                    </TableLayout>
+                </HorizontalScrollView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card: Datos del Cliente -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardDatosCliente"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardSeleccionPdm">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/textView32"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Datos Cliente"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="#E0E0E0" />
-
-                <!-- Grid de datos del cliente -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
-
-                    <!-- Columna 1 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:paddingEnd="8dp">
-
-                        <TextView
-                            android:id="@+id/textView33"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Nombre"
-                            android:textColor="#757575"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/txtNombre"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="16dp"
-                            android:text="-"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/textView35"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Atención A:"
-                            android:textColor="#757575"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/txtAtencion"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="16dp"
-                            android:text="-"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/textView37"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Teléfono"
-                            android:textColor="#757575"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/txtTelefono"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="-"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <!-- Columna 2 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:paddingStart="8dp">
-
-                        <TextView
-                            android:id="@+id/textView34"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Dirección"
-                            android:textColor="#757575"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/txtDireccion"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="16dp"
-                            android:text="-"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/textView36"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Puesto"
-                            android:textColor="#757575"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/txtPuesto"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="16dp"
-                            android:text="-"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/textView38"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Correo"
-                            android:textColor="#757575"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/txtCorreo"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="-"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Observaciones del PDM -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="#E0E0E0" />
-
-                <TextView
-                    android:id="@+id/obs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Observaciones"
-                    android:textColor="#757575"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tvObservacionesPDM"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:minHeight="40dp"
-                    android:text="Sin observaciones"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="italic" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Card: Servicios a Realizar -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardServicios"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardDatosCliente">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/textView39"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Servicios a Realizar"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="#E0E0E0" />
-
-                <!-- Headers de la tabla -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="8dp"
-                    android:background="#F5F5F5">
-
-                    <TextView
-                        android:id="@+id/tvIdServicio"
-                        android:layout_width="40dp"
-                        android:layout_height="wrap_content"
-                        android:text="ID"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:id="@+id/tvCantidad"
-                        android:layout_width="70dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="Cant."
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:id="@+id/tvEstudiosMicro"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="Est. Micro."
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvEstudiosFisico"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="Est. Físico."
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvCantidadToma"
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="Cant. Toma"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:id="@+id/tvdescripcion"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_weight="1"
-                        android:text="Descripción"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <!-- RecyclerView para servicios -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerServicios"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/black" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Botón Crear -->
         <Button
-            android:id="@+id/btnSiguiente"
+            android:id="@+id/btnCrearOrden"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="#00E676"
+            android:backgroundTint="#4CAF50"
             android:text="Crear Orden"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardServicios"
-            app:layout_constraintWidth_percent="0.5" />
-
-        <TextView
-            android:id="@+id/textView22"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="808dp"
-            android:layout_marginBottom="32dp"
-            android:text="Folio No:"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/cardSeleccionPdm"
-            app:layout_constraintStart_toEndOf="@+id/imageView" />
-
-        <TextView
-            android:id="@+id/tvFolioSiguiente"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="41dp"
-            android:layout_marginBottom="30dp"
-            android:text="0000"
-            android:textColor="#FD0000"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/cardSeleccionPdm"
-            app:layout_constraintStart_toEndOf="@+id/textView22" />
+            app:layout_constraintTop_toBottomOf="@+id/cardPlanesMuestreo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

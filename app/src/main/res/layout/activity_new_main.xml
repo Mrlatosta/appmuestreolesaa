@@ -5,70 +5,181 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F4F7FC"
     tools:context=".NewMainActivity">
 
-
+    <!-- Barra superior decorativa -->
     <View
-        android:id="@+id/rectangle_"
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
-        android:layout_height="106dp"
+        android:layout_height="80dp"
         android:background="#1E133D"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Logo de la empresa -->
+    <ImageView
+        android:id="@+id/logo_image"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/logorectangulartrans"
+        android:adjustViewBounds="true"
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Se eliminó la línea app:tint="@color/black" -->
+
+    <!-- Título de bienvenida -->
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/welcome_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="256dp"
-        android:text="Bienvenido a la App de Muestreo"
-        android:textSize="50sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:text="BIENVENIDO al Sistema de Muestreo"
+        android:textColor="#1E133D"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/logo_image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/btnCrearFolio"
-        android:layout_width="200dp"
+    <!-- Tarjeta con las opciones principales -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/actions_card"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="568dp"
-        android:layout_marginTop="80dp"
-        android:backgroundTint="#69F0AE"
-        android:text="Crear Folio"
+        android:layout_marginStart="400dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="400dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toBottomOf="@id/welcome_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/btnReenvio"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="568dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#00AEED"
-        android:text="Reenviar Folio"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnContiFolio" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-    <Button
-        android:id="@+id/btnContiFolio"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="568dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#64FFDA"
-        android:text="Continuar Folio"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCrearFolio" />
+            <!-- Opción: Crear Folio -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCrearFolio"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:backgroundTint="#0D47A1"
+                android:text="Crear folio"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="8dp"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconGravity="textStart"
+                app:iconTint="@color/white" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="236dp"
-        android:layout_height="114dp"
-        android:layout_marginTop="132dp"
-        android:layout_marginEnd="56dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logorectangulartrans" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="Inicia un nuevo registro de muestra"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
 
+            <!-- Espaciador -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <!-- Opción: Continuar Folio -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContiFolio"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Continuar folio"
+                android:textAllCaps="false"
+                android:textColor="#0D47A1"
+                android:textSize="16sp"
+                app:cornerRadius="8dp"
+                app:icon="@android:drawable/ic_menu_recent_history"
+                app:iconGravity="textStart"
+                app:iconTint="#0D47A1"
+                app:strokeColor="#0D47A1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="Recupera un trabajo pendiente"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+
+            <!-- Espaciador -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <!-- Opción: Reenviar Folio -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReenvio"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Reenviar folio"
+                android:textAllCaps="false"
+                android:textColor="#0D47A1"
+                android:textSize="16sp"
+                app:cornerRadius="8dp"
+                app:icon="@android:drawable/ic_menu_send"
+                app:iconGravity="textStart"
+                app:iconTint="#0D47A1"
+                app:strokeColor="#0D47A1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="Envía registros completos"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+
+            <!-- Espaciador -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <!-- Opción: Reenviar Folio -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFirmaPlan"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Firma final de folios"
+                android:textAllCaps="false"
+                android:textColor="#0D47A1"
+                android:textSize="16sp"
+                app:cornerRadius="8dp"
+                app:icon="@android:drawable/ic_menu_send"
+                app:iconGravity="textStart"
+                app:iconTint="#0D47A1"
+                app:strokeColor="#0D47A1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="Firmar folios"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

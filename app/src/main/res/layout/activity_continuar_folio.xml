@@ -1,264 +1,147 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ResendMuActivity">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tvCliente"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:text="-"
-        android:textSize="25sp"
-
-        app:layout_constraintStart_toEndOf="@+id/textView28"
-        app:layout_constraintTop_toBottomOf="@+id/tvFolio" />
-
-    <TextView
-        android:id="@+id/tvPdm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="12dp"
-        android:text="-"
-        android:textSize="25sp"
-        app:layout_constraintStart_toEndOf="@+id/textView29"
-        app:layout_constraintTop_toBottomOf="@+id/tvCliente" />
-
-    <TextView
-        android:id="@+id/textView29"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="12dp"
-        android:text="Pdm:"
-        android:textSize="25sp"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView28" />
-
-    <TextView
-        android:id="@+id/textView28"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:text="Cliente:"
-        android:textSize="25sp"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView27" />
-
-    <TextView
-        android:id="@+id/tvFolio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="36dp"
-        android:text="-"
-        android:textSize="25sp"
-
-        app:layout_constraintStart_toEndOf="@+id/textView27"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <TextView
-        android:id="@+id/textView27"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="36dp"
-        android:text="Folio:"
-        android:textSize="25sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:text="Continuar Folio"
-        android:textSize="50sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/spnSeleFolio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="600dp"
-        android:layout_marginTop="44dp"
-        android:text="Subir Archivo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <TextView
-        android:id="@+id/tvnumMuestra"
-        android:layout_width="30dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="150dp"
-        android:text="#"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio"
-        />
-
-    <TextView
-        android:id="@+id/tvfecham"
-        android:layout_width="1dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="150dp"
-        android:text=""
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvnumMuestra"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvregistroM"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:text="Registro m"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@+id/tvfecham"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvnombre"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="Nombre Muestra"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvregistroM"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvidLab"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="ID Lab"
-        android:textColor="#ffffff"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvnombre"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvcantidadAprox"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="C. Aprox"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvidLab"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvtemperatura"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="Temp"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvcantidadAprox"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvlugar"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="Lugar toma"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvtemperatura"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvdescripcion"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="Descripcion de la toma"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvlugar"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvMicro"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="E.micro"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvdescripcion"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-    <TextView
-        android:id="@+id/tvFisico"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="E.Fisico"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/tvMicro"
-        app:layout_constraintTop_toBottomOf="@+id/spnSeleFolio" />
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerReenviar"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="80dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvtemperatura" />
-
-    <Button
-        android:id="@+id/btnContinuar"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="600dp"
-        android:layout_marginTop="28dp"
-        android:text="Continuar Folio"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerReenviar" />
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvMuestaEta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="188dp"
-        android:text="Muestras Extra:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.593"
-        app:layout_constraintStart_toEndOf="@+id/spnSeleFolio"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Header -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="180dp"
+            android:layout_height="80dp"
+            android:src="@drawable/logorectangulartrans"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvFolioSeleccionado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Folio: -"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/imageView"/>
+
+        <!-- Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardFolios"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/imageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:text="Folios en proceso"
+                    android:layout_height="20dp"
+                    android:textSize="18sp"
+                    android:layout_width="match_parent"
+                    android:textStyle="bold"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <TableLayout
+                        android:id="@+id/tableFolios"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <!-- HEADER -->
+                        <TableRow android:background="#F5F5F5">
+
+                            <TextView android:layout_width="120dp"
+                                android:text="Folio"
+                                android:padding="8dp"
+                                android:textStyle="bold"/>
+
+                            <TextView android:layout_width="200dp"
+                                android:text="Cliente"
+                                android:padding="8dp"
+                                android:textStyle="bold"/>
+
+                            <TextView android:layout_width="200dp"
+                                android:text="PDM"
+                                android:padding="8dp"
+                                android:textStyle="bold"/>
+
+                            <TextView android:layout_width="60dp"
+                                android:text="Info"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:textStyle="bold"/>
+                        </TableRow>
+
+                        <!-- filas dinámicas -->
+
+                    </TableLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardMuestras"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/cardFolios"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvTituloMuestras"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Muestras recolectadas"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerMuestras"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <Button
+            android:id="@+id/btnContinuar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Continuar Folio"
+            android:backgroundTint="#4CAF50"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/cardMuestras"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

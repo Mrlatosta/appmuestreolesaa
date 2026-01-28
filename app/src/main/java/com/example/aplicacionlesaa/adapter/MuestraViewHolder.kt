@@ -28,7 +28,6 @@ class MuestraViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         binding.tvfecham.text = muestra.fechaMuestra.toString()
         binding.tvregistroM.text = muestra.registroMuestra
         binding.tvnombre.text = muestra.nombreMuestra
-        binding.tvidLab.text = muestra.idLab
         binding.tvcantidadAprox.text = muestra.cantidadAprox
         binding.tvtemperatura.text = muestra.tempM
         binding.tvlugar.text = muestra.lugarToma

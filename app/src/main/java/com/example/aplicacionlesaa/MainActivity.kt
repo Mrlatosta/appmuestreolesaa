@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     //private lateinit var handler: Handler
     private var modoEdicion = false
 
+
     //Lista a la cual le vamos a quitar o poner muestras
     private val storagePermissionRequestCode = 1001
     private var muestraMutableList: MutableList<Muestra> =
@@ -72,7 +73,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     private var fechaSinBarras: String = ""
     private var muestrasExtras: ArrayList<Muestra> = ArrayList()
     val subtipos = mutableListOf<String>()
-
 
 
 
@@ -168,7 +168,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         pdmDetallado = intent.getParcelableExtra("pdmDetallado")!!
 
-        binding.tvObserPDM.text = pdmDetallado.observaciones
 
 
         Log.e("Thayli", "El pdmDetallado es: $pdmDetallado")
@@ -190,6 +189,10 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             servicio.estudios_fisicoquimicos.trim()
         }
 
+
+
+        binding.tvObserPDM.text = pdmDetallado.observaciones
+
         binding.btnInfo.setOnClickListener {
             showServicioDialog()
         }
@@ -203,6 +206,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         spinner.adapter = adapter
 
         //Create an empty array of strings
+
 
 
         adapterSubtipo = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, subtipos)
@@ -250,6 +254,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     } catch (e: Exception) {
                         Log.e("Error", "Error al limpiar txtEfisico")
                     }
+
+
 
                     try {
                         txtCantidadAprox.text.clear()
@@ -1438,6 +1444,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             servicioId = idServicioEntero,
                             subtipo = subtipo.selectedItem.toString()
                         )
+
+
                     muestraMutableList.add(muestraobjeto)
                     contador = muestraMutableList.size
                     tvNum.text = (contador + 1).toString()
@@ -1445,6 +1453,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     adapter.notifyItemInserted(muestraMutableList.size - 1)
                     Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
                     sepudo = true
+
                     if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
                         servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
                         servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {

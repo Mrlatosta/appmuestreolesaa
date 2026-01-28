@@ -1,5 +1,6 @@
 package com.example.aplicacionlesaa.model
 
+import android.graphics.Bitmap
 import android.os.Parcel
 import android.os.Parcelable
 import com.example.aplicacionlesaa.Muestra
@@ -96,6 +97,17 @@ data class Descripcion(
         }
     }
 }
+
+data class DatosFirmaPlan(
+    val nombreAutoAnalisis: String,
+    val puestoAutoAnalisis: String,
+    val nombreMuestreador: String,
+    val puestoMuestreador: String,
+    val correo: String,
+    val firmaAutoriza: Bitmap,
+    val firmaMuestreador: Bitmap
+)
+
 
 data class Pdm(
     val nombre_pdm: String,

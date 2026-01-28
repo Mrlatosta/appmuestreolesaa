@@ -65,6 +65,12 @@ class NewMainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val btnFirmar = binding.btnFirmaPlan
+        btnFirmar.setOnClickListener {
+            val intent = Intent(this, FirmaFinalActivity::class.java)
+            startActivity(intent)
+        }
+
         val btnCrear = binding.btnCrearFolio
         btnCrear.setOnClickListener {
             val intent = Intent(this, SelePdmActivity::class.java)

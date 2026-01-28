@@ -13,6 +13,7 @@ class ServicioAdapterInfo(private val servicioList: List<Servicio>,private val o
     class ServicioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvIdServicio: TextView = itemView.findViewById(R.id.id)
         val tvCantidad: TextView = itemView.findViewById(R.id.cantidad)
+
         val tvEstudiosMicro: TextView = itemView.findViewById(R.id.estudios_microbiologicos)
         val tvEstudiosFisico: TextView = itemView.findViewById(R.id.estudios_fisicoquimicos)
         val tvDescripcion: TextView = itemView.findViewById(R.id.descripcion)
