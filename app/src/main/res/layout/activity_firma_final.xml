@@ -59,7 +59,7 @@
 
         <Button
             android:id="@+id/btnFirmarPlan"
-            android:text="Firmar plan completo"
+            android:text="Firmar Folios Seleccionados"
             android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

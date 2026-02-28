@@ -2,26 +2,53 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:layout_margin="8dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginEnd="40dp">
+
+        <TextView
+            android:id="@+id/tvNombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:text="Muestra"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginEnd="40dp">
+
+        <TextView
+            android:id="@+id/tvLugar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Lugar"/>
+
+        <TextView
+            android:id="@+id/tvFecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:layout_marginTop="4dp"
+            android:textColor="#666666"/>
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/tvNombre"
-        android:layout_width="match_parent"
+        android:id="@+id/tvObservaciones"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="Muestra"/>
-
-    <TextView
-        android:id="@+id/tvLugar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Lugar"/>
-
-    <TextView
-        android:id="@+id/tvFecha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Observaciones"
         android:textSize="12sp"
-        android:textColor="#666666"/>
+        android:textColor="#333333"/>
 </LinearLayout>

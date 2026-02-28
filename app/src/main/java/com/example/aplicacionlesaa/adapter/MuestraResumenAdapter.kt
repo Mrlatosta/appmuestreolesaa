@@ -16,6 +16,7 @@ class MuestraResumenAdapter(
         val tvNombre: TextView = view.findViewById(R.id.tvNombre)
         val tvLugar: TextView = view.findViewById(R.id.tvLugar)
         val tvFecha: TextView = view.findViewById(R.id.tvFecha)
+        val tvObservaciones: TextView = view.findViewById(R.id.tvObservaciones)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,6 +30,7 @@ class MuestraResumenAdapter(
         holder.tvNombre.text = muestra.nombreMuestra
         holder.tvLugar.text = muestra.lugarToma ?: "-"
         holder.tvFecha.text = muestra.fechaMuestra ?: "-"
+        holder.tvObservaciones.text = muestra.observaciones ?: "-"
     }
 
     override fun getItemCount(): Int = muestras.size

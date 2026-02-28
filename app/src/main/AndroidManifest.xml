@@ -23,8 +23,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AplicacionLesaa"
         tools:targetApi="31">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <activity
-            android:name=".FirmaFinalActivity"
+            android:name=".MainActivity2"
             android:exported="false" />
         <activity
             android:name=".ContinuarFolioActivity"
@@ -57,7 +67,7 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="false" />
         <activity
-            android:name=".MainActivity2"
+            android:name=".FirmaFinalActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity

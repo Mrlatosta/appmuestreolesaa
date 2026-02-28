@@ -1,4 +1,4 @@
-package com.example.aplicacionlesaa
+﻿package com.example.aplicacionlesaa
 
 
 import DragManageAdapter
@@ -346,14 +346,14 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         )
                     }
 
-                    if (servicioSeleccionado.clasificacion == "ALIMENTOS COCIDOS"){
+                    if (servicioSeleccionado.clasificacion.contains("ALIMENTOS COCIDOS", ignoreCase = true) ){
                         //Eliminar si hay contenido en subtipos
                         subtipos.clear()
                         //Add to subtipos array the string: hola
                         subtipos.add("Cocidos")
                         subtipos.add("Salsas y purés cocidos")
                         subtipos.add("Ensaladas cocidas")
-                    }else if (servicioSeleccionado.clasificacion == "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )"){
+                    }else if (servicioSeleccionado.clasificacion.contains("ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )",ignoreCase = true)){
                         subtipos.clear()
                         subtipos.add("Crudos listos para consumo")
                         subtipos.add("Pulpas")
@@ -363,7 +363,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         subtipos.add("Carnicos crudos listos para consumo")
                         subtipos.add("Productos de la pesca crudos")
                         subtipos.add("Ahumados")
-                    }else if (servicioSeleccionado.clasificacion == "POSTRES"){
+                    }else if (servicioSeleccionado.clasificacion.contains("POSTRES",ignoreCase = true)){
                         subtipos.clear()
                         subtipos.add("Postres lácteos")
                         subtipos.add("Postres a base de harina")
@@ -598,15 +598,15 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 Log.e("Servicio","El servicio seleccionado es: ${servicioSeleccionado}")
                 Log.e("Servicio estudio","El servicio seleccionado es: ${servicioSeleccionado!!.estudio_clave_interna}")
                 //Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
-                if (servicioSeleccionado!!.clasificacion.contains("AGUA DE USO RECREACTIVO")
-                    && servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-020")) {
+                if (servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-020", ignoreCase = true)) {
                     sepudo = createMuestrasMicrobiologicas()
-                }else if(servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-063")){
+                }else if(servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-063", ignoreCase = true)){
                     sepudo = createMuestrasFisicoquimicas()
                 }
                 else{
                     sepudo = createMuestra()
                 }
+
 
 
                 if (sepudo == true) {
@@ -1045,9 +1045,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 adapter.notifyItemInserted(muestraMutableList.size - 1)
                                 Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
 
-                                if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
-                                    servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                                    servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                                if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
+                                    servicioSeleccionado.descripcion.contains("Agua de Alberca", ignoreCase = true) ||
+                                    servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA", ignoreCase = true) ) {
                                     txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                                 }
                                 val tvRegM = binding.tvregistromuestra
@@ -1160,9 +1160,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                                 adapter.notifyItemInserted(muestraMutableList.size - 1)
                                 Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
 
-                                if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
-                                    servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                                    servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                                if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
+                                    servicioSeleccionado.descripcion.contains("Agua de Alberca", ignoreCase = true) ||
+                                    servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA", ignoreCase = true) ) {
 
                                     txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                                 }
@@ -1320,9 +1320,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         adapter.notifyItemInserted(muestraMutableList.size - 1)
                         Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
                         sepudo = true
-                        if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
-                            servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                        if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
+                            servicioSeleccionado.descripcion.contains("Agua de Alberca", ignoreCase = true) ||
+                            servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA", ignoreCase = true) ) {
                             txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                         }
                         val tvRegM = binding.tvregistromuestra
@@ -1454,9 +1454,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     Toast.makeText(this, "Se ha añadido la muestra", Toast.LENGTH_SHORT).show()
                     sepudo = true
 
-                    if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
-                        servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                        servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ) {
+                    if (servicioSeleccionado.descripcion.contains("Agua de alberca" , ignoreCase = true) ||
+                        servicioSeleccionado.descripcion.contains("Agua de Alberca", ignoreCase = true) ||
+                        servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA", ignoreCase = true) ) {
                         txtnombrem.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
                     }
 
@@ -1583,7 +1583,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
     private fun onDeletedItem(position: Int) {
-        if (modoEdicion == true || muestraMutableList[position].observaciones.contains( "Eliminada" )){
+        if (modoEdicion == true || muestraMutableList[position].observaciones.contains( "Eliminada", ignoreCase = true )){
             Toast.makeText(this, "No se puede eliminar una muestra en modo  o eliminada", Toast.LENGTH_SHORT).show()
         }else {
             val builder = AlertDialog.Builder(this)
@@ -1733,7 +1733,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
 
     private fun onEditItem(position: Int) {
-        if (modoEdicion == true || muestraMutableList[position].observaciones.contains( "Eliminada" )){
+        if (modoEdicion == true || muestraMutableList[position].observaciones.contains( "Eliminada", ignoreCase = true )){
             Toast.makeText(this, "No se puede elegir editar otra muestra en modo edicion o eliminada", Toast.LENGTH_SHORT).show()
         }else{
             val builder = AlertDialog.Builder(this)
@@ -1932,19 +1932,19 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 //                Toast.makeText(this, "Estableciendo nombre", Toast.LENGTH_SHORT).show()
 //                Log.e("Error", "Estableciendo nombre")
-                if (servicioSeleccionado.descripcion.contains("Agua de alberca") ||
+                if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
                     servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
                     servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
                     servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI",ignoreCase = true) ||
-                    servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO")) {
+                    servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO", ignoreCase = true)) {
                     txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
-                }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED")){
+                }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED", ignoreCase = true)){
                     txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
-                }else if (servicioSeleccionado.clasificacion.contains("HIELO")){
+                }else if (servicioSeleccionado.clasificacion.contains("HIELO", ignoreCase = true)){
                     txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
-                }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO")){
+                }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO",ignoreCase = true)){
                     txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
-                }else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL")){
+                }else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL", ignoreCase = true)){
                     txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
                 }
             }catch (e:Exception){
@@ -1981,14 +1981,14 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 )
             }
 
-            if (servicioSeleccionado.clasificacion == "ALIMENTOS COCIDOS"){
+            if (servicioSeleccionado.clasificacion.contains("ALIMENTOS COCIDOS",ignoreCase = true)){
                 //Eliminar si hay contenido en subtipos
                 subtipos.clear()
                 //Add to subtipos array the string: hola
                 subtipos.add("Cocidos")
                 subtipos.add("Salsas y purés cocidos")
                 subtipos.add("Ensaladas cocidas")
-            }else if (servicioSeleccionado.clasificacion == "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )"){
+            }else if (servicioSeleccionado.clasificacion.contains( "ALIMENTOS CRUDOS LISTO PARA CONSUMO  (ENSALADAS VERDES, CRUDAS O DE FRUTAS )",ignoreCase = true)){
                 subtipos.clear()
                 subtipos.add("Crudos listos para consumo")
                 subtipos.add("Pulpas")
@@ -1998,7 +1998,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 subtipos.add("Carnicos crudos listos para consumo")
                 subtipos.add("Productos de la pesca crudos")
                 subtipos.add("Ahumados")
-            }else if (servicioSeleccionado.clasificacion == "POSTRES"){
+            }else if (servicioSeleccionado.clasificacion.contains("POSTRES",ignoreCase = true)){
                 subtipos.clear()
                 subtipos.add("Postres lácteos")
                 subtipos.add("Postres a base de harina")

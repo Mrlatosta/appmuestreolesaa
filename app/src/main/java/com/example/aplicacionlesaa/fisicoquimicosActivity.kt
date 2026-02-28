@@ -44,7 +44,7 @@ import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.aplicacionlesaa.MainActivity2.FooterEventHandler
+// import com.example.aplicacionlesaa.MainActivity2.FooterEventHandler
 import com.example.aplicacionlesaa.model.ClientePdm
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.worker.SendDataWorker
@@ -268,8 +268,8 @@ class fisicoquimicosActivity : AppCompatActivity(),SignatureDialogFragment.Signa
             val document = Document(pdfDocument, PageSize.A4.rotate())
 
             // Manejar encabezados y pies de página
-            val footerHandler = FooterEventHandler(document)
-            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, footerHandler)
+            // val footerHandler = FooterEventHandler(document)
+            // pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, footerHandler)
 
             // Cargar el logotipo
             val inputStream = applicationContext.resources.openRawResource(R.raw.logorectangulartranssinabajo)
