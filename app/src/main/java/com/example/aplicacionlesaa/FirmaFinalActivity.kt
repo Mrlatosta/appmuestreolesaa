@@ -254,7 +254,7 @@ class FirmaFinalActivity : AppCompatActivity() {
         val signatureViewAutoriza = SignatureView(this)
         signatureViewAutoriza.layoutParams = android.view.ViewGroup.LayoutParams(
             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-            650
+            400
         )
 
         val layoutAutoriza = android.widget.LinearLayout(this)
@@ -279,7 +279,7 @@ class FirmaFinalActivity : AppCompatActivity() {
             val signatureViewMuestreador = SignatureView(this)
             signatureViewMuestreador.layoutParams = android.view.ViewGroup.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                800
+                400
             )
 
             val layoutMuestreador = android.widget.LinearLayout(this)

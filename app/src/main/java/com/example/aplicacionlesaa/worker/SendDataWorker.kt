@@ -17,6 +17,7 @@ import androidx.work.WorkerParameters
 import com.example.aplicacionlesaa.R
 import com.example.aplicacionlesaa.api.ApiService
 import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
+import com.example.aplicacionlesaa.model.FolioMuestreo
 import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.utils.NetworkUtils
 import com.google.gson.Gson
@@ -26,11 +27,18 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.time.LocalDate
 
 
-    class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
+class SendDataWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
 
         private lateinit var muestraMutableList: MutableList<Muestra_pdm>
+        //Crear un late iniit var string llamado FolioMuestreoAVerificar
+        private lateinit var FolioMuestreoAVerificar: String
+        private lateinit var pdmString: String
+        private lateinit var fechaDelMuestreo: String
+        private lateinit var folioCliente: String
+
 
         override fun doWork(): Result {
             return if (NetworkUtils.isInternetAvailable(applicationContext)) {
@@ -51,7 +59,16 @@ import java.io.File
                     val jsonObject = JSONObject(muestrasJson)
 
                     val folio = jsonObject.optString("folio")
+                    FolioMuestreoAVerificar = jsonObject.optString("folio")
+                    pdmString = jsonObject.optString("planMuestreo")
+
+
                     val muestrasArray = jsonObject.getJSONArray("muestras")
+
+                    //Obtener folio del cliente que esta en un arreglo
+                    val clientePdmA = jsonObject.getJSONObject("clientePdm")
+                    folioCliente = clientePdmA.getString("folio")
+
 
                     val type = object : TypeToken<List<Muestra_pdm>>() {}.type
                     val muestras: List<Muestra_pdm> = Gson().fromJson(muestrasArray.toString(), type)
@@ -60,8 +77,14 @@ import java.io.File
                     muestras.forEach {
                         requireNotNull(it.registro_muestra) { "registro_muestra no puede ser null" }
                     }
-
+                    val fechaHoy = ""
                     val apiMuestras = muestras.map { m ->
+                        //
+                        //Si es la primera muestra extrar su fecha extraer por su index
+                            if (m.registro_muestra == FolioMuestreoAVerificar + "-1") {
+                                fechaDelMuestreo = m.fecha_muestreo
+                                }
+
                         m.copy(
                             registro_muestra = m.registro_muestra,
                             folio_muestreo = folio,
@@ -191,34 +214,85 @@ import java.io.File
 
     }
 
-    private fun sendDatosFaltantesToApi() {
-        val nombreAutoAnalisis = inputData.getString("nombreAutoAnalisis") ?: ""
-        val puestoAutoAnalisis = inputData.getString("puestoAutoAnalisis") ?: ""
-        val nombreMuestreador = inputData.getString("nombreMuestreador") ?: ""
-        val puestoMuestreador = inputData.getString("puestoMuestreador") ?: ""
-        val folioText = inputData.getString("folioText") ?: ""
 
-        val datos = DatosFinalesFolioMuestreo(
-            nombreAutoAnalisis,
-            puestoAutoAnalisis,
-            nombreMuestreador,
-            puestoMuestreador
-        )
-        val callDatosFaltantes = RetrofitClient.instance.completarFolio(folioText, datos)
-        callDatosFaltantes.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(applicationContext, "Folio completado con éxito", Toast.LENGTH_SHORT).show()
+
+
+        private fun sendDatosFaltantesToApi(): Result {
+
+            return try {
+
+                val nombreAutoAnalisis = inputData.getString("nombreAutoAnalisis") ?: ""
+                val puestoAutoAnalisis = inputData.getString("puestoAutoAnalisis") ?: ""
+                val nombreMuestreador = inputData.getString("nombreMuestreador") ?: ""
+                val puestoMuestreador = inputData.getString("puestoMuestreador") ?: ""
+                val folioText = FolioMuestreoAVerificar
+
+                val datos = DatosFinalesFolioMuestreo(
+                    nombreAutoAnalisis,
+                    puestoAutoAnalisis,
+                    nombreMuestreador,
+                    puestoMuestreador
+                )
+
+                // 🔎 1️⃣ Verificar si existe
+                Log.e("FolioText pa worker", folioText)
+                val verificarResponse = RetrofitClient.instance
+                    .verificarFolio(FolioMuestreoAVerificar)
+                    .execute()
+
+                if (verificarResponse.isSuccessful) {
+
+                    // ✅ Existe → completar
+                    val completarResponse = RetrofitClient.instance
+                        .completarFolio(folioText, datos)
+                        .execute()
+
+                    if (completarResponse.isSuccessful) {
+                        Result.success()
+                    } else {
+                        Result.retry()
+                    }
+
+                } else if (verificarResponse.code() == 404) {
+
+                    // ❌ No existe → crear
+                    val nuevoFolio = FolioMuestreo(
+                        folio = folioText,
+                        fecha = fechaDelMuestreo,
+                        folio_cliente = folioCliente,
+                        folio_pdm = pdmString
+                    )
+
+                    val crearResponse = RetrofitClient.instance
+                        .createFolioMuestreo(nuevoFolio)
+                        .execute()
+
+                    if (crearResponse.isSuccessful) {
+
+                        // 🔥 Luego completar
+                        val completarResponse = RetrofitClient.instance
+                            .completarFolio(folioText, datos)
+                            .execute()
+
+                        if (completarResponse.isSuccessful) {
+                            Result.success()
+                        } else {
+                            Result.retry()
+                        }
+
+                    } else {
+                        Result.retry()
+                    }
+
                 } else {
-                    Toast.makeText(applicationContext, "Error al completar folio", Toast.LENGTH_SHORT).show()
+                    Result.failure()
                 }
-            }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Log.e("SendDataWorker", "Error enviando datos", e)
+                Result.retry()
             }
-        })
-    }
+        }
 
 
 }

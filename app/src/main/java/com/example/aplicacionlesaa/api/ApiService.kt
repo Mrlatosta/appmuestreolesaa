@@ -62,6 +62,11 @@ interface ApiService {
     @GET("ultimofoliomuestreo")
     fun getLastFolioMuestreo(): Call<UltimoFolio>
 
+    @GET("verificarfolio/{folio}")
+    fun verificarFolio(
+        @Path("folio") folio: String
+    ): Call<FolioMuestreo>
+
 
     @POST("crearmuestra")
     fun createMuestreo(@Body muestra: Muestra_pdm): Call<Void>

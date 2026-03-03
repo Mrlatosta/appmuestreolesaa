@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -40,9 +41,37 @@ class ResendMuActivity : AppCompatActivity() {
     private var muestraData: MuestraData? = null
     private var muestraMutableList: MutableList<Muestra> = mutableListOf()
     private lateinit var adapter: muestraAdapterActResumen
+    private lateinit var extractedDate: String
+
+    private fun getFileName(uri: Uri): String? {
+        var name: String? = null
+        val cursor = contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (it.moveToFirst() && nameIndex != -1) {
+                name = it.getString(nameIndex)
+            }
+        }
+        return name
+    }
+
+    private fun extractDateFromFileName(fileName: String): String? {
+        val regex = Regex("\\d{4}-\\d{2}-\\d{2}")
+        return regex.find(fileName)?.value
+    }
+
     private val getFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
+
+                val fileName = getFileName(uri)
+                Log.i("File Sexo", "FileName: $fileName")
+
+                fileName?.let {
+                    extractedDate = extractDateFromFileName(it).toString()
+                    Log.i("File Sexo", "Fecha extraída: $extractedDate")
+                }
+
                 handleFile(uri)
             }
         }
@@ -148,7 +177,7 @@ class ResendMuActivity : AppCompatActivity() {
 
                     // Convertir lista a JSON para el Worker
                     val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
-                    val filename = "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json"
+                    val filename = "Datos-folio-${binding.tvFolio.text}-${extractedDate}.json"
                     val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
                     val filePath = "$documentsDir/$filename"
 
@@ -231,13 +260,20 @@ class ResendMuActivity : AppCompatActivity() {
 
                 }else {
 
+                    Log.e("Entrando a funcion else", "Entrando a funcion else")
                     // ✅ Envío de muestras normales en una sola tarea (bulk)
                     val muestraListaNueva = convertirAMuestraPdm(muestraMutableList)
 
 
                     // Convertir lista a JSON para el Worker
                     val fechaHoy = LocalDate.now().toString() // Formato YYYY-MM-DD
-                    val filename = "Datos-folio-${binding.tvFolio.text}-${fechaHoy}.json"
+                    val filename = "Datos-folio-${binding.tvFolio.text}-${extractedDate}.json"
+                    //Log de file name
+                    Log.i("File Name", "FileName: $filename")
+                    //Log extracetdate
+                    Log.i("File Name Extractedsexo", "FileName: $extractedDate")
+
+
                     val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
                     val filePath = "$documentsDir/$filename"
 
