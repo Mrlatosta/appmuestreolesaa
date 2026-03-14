@@ -687,6 +687,12 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         }
 
+        binding.btnVolverMenu.setOnClickListener {
+            val intent = Intent(this, NewMainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+        }
+
         //val muestraUno = Muestra(1,32,"Agua de Red - NOM-000-123-345","20/05/2024 ")
 
         muestraProvider.listademuestras

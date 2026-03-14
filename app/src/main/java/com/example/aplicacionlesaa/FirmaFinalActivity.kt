@@ -24,16 +24,24 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Constraints
 import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.aplicacionlesaa.adapter.FoliosAdapter
 import com.example.aplicacionlesaa.adapter.MuestraResumenAdapter
 import com.example.aplicacionlesaa.databinding.ActivityFirmaFinalBinding
 import com.example.aplicacionlesaa.model.DatosFirmaPlan
+import com.example.aplicacionlesaa.model.DatosFinalesFolioMuestreo
 import com.example.aplicacionlesaa.model.MuestraData
 import com.example.aplicacionlesaa.model.Muestra_pdm
 import com.example.aplicacionlesaa.model.Muestra_pdmExtra
+import com.example.aplicacionlesaa.utils.NetworkUtils
+import com.example.aplicacionlesaa.worker.SendDataWorker
+import com.example.aplicacionlesaa.worker.SendDataWorkerMuestrasExtra
+import com.example.aplicacionlesaa.worker.SendDatosFaltantesWorker
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.itextpdf.barcodes.BarcodeQRCode
@@ -60,6 +68,7 @@ import com.itextpdf.layout.properties.VerticalAlignment
 import java.io.File
 import java.io.InputStreamReader
 import java.time.LocalDate
+import org.json.JSONObject
 
 class FirmaFinalActivity : AppCompatActivity() {
 
@@ -201,10 +210,16 @@ class FirmaFinalActivity : AppCompatActivity() {
 
         val edNombreMuestreador = EditText(this)
         edNombreMuestreador.hint = "Nombre muestreador"
+        // Llenar automáticamente con el ingeniero de campo del plan
+        val pdmDetallado = foliosSeleccionados.firstOrNull()?.pdmDetallado
+        if (pdmDetallado != null) {
+            edNombreMuestreador.setText(pdmDetallado.ingeniero_campo ?: "")
+        }
         layout.addView(edNombreMuestreador)
 
         val edPuestoMuestreador = EditText(this)
         edPuestoMuestreador.hint = "Puesto muestreador"
+        edPuestoMuestreador.setText("ing. en campo")
         layout.addView(edPuestoMuestreador)
 
         val edCorreo = EditText(this)
@@ -254,7 +269,7 @@ class FirmaFinalActivity : AppCompatActivity() {
         val signatureViewAutoriza = SignatureView(this)
         signatureViewAutoriza.layoutParams = android.view.ViewGroup.LayoutParams(
             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-            650
+            600
         )
 
         val layoutAutoriza = android.widget.LinearLayout(this)
@@ -279,7 +294,7 @@ class FirmaFinalActivity : AppCompatActivity() {
             val signatureViewMuestreador = SignatureView(this)
             signatureViewMuestreador.layoutParams = android.view.ViewGroup.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                800
+                600
             )
 
             val layoutMuestreador = android.widget.LinearLayout(this)
@@ -347,7 +362,7 @@ class FirmaFinalActivity : AppCompatActivity() {
             // Agregar event handler para paginación
             val footerHandler = FooterEventHandler(document)
             pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, footerHandler)
-
+//
             // Cargar logo desde recursos
             val inputStream = context.resources.openRawResource(R.raw.logorectangulartrans)
             val byteArrayOutputStream = ByteArrayOutputStream()
@@ -845,40 +860,162 @@ class FirmaFinalActivity : AppCompatActivity() {
     }
 
     private fun mostrarOpcionesDeEnvio(datosFirma: DatosFirmaPlan, foliosSeleccionados: List<MuestraData>) {
-        val correosDestino = listOf(
-            datosFirma.correo,
-            "recepcionlab.lesa@gmail.com",
-            "operacioneslab.lesa@gmail.com"
-        )
-
         foliosSeleccionados.forEach { muestraData ->
-            val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-            val file = File(pdfPath, "Muestras-Folio-${muestraData.folio}.pdf")
-            val subject = "Resultados de muestreo - Folio ${muestraData.folio}"
-            
-            val messageText = """
-                <h2>Registro de Muestreo</h2>
-                <p><strong>Folio:</strong> ${muestraData.folio}</p>
-                <p>Adjunto encontrará el registro de muestreo solicitado.</p>
-                <p>Agradecemos su confianza.</p>
-                <br>
-                <p><strong>Laboratorio LESA</strong></p>
-            """.trimIndent()
+            try {
+                val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                val file = File(pdfPath, "Muestras-Folio-${muestraData.folio}.pdf")
 
-            // Enviar a cada correo
-            correosDestino.forEach { correo ->
-                val data = Data.Builder()
-                    .putString("emailAddress", correo)
-                    .putString("filePath", file.absolutePath)
-                    .putString("subject", subject)
-                    .putString("messageText", messageText)
+                // ========== PASO 1: Guardar JSON con datos de muestras ==========
+                val fechaHoy = LocalDate.now().toString()
+                val filename = "Datos-folio-${muestraData.folio}-${fechaHoy}.json"
+                val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+                val filePath = "$documentsDir/$filename"
+                saveDataToJson(this, muestraData, filename)
+
+                // ========== PASO 2: Encolar SendDataWorker (muestras normales) ==========
+                if (muestraData.muestras.isNotEmpty()) {
+                    val data = Data.Builder()
+                        .putString("filePath", filePath)
+                        .putString("folioText", muestraData.folio)
+                        .putString("nombreAutoAnalisis", datosFirma.nombreAutoAnalisis)
+                        .putString("puestoAutoAnalisis", datosFirma.puestoAutoAnalisis)
+                        .putString("nombreMuestreador", datosFirma.nombreMuestreador)
+                        .putString("puestoMuestreador", datosFirma.puestoMuestreador)
+                        .build()
+
+                    val workRequest = OneTimeWorkRequestBuilder<SendDataWorker>()
+                        .setInputData(data)
+                        .setConstraints(
+                            Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+                        )
+                        .build()
+
+                    WorkManager.getInstance(this).enqueue(workRequest)
+                    Log.i("FirmaFinalActivity", "📦 Encolado SendDataWorker para ${muestraData.muestras.size} muestras")
+                }
+
+                // ========== PASO 3: Encolar SendDataWorkerMuestrasExtra (si existen) ==========
+                if (muestraData.muestrasExtra != null && muestraData.muestrasExtra.isNotEmpty()) {
+                    val tamanoExtra = muestraData.muestrasExtra.size
+                    val dataListExtra = mutableListOf<Data>()
+
+                    muestraData.muestrasExtra.forEachIndexed { index, muestra ->
+                        val data = Data.Builder()
+                            .putInt("muestra_count", tamanoExtra)
+                            .putString("registro_muestra_$index", muestra.registroMuestra)
+                            .putString("folio_muestreo_$index", muestra.numeroMuestra + "E")
+                            .putString("fecha_muestreo_$index", muestra.fechaMuestra)
+                            .putString("nombre_muestra_$index", muestra.nombreMuestra)
+                            .putString("id_lab_$index", muestra.idLab)
+                            .putString("cantidad_aprox_$index", muestra.cantidadAprox)
+                            .putString("temperatura_$index", muestra.tempM)
+                            .putString("lugar_toma_$index", muestra.lugarToma)
+                            .putString("descripcion_toma_$index", muestra.descripcionM)
+                            .putString("e_micro_$index", muestra.emicro)
+                            .putString("e_fisico_$index", muestra.efisico)
+                            .putString("observaciones_$index", muestra.observaciones)
+                            .putString("folio_pdm_$index", muestraData.planMuestreo)
+                            .putInt("estudio_id_$index", muestra.idEstudio.toInt())
+                            .putString("cliente", muestraData.clientePdm?.folio)
+                            .putString("folio", muestraData.folio + "E")
+                            .putString("folioPDM", muestraData.planMuestreo)
+                            .build()
+                        dataListExtra.add(data)
+                    }
+
+                    dataListExtra.forEach { data ->
+                        val workRequest = OneTimeWorkRequestBuilder<SendDataWorkerMuestrasExtra>()
+                            .setInputData(data)
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+                        WorkManager.getInstance(this).enqueue(workRequest)
+                    }
+                    Log.i("FirmaFinalActivity", "📦 Encolado SendDataWorkerMuestrasExtra para ${tamanoExtra} muestras")
+                }
+
+                // ========== PASO 4: Encolar SendDatosFaltantesWorker ==========
+                val datosFaltantesData = Data.Builder()
+                    .putString("nombreAutoAnalisis", datosFirma.nombreAutoAnalisis)
+                    .putString("puestoAutoAnalisis", datosFirma.puestoAutoAnalisis)
+                    .putString("nombreMuestreador", datosFirma.nombreMuestreador)
+                    .putString("puestoMuestreador", datosFirma.puestoMuestreador)
+                    .putString("folioText", muestraData.folio)
                     .build()
-                val sendEmailRequest = OneTimeWorkRequestBuilder<SendEmailWorker>()
-                    .setInputData(data)
+
+                val sendDatosFaltanteWorkRequest = OneTimeWorkRequestBuilder<SendDatosFaltantesWorker>()
+                    .setInputData(datosFaltantesData)
+                    .setConstraints(
+                        Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build()
+                    )
                     .build()
-                WorkManager.getInstance(this).enqueue(sendEmailRequest)
+
+                WorkManager.getInstance(this).enqueue(sendDatosFaltanteWorkRequest)
+                Log.i("FirmaFinalActivity", "📦 Encolado SendDatosFaltantesWorker para folio ${muestraData.folio}")
+
+                // ========== PASO 5: Encolar SendEmailWorker ==========
+                val correosDestino = listOf(
+                    datosFirma.correo,
+                    "recepcionlab.lesa@gmail.com",
+                    "operacioneslab.lesa@gmail.com"
+                )
+
+                val subject = "Reporte de servicio GRUPO LESAA - Folio ${muestraData.folio}"
+                val messageText = """
+                    <p>- Servicios que genera valor -</p>
+                    <a href="grupolesaa.com.mx"><img src="https://grupolesaa.com.mx/img/logorectangulartrans.png" alt="Logo Lesaa" width="300"/> </a>
+                    <p><strong> ¡Tenemos información para tí!, </strong> </p>
+                    <p>Buen día</p>
+                    <p>Esperando que se encuentre bien el día de hoy, le notificamos que ha recibido reporte de servicio correspondiente a la colecta de muestras
+                     del día <strong> ${LocalDate.now()} </strong> con No. de folio <strong> ${muestraData.folio} </strong> el cual está en proceso y garantizamos la terminación de este en tiempo y forma.</p>
+                    <p>Sin más por el momento, quedamos a sus órdenes.</p>
+                    <p>¡Tenga un excelente día!</p>
+                    <br>
+                    <p style="font-size:0.3rem">Tablet: ${Build.MODEL.uppercase()} </p>
+                """.trimIndent()
+
+                correosDestino.forEach { correo ->
+                    val emailData = Data.Builder()
+                        .putString("emailAddress", correo)
+                        .putString("filePath", file.absolutePath)
+                        .putString("subject", subject)
+                        .putString("messageText", messageText)
+                        .putBoolean("isHtml", true)
+                        .build()
+
+                    val sendEmailRequest = OneTimeWorkRequest.Builder(SendEmailWorker::class.java)
+                        .setInputData(emailData)
+                        .build()
+
+                    WorkManager.getInstance(this).enqueue(sendEmailRequest)
+                }
+                Log.i("FirmaFinalActivity", "📧 Encolado SendEmailWorker para ${correosDestino.size} correos")
+
+            } catch (e: Exception) {
+                Log.e("FirmaFinalActivity", "Error en mostrarOpcionesDeEnvio: ${e.message}", e)
+                Toast.makeText(this, "Error al procesar folio: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
-        Toast.makeText(this, "PDFs generados y correos enviados para ${foliosSeleccionados.size} folio(s)", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "✅ ${foliosSeleccionados.size} folio(s) procesados - Sincronizando con servidor...", Toast.LENGTH_LONG).show()
+    }
+
+    private fun saveDataToJson(context: Context, muestraData: MuestraData, filename: String) {
+        try {
+            val gson = Gson()
+            val jsonString = gson.toJson(muestraData)
+            val documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+            val file = File(documentsDir, filename)
+            file.writeText(jsonString)
+            Log.i("FirmaFinalActivity", "JSON guardado: ${file.absolutePath}")
+        } catch (e: Exception) {
+            Log.e("FirmaFinalActivity", "Error al guardar JSON: ${e.message}", e)
+        }
     }
 }
