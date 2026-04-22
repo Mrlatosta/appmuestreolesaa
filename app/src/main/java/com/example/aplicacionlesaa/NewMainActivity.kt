@@ -76,6 +76,12 @@ class NewMainActivity : AppCompatActivity() {
             val intent = Intent(this, SelePdmActivity::class.java)
             startActivity(intent)
         }
+
+        binding.fabPdfViewer.setOnClickListener {
+            val intent = Intent(this, PdfViewerActivity::class.java)
+            startActivity(intent)
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
                 ContextCompat.checkSelfPermission(

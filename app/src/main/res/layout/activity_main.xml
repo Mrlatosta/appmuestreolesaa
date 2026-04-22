@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    android:padding="16dp"
+    android:fillViewport="true"
+    android:scrollbars="vertical"
     tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F5F5F5"
+        android:padding="16dp">
 
     <!-- ========== HEADER SECTION ========== -->
 
@@ -26,14 +32,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/tvTitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Registro de Muestras"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#1A237E"
                 app:layout_constraintTop_toTopOf="parent"
@@ -43,10 +49,10 @@
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="20dp"
                 android:text="PDM:"
                 android:textColor="#424242"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tvTitulo" />
@@ -58,7 +64,7 @@
                 android:layout_marginStart="8dp"
                 android:text="-"
                 android:textColor="#D32F2F"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textView4" />
@@ -72,6 +78,7 @@
                 android:textColor="#424242"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tvPDM" />
 
@@ -84,6 +91,7 @@
                 android:textColor="#D32F2F"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textView5" />
 
@@ -96,6 +104,7 @@
                 android:textColor="#424242"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tvFolio" />
 
@@ -108,6 +117,7 @@
                 android:textColor="#1A237E"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textView7" />
 
@@ -115,12 +125,12 @@
                 android:id="@+id/textView24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="20dp"
                 android:text="Cliente:"
                 android:textColor="#424242"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/tvfechamuestreo"
+                app:layout_constraintStart_toEndOf="@+id/tvPDM"
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
@@ -132,10 +142,61 @@
                 android:layout_marginEnd="12dp"
                 android:text="-"
                 android:textColor="#D32F2F"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 app:layout_constraintTop_toTopOf="@id/textView24"
                 app:layout_constraintStart_toEndOf="@id/textView24"
-                app:layout_constraintEnd_toStartOf="@id/btnVolverMenu" />
+                app:layout_constraintEnd_toStartOf="@id/textView21"
+                app:layout_constraintWidth_percent="0.20" />
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Cantidad Restante:"
+                android:textColor="#0F1C4C"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/tvCliente"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvCantidadRestante"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="-"
+                android:textColor="#2E7D32"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@id/textView21"
+                app:layout_constraintStart_toEndOf="@id/textView21" />
+
+            <TextView
+                android:id="@+id/tvMuestaEta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Muestras Extra: 0"
+                android:textColor="#616161"
+                android:textSize="13sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/textView21"
+                app:layout_constraintStart_toEndOf="@id/tvCantidadRestante" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMuestraExtra"
+                android:layout_width="170dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="16dp"
+                android:text="Muestra Extra"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:backgroundTint="#174B6E"
+                app:cornerRadius="8dp"
+                app:layout_constraintStart_toEndOf="@id/tvMuestaEta"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnVolverMenu"
@@ -143,10 +204,12 @@
                 android:layout_height="wrap_content"
                 android:text="Volver"
                 android:textSize="12sp"
-                android:padding="8dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
                 app:backgroundTint="#F57C00"
                 app:cornerRadius="6dp"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnMuestraExtra"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -159,6 +222,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:cardBackgroundColor="#FFFFFF"
         app:cardElevation="2dp"
         app:cardCornerRadius="8dp"
@@ -199,36 +263,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:text="ID Servicio"
+                android:text="ID Servicio:"
                 android:textColor="#424242"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/tvNumeroMuestra"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Spinner
-                android:id="@+id/idSpinner1"
+            <TextView
+                android:id="@+id/tvServicioActual"
                 android:layout_width="0dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/spinner_background"
-                app:layout_constraintEnd_toStartOf="@id/btnInfo"
-                app:layout_constraintStart_toEndOf="@id/textView3"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="spread" />
-
-            <Button
-                android:id="@+id/btnInfo"
-                android:layout_marginTop="0dp"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="0dp"
-                android:text="ℹ️"
-                android:textSize="30sp"
+                android:text="-"
+                android:textColor="#D32F2F"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textView3"
                 app:layout_constraintTop_toTopOf="parent" />
+
+
 
             <TextView
                 android:id="@+id/textview4"
@@ -243,7 +300,7 @@
                 app:layout_constraintTop_toBottomOf="@id/textView3" />
 
             <TextView
-                android:id="@+id/tvdescripcionmuestra"
+                android:id="@+id/tvdescripcionmuestraLegacy"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -289,79 +346,21 @@
         android:id="@+id/cardActions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="6dp"
+        android:visibility="gone"
         app:cardBackgroundColor="#FFFFFF"
         app:cardElevation="2dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintTop_toBottomOf="@id/cardHeader"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/cardServiceInfo"
-        app:layout_constraintWidth_percent="0.32">
+        app:layout_constraintHorizontal_bias="0.72"
+        app:layout_constraintWidth_percent="0.43">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:padding="16dp">
+            android:layout_height="1dp" />
 
-            <TextView
-                android:id="@+id/textView21"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cantidad Restante:"
-                android:textColor="#0F1C4C"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-
-                tools:layout_editor_absoluteX="16dp" />
-
-            <TextView
-                android:id="@+id/tvCantidadRestante"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="-"
-                android:textColor="#B50000"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textView21"
-                tools:layout_editor_absoluteY="16dp" />
-
-                " />
-
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMuestraExtra"
-                android:layout_width="200dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="150dp"
-                android:text="Muestra Extra"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:backgroundTint="#174B6E"
-                app:cornerRadius="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView21" />
-
-            <TextView
-                android:id="@+id/tvMuestaEta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:text="Muestras Extra: 0"
-                android:textColor="#616161"
-                android:textSize="12sp"
-                app:layout_constraintStart_toEndOf="@+id/tvCantidadRestante"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <!-- ========== SAMPLE INPUT FORM ========== -->
@@ -374,12 +373,12 @@
         app:cardBackgroundColor="#FFFFFF"
         app:cardElevation="2dp"
         app:cardCornerRadius="8dp"
-        app:layout_constraintTop_toBottomOf="@id/cardServiceInfo"
+        app:layout_constraintTop_toBottomOf="@id/cardHeader"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="1246dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp">
 
@@ -471,6 +470,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:longClickable="false"
                     android:textSize="14sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -559,7 +563,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:hint="Descripción"
-                app:layout_constraintEnd_toStartOf="@id/tvSubtipo"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tilLugar"
                 app:layout_constraintTop_toBottomOf="@id/textView16"
                 app:layout_constraintWidth_percent="0.20">
@@ -573,32 +577,112 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Row 3: E.Micro, E.Fisico, Observaciones -->
+            <!-- ========== SERVICE SELECTION (COLLAPSIBLE) ========== -->
 
-            <TextView
-                android:id="@+id/tvSubtipo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginEnd="132dp"
-                android:text="Subtipo"
-                android:textColor="#424242"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tilDescripcion" />
-
-            <Spinner
-                android:id="@+id/idspinnerSubtipo"
+            <LinearLayout
+                android:id="@+id/headerServiceSelection"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="0dp"
-                android:background="@drawable/spinner_background"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@id/tilDescripcion"
-                app:layout_constraintTop_toBottomOf="@id/tvSubtipo"
-                app:layout_constraintWidth_percent="0.15" />
+                app:layout_constraintTop_toBottomOf="@id/tilDescripcion">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Seleccionar Servicio"
+                    android:textColor="#1A237E"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvExpandIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="▼"
+                    android:textColor="#1A237E"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginStart="12dp" />
+
+            </LinearLayout>
+
+            <!-- Contenido Expandible -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/expandableContent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@id/headerServiceSelection"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/textViewServicio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ID Servicio:"
+                    android:textColor="#424242"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Spinner
+                    android:id="@+id/idSpinner1"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/spinner_background"
+                    app:layout_constraintWidth_percent="0.4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btnInfoModal"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="0dp"
+                    android:text="ℹ️"
+                    android:textSize="24sp"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toEndOf="@id/idSpinner1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvdescripcionmuestra"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="0dp"
+                    android:text="Descripcion:"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    app:layout_constraintStart_toEndOf="@id/btnInfoModal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/textView17"
@@ -610,7 +694,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tilNombre" />
+                app:layout_constraintTop_toBottomOf="@id/expandableContent" />
 
             <TextView
                 android:id="@+id/textView18"
@@ -629,12 +713,13 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:hint="Micro"
                 app:layout_constraintEnd_toStartOf="@id/tilFisico"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView18"
-                app:layout_constraintWidth_percent="0.20">
+                app:layout_constraintWidth_percent="0.15">
 
                 <EditText
                     android:id="@+id/txtMicro"
@@ -662,12 +747,12 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:hint="Fisico"
                 app:layout_constraintEnd_toStartOf="@id/tilObservaciones"
                 app:layout_constraintStart_toEndOf="@id/tilMicro"
                 app:layout_constraintTop_toBottomOf="@id/textView19"
-                app:layout_constraintWidth_percent="0.20">
+                app:layout_constraintWidth_percent="0.15">
 
                 <EditText
                     android:id="@+id/txtFisico"
@@ -695,12 +780,12 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:hint="Observaciones"
-                app:layout_constraintEnd_toStartOf="@id/btnStart"
+                app:layout_constraintEnd_toStartOf="@id/idspinnerSubtipo"
                 app:layout_constraintStart_toEndOf="@id/tilFisico"
                 app:layout_constraintTop_toBottomOf="@id/textView20"
-                app:layout_constraintWidth_percent="0.20">
+                app:layout_constraintWidth_percent="0.18">
 
                 <EditText
                     android:id="@+id/txtobservaciones"
@@ -711,23 +796,76 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/tvSubtipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Subtipo"
+                android:textColor="#424242"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/idspinnerSubtipo"
+                app:layout_constraintTop_toBottomOf="@id/textView17" />
+
+            <Spinner
+                android:id="@+id/idspinnerSubtipo"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/spinner_background"
+                app:layout_constraintEnd_toStartOf="@id/idspinnerHerramientas"
+                app:layout_constraintStart_toEndOf="@id/tilObservaciones"
+                app:layout_constraintTop_toBottomOf="@id/tvSubtipo"
+                app:layout_constraintWidth_percent="0.12" />
+
+            <!-- Nuevo campo Herramientas -->
+            <TextView
+                android:id="@+id/tvHerramientas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Herramientas"
+                android:textColor="#424242"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/idspinnerHerramientas"
+                app:layout_constraintTop_toBottomOf="@id/textView17" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/idspinnerHerramientas"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@id/btnStart"
+                app:layout_constraintStart_toEndOf="@id/idspinnerSubtipo"
+                app:layout_constraintTop_toBottomOf="@id/tvHerramientas"
+                app:layout_constraintWidth_percent="0.12">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actvHerramientas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textSize="13sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnStart"
-                android:layout_width="250dp"
-                android:layout_height="52dp"
-                android:layout_marginTop="128dp"
-                android:text="Agregar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:text="+ AGREGAR"
                 android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 app:backgroundTint="#088395"
                 app:cornerRadius="8dp"
-                app:icon="@android:drawable/ic_input_add"
-                app:iconGravity="textStart"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.803"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@id/idspinnerHerramientas"
+                app:layout_constraintTop_toBottomOf="@id/tvSubtipo"
+                app:layout_constraintWidth_percent="0.12" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -816,4 +954,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

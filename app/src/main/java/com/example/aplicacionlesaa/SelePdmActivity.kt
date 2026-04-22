@@ -223,7 +223,7 @@ class SelePdmActivity : AppCompatActivity() {
 
             row.addView(createTableCell(plan.nombre_pdm ?: "N/A"))
             row.addView(createTableCell(plan.nombre_empresa ?: "N/A"))
-            row.addView(createTableCell("plan")) // Placeholder for fase
+            row.addView(createTableCell(plan.fase ?: "-"))
 
             row.addView(createTableCell(plan.pq_atendera ?: "N/A"))
             row.addView(createTableCell(plan.fecha_hora_cita ?: "N/A"))

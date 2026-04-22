@@ -35,13 +35,21 @@
 
         <activity
             android:name=".MainActivity2"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+
+            />
         <activity
             android:name=".ContinuarFolioActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            />
         <activity
             android:name=".fisicoquimicosActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            />
         <activity
             android:name=".VerMuestrasExtraActivity"
             android:exported="false" />
@@ -50,6 +58,9 @@
             android:exported="false" />
         <activity
             android:name=".ResendMuActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PdfViewerActivity"
             android:exported="false" />
         <activity
             android:name=".NewMainActivity"
@@ -68,6 +79,7 @@
             android:exported="false" />
         <activity
             android:name=".FirmaFinalActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity

@@ -117,7 +117,8 @@ data class Pdm(
     val ingeniero_campo: String,
     val nombre_lugar: String,
     val nombre_empresa: String,
-    val observaciones: String
+    val observaciones: String,
+    val fase: String? = null
 ) : Parcelable {
     constructor(parcel: Parcel): this(
         parcel.readString() ?: "",
@@ -126,10 +127,9 @@ data class Pdm(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: ""
-        ,parcel.readString() ?: ""
-
-
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -141,7 +141,7 @@ data class Pdm(
         parcel.writeString(nombre_lugar)
         parcel.writeString(nombre_empresa)
         parcel.writeString(observaciones)
-
+        parcel.writeString(fase)
     }
     override fun describeContents(): Int {
         return 0

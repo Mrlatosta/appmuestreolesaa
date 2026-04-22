@@ -52,6 +52,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapterSubtipo: ArrayAdapter<String>
+    private lateinit var adapterHerramientas: ArrayAdapter<String>
+    private lateinit var actvHerramientas: android.widget.AutoCompleteTextView
     //private lateinit var handler: Handler
     private var modoEdicion = false
 
@@ -73,6 +75,9 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     private var fechaSinBarras: String = ""
     private var muestrasExtras: ArrayList<Muestra> = ArrayList()
     val subtipos = mutableListOf<String>()
+    val herramientas = mutableListOf("", "Termómetro Digital", "Termómetro Taylor", "Termómetro Higrómetro", "Colorímetro Portátil Multiparamétrico", "Analizador Pocket Pro+")
+    private var servicioSeleccionadoId: String? = null
+    private var isServiceSelectionExpanded = false
 
 
 
@@ -193,17 +198,21 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         binding.tvObserPDM.text = pdmDetallado.observaciones
 
-        binding.btnInfo.setOnClickListener {
+        // La seccion de servicio queda fija (sin colapsar).
+
+        binding.btnInfoModal.setOnClickListener {
             showServicioDialog()
         }
 
-        val ids = serviciosList.map { it.id.toString() } // Convertir IDs a Strings
+        val ids = mutableListOf("")
+        ids.addAll(serviciosList.map { it.id.toString() }) // Primera opcion vacia para forzar seleccion manual
 
         // Configurar el adaptador del Spinner con la lista de IDs
 
         val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, ids)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
+        spinner.setSelection(0, false)
 
         //Create an empty array of strings
 
@@ -212,6 +221,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         adapterSubtipo = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, subtipos)
         adapterSubtipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerSubtipo.adapter = adapterSubtipo
+
+        actvHerramientas = binding.actvHerramientas
+        adapterHerramientas = ArrayAdapter(this@MainActivity, android.R.layout.simple_list_item_1, herramientas)
+        actvHerramientas.setAdapter(adapterHerramientas)
+        actvHerramientas.setOnClickListener { actvHerramientas.showDropDown() }
 
 
         val tvDescripcion = binding.tvdescripcionmuestra
@@ -229,10 +243,33 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 id: Long
             ) {
 
+                if (position == 0) {
+                    servicioSeleccionadoId = null
+                    binding.tvServicioActual.text = "-"
+                    tvDescripcion.text = "Descripcion:"
+                    tvCantidad.text = "-"
+                    txtEmicro.text.clear()
+                    txtEfisico.text.clear()
+                    txtCantidadAprox.text.clear()
+                    subtipos.clear()
+                    subtipos.add("")
+                    adapterSubtipo.notifyDataSetChanged()
+                    spinnerSubtipo.setSelection(0)
+                    return
+                }
+
                 // Obtener el servicio seleccionado
-                val servicioSeleccionado = serviciosList[position]
+                val servicioSeleccionado = serviciosList[position - 1]
+                servicioSeleccionadoId = servicioSeleccionado.id
+                
+                // Actualizar el display del servicio en el header
+                binding.tvServicioActual.text = servicioSeleccionado.id.toString()
+                
                 println(position)
                 try {
+                    // Guardar el nombre actual antes de hacer cualquier cambio
+                    val nombreActual = txtNombre.text.toString()
+                    
                     try{
                         if (servicioSeleccionado.cantidad == 0){
                             tvCantidad.setTextColor(resources.getColor(R.color.red))
@@ -255,24 +292,40 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         Log.e("Error", "Error al limpiar txtEfisico")
                     }
 
-
-
                     try {
                         txtCantidadAprox.text.clear()
                     } catch (e: Exception) {
                         Log.e("Error", "Error al limpiar txtCantidadAprox")
                     }
 
-                    try {
-                        if (modoEdicion == false){
-                            txtNombre.text.clear()
+                    // Lógica de nombre automático y bloqueos por estudio
+                    if (modoEdicion == false) {
+                        binding.txtFisico.isEnabled = true
+                        if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
+                            servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI", ignoreCase = true) ||
+                            servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO", ignoreCase = true)) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                            binding.txtFisico.isEnabled = false
+                        } else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED", ignoreCase = true)) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
+                        } else if (servicioSeleccionado.clasificacion.contains("HIELO", ignoreCase = true)) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
+                        } else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO", ignoreCase = true)) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
+                        } else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL", ignoreCase = true)) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
+                        } else if (servicioSeleccionado.clasificacion.contains("Superficia viva", ignoreCase = true)) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Viva")
+                        } else if (servicioSeleccionado.clasificacion.contains("Superficie Inerte", ignoreCase = true)) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Inerte")
+                        } else {
+                            // Restaurar el nombre que se guardó al inicio si no es estudio especial
+                            txtNombre.text = Editable.Factory.getInstance().newEditable(nombreActual)
                         }
-                    } catch (e: Exception) {
-                        Log.e("Error", "Error al limpiar txtNombre")
                     }
 
                     try {
-                        tvDescripcion.text = servicioSeleccionado.descripcion
+                        tvDescripcion.text = "Descripcion: ${servicioSeleccionado.descripcion}"
                     } catch (e: Exception) {
                         Log.e("Error", "Error al establecer la descripción en tvDescripcion")
                     }
@@ -281,39 +334,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         tvCantidad.text = servicioSeleccionado.cantidad.toString()
                     } catch (e: Exception) {
                         Log.e("Error", "Error al establecer la cantidad en tvCantidad")
-                    }
-
-                    try{
-
-                        //Ver si esta en modo edicion
-                        if (modoEdicion == true){
-                            Log.e("Errordos", "no se pondra nombre")
-                        }else{
-                            Log.e("Nomodoedicion", "intentando establecer el nombre en txtNombre")
-                            binding.txtFisico.isEnabled = true
-                            if (servicioSeleccionado.descripcion.contains("Agua de alberca",ignoreCase = true) ||
-                                servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI",ignoreCase = true) ||
-                                servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO", ignoreCase = true)) {
-                                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
-                                binding.txtFisico.isEnabled = false
-                            }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED", ignoreCase = true)){
-                                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
-                            }else if (servicioSeleccionado.clasificacion.contains("HIELO" , ignoreCase = true)){
-                                txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
-                            }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO", ignoreCase = true)){
-                                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
-                            }else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL", ignoreCase = true)){
-                                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
-                            }else if (servicioSeleccionado.clasificacion.contains("Superficia viva", ignoreCase = true)){
-                                txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Viva")
-                            }else if (servicioSeleccionado.clasificacion.contains("Superficie Inerte", ignoreCase = true)){
-                                txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Inerte")
-                            }
-
-                        }
-
-                    }catch (e:Exception){
-                        Log.e("Error", "Error al establecer el nombre en txtNombre")
                     }
 
                     try {
@@ -384,7 +404,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Manejar la situación en la que no se ha seleccionado nada en el Spinner (opcional)
+                servicioSeleccionadoId = null
             }
         }
 
@@ -538,7 +558,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                             binding.btnStart.text = "Agregar"
                             indexMuestraAEditar = -1
                             binding.idSpinner1.isEnabled = true
-                            binding.btnInfo.isEnabled = true
 
                         }
 
@@ -548,7 +567,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         binding.tvTitulo.text = "Registro de Muestras"
                         binding.btnStart.text = "Agregar"
                         binding.idSpinner1.isEnabled = true
-                        binding.btnInfo.isEnabled = true
 
                         clearTextFields("no")
                         Toast.makeText(
@@ -570,7 +588,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     binding.tvTitulo.text = "Registro de Muestras"
                     binding.btnStart.text = "Agregar"
                     binding.idSpinner1.isEnabled = true
-                    binding.btnInfo.isEnabled = true
 
                     clearTextFields("no")
                     Toast.makeText(
@@ -588,6 +605,16 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
 
             }else{
+                // Validar que un servicio esté seleccionado
+                if (servicioSeleccionadoId.isNullOrEmpty()) {
+                    Toast.makeText(
+                        this,
+                        "Por favor, selecciona un servicio",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+
                 val txtServicioId = binding.idSpinner1
                 val idServicioString = txtServicioId.selectedItem.toString()
                 var idServicioEntero = idServicioString
@@ -600,10 +627,16 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 //Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
                 if (servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-020", ignoreCase = true)) {
                     sepudo = createMuestrasMicrobiologicas()
-                }else if(servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-063", ignoreCase = true)){
-                    sepudo = createMuestrasFisicoquimicas()
-                }
-                else{
+                } else if (servicioSeleccionado!!.estudio_clave_interna.contains("CI-EST-063", ignoreCase = true)) {
+                    createMuestrasFisicoquimicas {
+                        if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
+                            servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO", ignoreCase = true)) {
+                            txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                        }
+                        checkStoragePermissionAndSaveJson()
+                    }
+                    return@setOnClickListener
+                } else {
                     sepudo = createMuestra()
                 }
 
@@ -688,6 +721,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         }
 
         binding.btnVolverMenu.setOnClickListener {
+            checkStoragePermissionAndSaveJson()
+            Toast.makeText(this, "Se guardo el JSON", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, NewMainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
@@ -793,27 +828,24 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
     private fun clearTextFields(alberca: String) {
 
-        if (alberca == "no" ){
-            Log.i(" erroralberca", "no es alberca" )
-            val txtnombrem = binding.txtnombre
-            txtnombrem.text.clear()
-        }else{
-            Log.i(" alberca", "es alberca" )
-        }
+        binding.txtnombre.text.clear()
 
         val txtTemp = binding.txtTemp
         val txtLugar = binding.txtLugar
         val txtDescripcion = binding.txtdescripcion
         val txtObserva = binding.txtobservaciones
+        val spinnerServicio = binding.idSpinner1
 
         txtTemp.text.clear()
         txtLugar.text.clear()
         txtDescripcion.text.clear()
         txtObserva.text.clear()
+        spinnerServicio.setSelection(0, false)
+        servicioSeleccionadoId = null
 
     }
 
-    private fun createMuestrasFisicoquimicas() :Boolean{
+    private fun createMuestrasFisicoquimicas(onSuccess: () -> Unit) {
 
         var sepudo = false
         val tvNum = binding.tvNumeroMuestra
@@ -846,8 +878,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
         {
             Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
-            sepudo = false
-            return sepudo
+            return
         } else {
             try {
                 idServicioEntero = idServicioString
@@ -1199,6 +1230,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 sepudo = true
                 dialog.dismiss()
                 clearTextFields("si")
+                onSuccess()
             }
 
 // Botón para cancelar
@@ -1210,9 +1242,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             builder.show()
 
         }
-
-
-        return sepudo
     }
 
     private fun createMuestrasMicrobiologicas() :Boolean{
@@ -1535,6 +1564,11 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         touchHelper.attachToRecyclerView(binding.recyclerMuestras)
         Toast.makeText(this, "El modo de edicion es: $modoEdicion", Toast.LENGTH_SHORT).show()
 
+        val indexEditar = intent.getIntExtra("indexMuestraEditar", -1)
+        if (indexEditar >= 0 && indexEditar < muestraMutableList.size) {
+            binding.root.post { onEditItem(indexEditar) }
+        }
+
 
 
 
@@ -1543,6 +1577,20 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
         // Implementa la lógica para guardar los datos cuando un item se mueva
         checkStoragePermissionAndSaveJson()
         Log.i("Ray", "Se ha movido un item")
+    }
+
+    private fun toggleServiceSelection() {
+        isServiceSelectionExpanded = !isServiceSelectionExpanded
+        val expandableContent = binding.expandableContent
+        val expandIcon = binding.tvExpandIcon
+        
+        if (isServiceSelectionExpanded) {
+            expandableContent.visibility = View.VISIBLE
+            expandIcon.text = "▲"
+        } else {
+            expandableContent.visibility = View.GONE
+            expandIcon.text = "▼"
+        }
     }
 
     
@@ -1752,9 +1800,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                     for (servicio in serviciosList) {
                         if (servicio.id == servicioSeleccionado) {
                             val spinner1 = binding.idSpinner1
-                            spinner1.setSelection(serviciosList.indexOf(servicio))
+                            spinner1.setSelection(serviciosList.indexOf(servicio) + 1)
                             spinner1.isEnabled = false
-                            binding.btnInfo.isEnabled = true
 
 
                             val subtipo = binding.idspinnerSubtipo
@@ -1915,15 +1962,30 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 Log.e("Error", "Error al limpiar txtCantidadAprox")
             }
 
-            try {
-                txtNombre.text.clear()
-                Toast.makeText(this, "Limpiando txtNombre", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Log.e("Error", "Error al limpiar txtNombre")
+            // Lógica de nombre automático por estudio (desde diálogo modal)
+            binding.txtFisico.isEnabled = true
+            if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
+                servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI", ignoreCase = true) ||
+                servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO", ignoreCase = true)) {
+                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
+                binding.txtFisico.isEnabled = false
+            } else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED", ignoreCase = true)) {
+                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
+            } else if (servicioSeleccionado.clasificacion.contains("HIELO", ignoreCase = true)) {
+                txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
+            } else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO", ignoreCase = true)) {
+                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
+            } else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL", ignoreCase = true)) {
+                txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
+            } else if (servicioSeleccionado.clasificacion.contains("Superficia viva", ignoreCase = true)) {
+                txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Viva")
+            } else if (servicioSeleccionado.clasificacion.contains("Superficie Inerte", ignoreCase = true)) {
+                txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Inerte")
             }
+            // Ya no se limpia el campo nombre aquí
 
             try {
-                tvDescripcion.text = servicioSeleccionado.descripcion
+                tvDescripcion.text = "Descripcion: ${servicioSeleccionado.descripcion}"
             } catch (e: Exception) {
                 Log.e("Error", "Error al establecer la descripción en tvDescripcion")
             }
@@ -1932,29 +1994,6 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                 tvCantidad.text = servicioSeleccionado.cantidad.toString()
             } catch (e: Exception) {
                 Log.e("Error", "Error al establecer la cantidad en tvCantidad")
-            }
-
-            try{
-
-//                Toast.makeText(this, "Estableciendo nombre", Toast.LENGTH_SHORT).show()
-//                Log.e("Error", "Estableciendo nombre")
-                if (servicioSeleccionado.descripcion.contains("Agua de alberca", ignoreCase = true) ||
-                    servicioSeleccionado.descripcion.contains("Agua de Alberca") ||
-                    servicioSeleccionado.descripcion.contains("AGUA DE ALBERCA") ||
-                    servicioSeleccionado.clasificacion.contains("AGUA DE JACUZZI",ignoreCase = true) ||
-                    servicioSeleccionado.clasificacion.contains("AGUA DE USO RECREACTIVO", ignoreCase = true)) {
-                    txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Alberca")
-                }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RED", ignoreCase = true)){
-                    txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Red")
-                }else if (servicioSeleccionado.clasificacion.contains("HIELO", ignoreCase = true)){
-                    txtNombre.text = Editable.Factory.getInstance().newEditable("Hielo")
-                }else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO",ignoreCase = true)){
-                    txtNombre.text = Editable.Factory.getInstance().newEditable("Agua de Riego")
-                }else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL", ignoreCase = true)){
-                    txtNombre.text = Editable.Factory.getInstance().newEditable("Agua Residual")
-                }
-            }catch (e:Exception){
-                Log.e("Error", "Error al establecer el nombre en txtNombre")
             }
 
             try {
@@ -2020,7 +2059,7 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
 
             // Seleccionar el id del servicio correspondiente en el spinner
             val spinner1 = binding.idSpinner1
-            spinner1.setSelection(serviciosList.indexOf(servicioSeleccionado))
+            spinner1.setSelection(serviciosList.indexOf(servicioSeleccionado) + 1)
             dialog.dismiss()
 
         } catch (e: Exception) {

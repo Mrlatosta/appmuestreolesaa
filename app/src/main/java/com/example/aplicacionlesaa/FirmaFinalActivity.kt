@@ -3,6 +3,7 @@ package com.example.aplicacionlesaa
 import SendEmailWorker
 import android.content.Context
 import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
@@ -78,6 +79,14 @@ class FirmaFinalActivity : AppCompatActivity() {
     private var selectedPlan: String? = null
     private lateinit var foliosAdapter: FoliosAdapter
     private lateinit var muestraAdapter: MuestraResumenAdapter
+    private val hiddenState = mutableMapOf<String, Boolean>()
+    private var currentSelectedMuestraData: MuestraData? = null
+
+    private val editMuestraLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        cargarArchivosHoyAgrupados()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +101,7 @@ class FirmaFinalActivity : AppCompatActivity() {
         }
 
         setupRecyclers()
+        loadHiddenState()
         cargarArchivosHoyAgrupados()
 
         if (savedInstanceState != null) {
@@ -112,12 +122,29 @@ class FirmaFinalActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclers() {
-        muestraAdapter = MuestraResumenAdapter(emptyList())
+        muestraAdapter = MuestraResumenAdapter(emptyList()) { index ->
+            val muestraData = currentSelectedMuestraData ?: return@MuestraResumenAdapter
+            val lugares = ArrayList(muestraData.muestras.map { it.lugarToma }.filter { it.isNotBlank() }.distinct())
+            val intent = Intent(this, MainActivity::class.java).apply {
+                putExtra("tipomuestreo", "continuar")
+                putExtra("plandemuestreo", muestraData.planMuestreo)
+                putExtra("clientePdm", muestraData.clientePdm)
+                putExtra("folio", muestraData.folio)
+                putExtra("pdmDetallado", muestraData.pdmDetallado)
+                putParcelableArrayListExtra("listaServicios", ArrayList(muestraData.serviciosPdm))
+                putParcelableArrayListExtra("muestraList", ArrayList(muestraData.muestras))
+                putParcelableArrayListExtra("muestraExtraList", ArrayList(muestraData.muestrasExtra ?: emptyList()))
+                putStringArrayListExtra("lugares", lugares)
+                putExtra("indexMuestraEditar", index)
+            }
+            editMuestraLauncher.launch(intent)
+        }
         binding.recyclerMuestras.layoutManager = LinearLayoutManager(this)
         binding.recyclerMuestras.adapter = muestraAdapter
 
         foliosAdapter = FoliosAdapter(emptyList()) { muestraData ->
             val ultimoSeleccionado = foliosAdapter.getSelectedItems().lastOrNull()
+            currentSelectedMuestraData = ultimoSeleccionado
             muestraAdapter.updateData(ultimoSeleccionado?.muestras ?: emptyList())
         }
         binding.recyclerFolios.layoutManager = LinearLayoutManager(this)
@@ -163,10 +190,12 @@ class FirmaFinalActivity : AppCompatActivity() {
             val row = TableRow(this).apply {
                 setOnClickListener { mostrarFoliosDelPlan(pdm) }
             }
-            row.addView(createCell(pdm))
-            row.addView(createCell(cliente))
+            val pdmCell = createCell(pdm)
+            val clienteCell = createCell(cliente)
+            row.addView(pdmCell)
+            row.addView(clienteCell)
             row.addView(createCell(folios.size.toString()))
-            row.addView(createInfoCell(pdm))
+            row.addView(createInfoCell(pdm, pdmCell, cliente, clienteCell))
             table.addView(row)
         }
     }
@@ -177,11 +206,43 @@ class FirmaFinalActivity : AppCompatActivity() {
         gravity = Gravity.CENTER_VERTICAL
     }
 
-    private fun createInfoCell(pdm: String): View = ImageView(this).apply {
-        setImageResource(android.R.drawable.ic_menu_view)
+    private fun createInfoCell(pdmOriginal: String, pdmCell: TextView, clienteOriginal: String, clienteCell: TextView): View = ImageView(this).apply {
         setPadding(16, 16, 16, 16)
         setColorFilter(Color.parseColor("#4CAF50"))
-        setOnClickListener { mostrarFoliosDelPlan(pdm) }
+
+        val isHidden = hiddenState[pdmOriginal] ?: false
+        setImageResource(if (isHidden) android.R.drawable.ic_lock_lock else android.R.drawable.ic_menu_view)
+        pdmCell.text = if (isHidden) "*".repeat(pdmOriginal.length) else pdmOriginal
+        clienteCell.text = if (isHidden) "*".repeat(clienteOriginal.length) else clienteOriginal
+
+        setOnClickListener {
+            val hidden = hiddenState[pdmOriginal] ?: false
+            if (hidden) {
+                hiddenState[pdmOriginal] = false
+                pdmCell.text = pdmOriginal
+                clienteCell.text = clienteOriginal
+                setImageResource(android.R.drawable.ic_menu_view)
+            } else {
+                hiddenState[pdmOriginal] = true
+                pdmCell.text = "*".repeat(pdmOriginal.length)
+                clienteCell.text = "*".repeat(clienteOriginal.length)
+                setImageResource(android.R.drawable.ic_lock_lock)
+            }
+            saveHiddenState()
+        }
+    }
+
+    private fun saveHiddenState() {
+        val prefs = getSharedPreferences("HiddenStatePrefs", Context.MODE_PRIVATE)
+        val hiddenSet = hiddenState.filter { it.value }.keys.toSet()
+        prefs.edit().putStringSet("hidden_pdms", hiddenSet).apply()
+    }
+
+    private fun loadHiddenState() {
+        val prefs = getSharedPreferences("HiddenStatePrefs", Context.MODE_PRIVATE)
+        val hiddenSet = prefs.getStringSet("hidden_pdms", emptySet()) ?: emptySet()
+        hiddenState.clear()
+        hiddenSet.forEach { hiddenState[it] = true }
     }
 
     private fun mostrarFoliosDelPlan(pdm: String) {
@@ -189,6 +250,7 @@ class FirmaFinalActivity : AppCompatActivity() {
         val folios = pdmMap[pdm] ?: emptyList()
         binding.tvPlanSeleccionado.text = "Plan seleccionado: $pdm"
         foliosAdapter.updateData(folios)
+        currentSelectedMuestraData = null
         muestraAdapter.updateData(emptyList())
     }
 
@@ -219,7 +281,13 @@ class FirmaFinalActivity : AppCompatActivity() {
 
         val edPuestoMuestreador = EditText(this)
         edPuestoMuestreador.hint = "Puesto muestreador"
-        edPuestoMuestreador.setText("ing. en campo")
+        val nombreMuestreadorAuto = pdmDetallado?.ingeniero_campo ?: ""
+        val puestoAuto = when {
+            nombreMuestreadorAuto.contains("Diego Alejo", ignoreCase = true) -> "Jefe de gestión de calidad"
+            nombreMuestreadorAuto.contains("Ricardo Linares", ignoreCase = true) -> "Gerente de operaciones"
+            else -> "ing. en campo"
+        }
+        edPuestoMuestreador.setText(puestoAuto)
         layout.addView(edPuestoMuestreador)
 
         val edCorreo = EditText(this)
@@ -343,12 +411,16 @@ class FirmaFinalActivity : AppCompatActivity() {
     ) {
         foliosSeleccionados.forEach { muestraData ->
             generarPdfPlan(context, muestraData, datosFirma)
+            if (!muestraData.muestrasExtra.isNullOrEmpty()) {
+                generarPdfPlan(context, muestraData, datosFirma, esExtra = true)
+            }
         }
     }
 
-    private fun generarPdfPlan(context: Context, muestraData: MuestraData, datosFirma: DatosFirmaPlan) {
+    private fun generarPdfPlan(context: Context, muestraData: MuestraData, datosFirma: DatosFirmaPlan, esExtra: Boolean = false) {
         val pdfPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-        val file = File(pdfPath, "Muestras-Folio-${muestraData.folio}.pdf")
+        val folioMostrado = muestraData.folio + if (esExtra) "E" else ""
+        val file = File(pdfPath, "Muestras-Folio-$folioMostrado.pdf")
 
         try {
             val pdfWriter = PdfWriter(file)
@@ -438,7 +510,7 @@ class FirmaFinalActivity : AppCompatActivity() {
 
             datosSolicitudTable.addCell(Cell().add(Paragraph("FOLIO:").setFontSize(fontSize)
                 .setFontColor(whiteColor)).setBackgroundColor(headerColor))
-            datosSolicitudTable.addCell(Cell().add(Paragraph(muestraData.folio)
+            datosSolicitudTable.addCell(Cell().add(Paragraph(folioMostrado)
                 .setFontSize(fontSize).setBold()).setBackgroundColor(whiteColor))
 
             // ====== TABLA DE DATOS DE QUIEN SOLICITA ======
@@ -559,7 +631,8 @@ class FirmaFinalActivity : AppCompatActivity() {
 
             // Agregar filas de datos
             var idx = 1
-            for (muestra in muestraData.muestras) {
+            val muestrasAMostrar = if (esExtra) muestraData.muestrasExtra ?: emptyList() else muestraData.muestras
+            for (muestra in muestrasAMostrar) {
                 table.addCell(Cell().add(Paragraph(idx.toString()).setFontSize(7f)))
                 table.addCell(Cell().add(Paragraph(muestra.registroMuestra ?: "").setFontSize(7f)))
                 table.addCell(Cell().add(Paragraph(muestra.nombreMuestra ?: "").setFontSize(7f)))
@@ -997,6 +1070,26 @@ class FirmaFinalActivity : AppCompatActivity() {
                     WorkManager.getInstance(this).enqueue(sendEmailRequest)
                 }
                 Log.i("FirmaFinalActivity", "📧 Encolado SendEmailWorker para ${correosDestino.size} correos")
+
+                // ========== PASO 6: Email con PDF extra si existe ==========
+                if (!muestraData.muestrasExtra.isNullOrEmpty()) {
+                    val fileExtra = File(pdfPath, "Muestras-Folio-${muestraData.folio}E.pdf")
+                    val subjectExtra = "Reporte de servicio GRUPO LESAA - Folio ${muestraData.folio}E"
+                    correosDestino.forEach { correo ->
+                        val emailDataExtra = Data.Builder()
+                            .putString("emailAddress", correo)
+                            .putString("filePath", fileExtra.absolutePath)
+                            .putString("subject", subjectExtra)
+                            .putString("messageText", messageText)
+                            .putBoolean("isHtml", true)
+                            .build()
+                        val sendEmailRequestExtra = OneTimeWorkRequest.Builder(SendEmailWorker::class.java)
+                            .setInputData(emailDataExtra)
+                            .build()
+                        WorkManager.getInstance(this).enqueue(sendEmailRequestExtra)
+                    }
+                    Log.i("FirmaFinalActivity", "📧 Encolado SendEmailWorker extra para ${correosDestino.size} correos")
+                }
 
             } catch (e: Exception) {
                 Log.e("FirmaFinalActivity", "Error en mostrarOpcionesDeEnvio: ${e.message}", e)

@@ -9,7 +9,10 @@ import com.example.aplicacionlesaa.R
 import com.example.aplicacionlesaa.model.Estudio
 import com.example.aplicacionlesaa.model.Servicio
 
-class EstudiosAdapterInfo(private val estudiosList: List<Estudio>): RecyclerView.Adapter<EstudiosAdapterInfo.ServicioViewHolder>() {
+class EstudiosAdapterInfo(
+    private val estudiosList: List<Estudio>,
+    private val onItemClick: (Estudio) -> Unit
+): RecyclerView.Adapter<EstudiosAdapterInfo.ServicioViewHolder>() {
 
     class ServicioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvIdServicio: TextView = itemView.findViewById(R.id.id)
@@ -32,6 +35,9 @@ class EstudiosAdapterInfo(private val estudiosList: List<Estudio>): RecyclerView
         holder.tvcantidad_toma.text = "Cantidad toma: ${currentItem.cantidad_toma}"
         holder.tvnorma.text = "Norma: ${currentItem.norma}"
 
+        holder.itemView.setOnClickListener {
+            onItemClick(currentItem)
+        }
     }
 
 
