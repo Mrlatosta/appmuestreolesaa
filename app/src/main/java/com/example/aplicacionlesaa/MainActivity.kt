@@ -280,16 +280,19 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         Log.e("Error", "Error al establecer color en tvCantidad")
                     }
 
-                    try {
-                        txtEmicro.text.clear()
-                    } catch (e: Exception) {
-                        Log.e("Error", "Error al limpiar txtEmicro")
-                    }
+                    // No limpiar estos campos en modo edición para preservar datos anotados
+                    if (modoEdicion == false) {
+                        try {
+                            txtEmicro.text.clear()
+                        } catch (e: Exception) {
+                            Log.e("Error", "Error al limpiar txtEmicro")
+                        }
 
-                    try {
-                        txtEfisico.text.clear()
-                    } catch (e: Exception) {
-                        Log.e("Error", "Error al limpiar txtEfisico")
+                        try {
+                            txtEfisico.text.clear()
+                        } catch (e: Exception) {
+                            Log.e("Error", "Error al limpiar txtEfisico")
+                        }
                     }
 
                     try {
@@ -336,24 +339,26 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         Log.e("Error", "Error al establecer la cantidad en tvCantidad")
                     }
 
-                    try {
-                        txtEmicro.text = Editable.Factory.getInstance()
-                            .newEditable(servicioSeleccionado.estudios_microbiologicos)
-                    } catch (e: Exception) {
-                        Log.e(
-                            "Error",
-                            "Error al establecer los estudios microbiológicos en txtEmicro"
-                        )
-                    }
+                    if (modoEdicion == false) {
+                        try {
+                            txtEmicro.text = Editable.Factory.getInstance()
+                                .newEditable(servicioSeleccionado.estudios_microbiologicos)
+                        } catch (e: Exception) {
+                            Log.e(
+                                "Error",
+                                "Error al establecer los estudios microbiológicos en txtEmicro"
+                            )
+                        }
 
-                    try {
-                        txtEfisico.text = Editable.Factory.getInstance()
-                            .newEditable(servicioSeleccionado.estudios_fisicoquimicos)
-                    } catch (e: Exception) {
-                        Log.e(
-                            "Error",
-                            "Error al establecer los estudios físicoquímicos en txtEfisico"
-                        )
+                        try {
+                            txtEfisico.text = Editable.Factory.getInstance()
+                                .newEditable(servicioSeleccionado.estudios_fisicoquimicos)
+                        } catch (e: Exception) {
+                            Log.e(
+                                "Error",
+                                "Error al establecer los estudios físicoquímicos en txtEfisico"
+                            )
+                        }
                     }
 
                     try {
@@ -1982,7 +1987,17 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             } else if (servicioSeleccionado.clasificacion.contains("Superficie Inerte", ignoreCase = true)) {
                 txtNombre.text = Editable.Factory.getInstance().newEditable("Superficie Inerte")
             }
-            // Ya no se limpia el campo nombre aquí
+            
+            // Llenar observaciones automáticamente solo para aguas específicas (excepto alberca)
+            if (servicioSeleccionado.clasificacion.contains("AGUA DE RED", ignoreCase = true)) {
+                binding.txtobservaciones.setText("Hora de análisis:")
+            } else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL", ignoreCase = true)) {
+                binding.txtobservaciones.setText("Hora de análisis:")
+            } else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO", ignoreCase = true)) {
+                binding.txtobservaciones.setText("Hora de análisis:")
+            } else {
+                binding.txtobservaciones.text.clear()
+            }
 
             try {
                 tvDescripcion.text = "Descripcion: ${servicioSeleccionado.descripcion}"
