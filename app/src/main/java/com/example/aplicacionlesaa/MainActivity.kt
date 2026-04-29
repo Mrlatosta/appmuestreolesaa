@@ -1989,11 +1989,22 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
             }
             
             // Llenar observaciones automáticamente solo para aguas específicas (excepto alberca)
-            if (servicioSeleccionado.clasificacion.contains("AGUA DE RED", ignoreCase = true)) {
-                binding.txtobservaciones.setText("Hora de análisis:")
-            } else if (servicioSeleccionado.clasificacion.contains("AGUA RESIDUAL", ignoreCase = true)) {
-                binding.txtobservaciones.setText("Hora de análisis:")
-            } else if (servicioSeleccionado.clasificacion.contains("AGUA DE RIEGO", ignoreCase = true)) {
+            val clasifObs = servicioSeleccionado.clasificacion
+            val descObs   = servicioSeleccionado.descripcion
+            val esAguaConHora = clasifObs.contains("AGUA DE RED",      ignoreCase = true) ||
+                                clasifObs.contains("AGUA RESIDUAL",    ignoreCase = true) ||
+                                clasifObs.contains("AGUA DE RIEGO",    ignoreCase = true) ||
+                                clasifObs.contains("AGUA PURIFICADA",  ignoreCase = true) ||
+                                clasifObs.contains("AGUA CARBOJET",    ignoreCase = true) ||
+                                clasifObs.contains("AGUA DE CISTERNA", ignoreCase = true) ||
+                                clasifObs.contains("AGUA DE CONSUMO",  ignoreCase = true) ||
+                                clasifObs.contains("AGUA ALCALINA",    ignoreCase = true) ||
+                                descObs.contains("AGUA PURIFICADA",    ignoreCase = true) ||
+                                descObs.contains("AGUA ALCALINA",      ignoreCase = true) ||
+                                descObs.contains("AGUA CARBOJET",      ignoreCase = true) ||
+                                descObs.contains("AGUA DE CISTERNA",   ignoreCase = true) ||
+                                descObs.contains("AGUA DE CONSUMO",    ignoreCase = true)
+            if (esAguaConHora) {
                 binding.txtobservaciones.setText("Hora de análisis:")
             } else {
                 binding.txtobservaciones.text.clear()
