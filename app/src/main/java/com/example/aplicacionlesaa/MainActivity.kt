@@ -295,10 +295,12 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         }
                     }
 
-                    try {
-                        txtCantidadAprox.text.clear()
-                    } catch (e: Exception) {
-                        Log.e("Error", "Error al limpiar txtCantidadAprox")
+                    if (modoEdicion == false) {
+                        try {
+                            txtCantidadAprox.text.clear()
+                        } catch (e: Exception) {
+                            Log.e("Error", "Error al limpiar txtCantidadAprox")
+                        }
                     }
 
                     // Lógica de nombre automático y bloqueos por estudio
@@ -361,14 +363,16 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
                         }
                     }
 
-                    try {
-                        txtCantidadAprox.text = Editable.Factory.getInstance()
-                            .newEditable(servicioSeleccionado.cantidad_de_toma)
-                    } catch (e: Exception) {
-                        Log.e(
-                            "Error",
-                            "Error al establecer la cantidad aproximada en txtCantidadAprox"
-                        )
+                    if (modoEdicion == false) {
+                        try {
+                            txtCantidadAprox.text = Editable.Factory.getInstance()
+                                .newEditable(servicioSeleccionado.cantidad_de_toma)
+                        } catch (e: Exception) {
+                            Log.e(
+                                "Error",
+                                "Error al establecer la cantidad aproximada en txtCantidadAprox"
+                            )
+                        }
                     }
 
                     if (servicioSeleccionado.clasificacion.contains("ALIMENTOS COCIDOS", ignoreCase = true) ){
@@ -1924,7 +1928,8 @@ class MainActivity : AppCompatActivity(), OnItemMovedListener {
     }
     fun setEditMode(editMode: Boolean) {
         modoEdicion = editMode
-        // Aquí puedes hacer otras acciones necesarias cuando el modo edición cambia
+        binding.idSpinner1.isEnabled = !editMode
+        binding.btnInfoModal.isEnabled = !editMode
     }
 
     private fun onItemSelectedServicio(servicio: Servicio, dialog: AlertDialog) {
